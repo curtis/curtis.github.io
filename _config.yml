@@ -1,0 +1,18 @@
+# Site Information
+baseurl: ""
+description: "Musings of a startup junkie and Ruby on Rails nerd."
+header-img: img/home-bg.jpg
+title: Millarian
+url: "http://millarian.com"
+
+# My Info
+author: Curtis Miller
+twitter_username: curtism
+github_username:  curtis
+
+# Build Settings
+markdown: kramdown
+highlighter: pygments
+permalink: pretty
+paginate: 5
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
