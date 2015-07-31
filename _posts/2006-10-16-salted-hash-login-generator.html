@@ -1,0 +1,21 @@
+---
+categories: [rails]
+date: 2006-10-16 02:14:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/salted-hash-login-generator/
+title: Salted Hash Login Generator
+---
+<p>The remainder of the day, I worked with Ruby on Rails – I am a n00b, so be kind. I am currently looking at the requirements for login and registration. I rolled my own login and registration that was pretty simple using <span class="caps">SHA1</span> encryption for the password, but it was <i>extremely simplistic</i>. So what other options are there besides reinventing the wheel?</p>
+<p>There are several options for this particular functionality. The <a href="http://wiki.rubyonrails.com/rails/pages/LoginGenerator">LoginGenerator</a> was the first I found on the <a href="http://wiki.rubyonrails.com">RoR Wiki</a>, but I soon abandoned that in favor of a generator called the <a href="http://wiki.rubyonrails.com/rails/pages/SaltedHashLoginGenerator">SaltedHashLoginGenerator</a> that was referenced a few paragraphs down the page. It stated it was:</p>
+<blockquote>
+a newer descendant of this codebase adds ActionMailer support for changed and forgotten passwords, as well as account verification via a registration email with a custom <span class="caps">URL</span> sent to the user's registered address.
+</blockquote>
+<p>Sounds good to me. Talk about knocking out several requirements with one solution…if it works, that is. My advice to anyone thinking about the using the <acronym title="SaltedHashLoginGenerator">SHLG</acronym> (1.1.1) is read <b>all</b> the documentation. I encountered several blogs that said &#8220;Don't use it!&#8221; or &#8220;I can't figure it out!&#8221;. Either they had an old, broken version or they did not <span class="caps">RTFM</span>. Some things that can be easily overlooked:</p>
+<ol>
+<li>Check if you have the iconv library installed. If not, then get it.</li>
+<li>After executing <code>script/generate salted_login &lt;User Name&gt; &lt;Localization Name&gt;</code> two files are produced that you <i>need</i> to read: <code>README_&lt;User Name&gt;_LOGIN</code> and <code>README_&lt;Localization Name&gt;</code>.  If you read those and follow the instructions, then you should have no problems.</li>
+<li>Implicit multipart e-mail messages will not work with the Localization generator. See <a href="http://lists.rubyonrails.org/pipermail/rails/2006-February/016479.html" title="Multipart Recipe">here</a> or look in the <a href="http://www.amazon.com/Rails-Recipes-Pragmatic-Programmers-Fowler/dp/0977616606/sr=1-1/qid=1160987153/ref=sr_1_1/104-2305102-2783144?ie=UTF8&amp;s=books">Rails Recipes</a>, pages 295-298.  This caused me some frustration, but following the advice in the list thread worked. Unfortunately, I think this may impact the ability to localize the e-mails.  Not a big deal for me at the moment, but it could be for some people.  After making that change, you may add view files to <code>app/views/&lt;User Name&gt;_notify</code> for each part of your multipart message. For example, I have <code>signup.text.html.rhtml</code> and <code>signup.text.plain.rhtml</code> for my <span class="caps">HTML</span> and plain text messages respectively.</li>
+</ol>
+<p>I hope this helps someone. Let me know your experiences with LoginGenerator, SaltedHashLoginGenerator, or suggestions on other alternatives.</p>
+<p><b>Update</b>: Also, if you modify a file in the config or lib directories then you must restart the server for the change to take effect.</p>

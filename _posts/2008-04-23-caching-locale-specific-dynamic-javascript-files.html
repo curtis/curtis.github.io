@@ -1,0 +1,33 @@
+---
+categories: [rails]
+date: 2008-04-23 20:58:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/caching-locale-specific-dynamic-javascript-files/
+title: "Caching Locale-specific Dynamic JavaScript Files"
+---
+<p>I was recently inspired to create some cached, dynamic JavaScript files for a project I am working on after watching <a href="http://railscasts.com">Ryan Bates Railscasts</a> episodes 88 and 89.</p>
+<p>The basic concept is to create a JavaScript controller that dynamically renders some JavaScript file(s).  This allows you to take advantage of <span class="caps">ERB</span> in your JavaScript files.  However, this can become slow as every request for that JavaScript file must be processed by Rails.  In episode 89, Ryan showed how to cache the dynamic JavaScript file to improve performance.  These episodes were great, except I had one problem… The dynamic portion of the JavaScript files I was working with were translated strings.</p>
+<p>This meant that I couldn't just cache the JavaScript file because the translation would need to be different based on the locale setting of the user.  It turns out there's a pretty easy solution to this.  If you follow the lessons from the episodes then you will have a general caching mechanism for the dynamic JavaScript files.  Assuming you are using a translation mechanism like <a href="http://www.globalize-rails.org">Globalize</a> then you have access to a locale for the current session.  Simply use this locale when including the JavaScript file (e.g., dynamic_states):</p>
+
+<h4>Your layout file</h4>
+
+{% highlight erb %}
+<%= javascript_include_tag "#{locale}/dynamic_states" -%>
+{% endhighlight %}
+
+<p>This will try to include the dynamic_states.js file from the javascripts/locale directory where locale is something like en, es, zh, etc.  The only other thing to do is define a custom route to handle this new pattern.</p>
+
+<h4>routes.rb</h4>
+
+{% highlight ruby %}
+map.connect ':controller/:locale/:action.:format'
+{% endhighlight %}
+
+<p>That's it.  You should now have locale-specific dynamic JavaScript files.  For what I was working on, I also nested the locale directory within another directory (e.g., cache) just for ease of removal in case you need to wipe out the entire cache of dynamic JS.</p>
+
+<h3>Resources</h3>
+<ul>
+<li><a href="http://railscasts.com/episodes/88">Dynamic Select Menus</a></li>
+<li><a href="http://railscasts.com/episodes/89">Page Caching</a></li>
+</ul>

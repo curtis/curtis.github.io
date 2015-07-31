@@ -1,0 +1,16 @@
+---
+categories: [ops]
+date: 2008-09-13 21:47:00
+layout: post
+redirect_from:
+  - /programming/quick-tip-setting-time-zone-on-ubuntu-hardy/
+title: "Quick Tip: Setting time zone on Ubuntu Hardy"
+---
+<p>I've been pretty enamored with <a href="http://slicehost.com">SliceHost</a> recently. They make it very easy to setup a slice, configure it and get your product deployed quickly (I'm down to 30 min). I hadn't noticed until just recently that I've never set a time zone on any slice I've configured. So, here's how you do it, simple and easy.</p>
+<ol>
+<li><span class="caps">SSH</span> into your slice</li>
+<li>Run this command: <code>sudo dpkg-reconfigure tzdata</code></li>
+<li>Select your geographic area and location</li>
+</ol>
+<p>That's it, hope it helps!</p>
+<p>If you want your own slice, consider using my <a href="https://manage.slicehost.com/customers/new?referrer=23bdbe98ed4c7a89f27b83bb9ab7bf1a">Slicehost referral link</a>. Thanks!</p>

@@ -1,0 +1,80 @@
+---
+categories: [ruby]
+date: 2007-11-05 04:48:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/the-tip-of-the-ruby-1/
+title: 'The Tip of the Ruby #1'
+---
+<p>I was recently asked about the difference between using <code>or</code> versus <code>||</code> in Ruby and thought it might make a good tip. They essentially do the same thing, but with one difference: operator precedence.  You see <code>||</code> is evaluated before an assignment whereas <code>or</code> is evaluated after an assignment.  This is why you can create conditional assignments like so:</p>
+
+{% highlight ruby %}
+user = User.find_by_id(1) || User.new
+{% endhighlight %}
+
+<p>In the above code, if a user is found, then the variable is assigned that user.  If a user is not found, then <code>find_by_id</code> returns <code>nil</code> (evaluates to false) and a new User is instantiated and assigned to the variable.  If you were to use <code>or</code> in the code above, then when <code>find_by_id</code> returned nil the variable would be assigned nil as the assignment operator takes precedence over the <code>or</code> operator.</p>
+
+<h3>Example</h3>
+<p>Here's a contrived example to show the difference between the two. Given the following class:</p>
+
+{% highlight ruby %}
+class Tester
+  def self.a
+    p "In Tester.a"
+    return true
+  end
+
+  def self.b
+    p "In Tester.b"
+    return false
+  end
+end
+{% endhighlight %}
+
+<p>Here are some expressions and their results:</p>
+
+{% highlight ruby %}
+>> x = Tester.a || Tester.b
+"In Tester.a"
+=> true
+>> x
+true
+x = Tester.a or Tester.b
+"In Tester.a"
+=> true
+>> x
+=> true
+{% endhighlight %}
+
+<p>So far they look identical… But, let's change the order things are invoked.</p>
+
+{% highlight ruby %}
+>> x = Tester.b || Tester.a
+"In Tester.b"
+"In Tester.a"
+=> true
+>> x
+=> true
+>> x = Tester.b or Tester.a
+"In Tester.b"
+"In Tester.a"
+=> true
+>> x
+=> false
+{% endhighlight %}
+
+<p>Now we see the difference! When the invocation of Tester.b finishes, then the assignment operator is invoked, thus assigning false to the variable.  Notice that <code>Tester.a</code> is still invoked, but it is ORed with the result of the assignment.</p>
+<h3>Lazy (Shortcircuit) Evaluation</h3>
+<p>I was also asked if the conversational operators are always evaluated.  The answer is: No.  The are evaluated just as the non-conversational operators.  From <em>Programming Ruby, 2nd Edition</em>:</p>
+
+<blockquote>
+Both and and && evaluate to true only if both operands are true. They evaluate the second operand only if the first is true (this is sometimes known as shortcircuit evaluation). The only difference in the two forms is precedence (and binds lower than &&).
+<br/><br/>
+Similarly, both or and || evaluate to true if either operand is true. They evaluate their second operand only if the first is false. As with and, the only difference between or and || is their precedence.
+</blockquote>
+
+<h3>Precedence of <code>and</code> and <code>or</code></h3>
+<p>There is one other minor difference.  The <code>&&</code> operator takes precedence over the <code>||</code> operator so if you had an expression containing both, the <code>&&</code> should evaluate first. With <code>and</code> and <code>or</code> they should be evaluated at an equal precedence, probably in the order they're encountered.</p>
+<h3>Conclusion</h3>
+<p>I use the conversational <code>not/and/or</code> because I feel they make the code easier to read and force you to be explicit to account for the low operator precedence.  I tend to use <code>!/&&/||</code> sparingly (like using || for conditional assignment).  Also, with compound expressions, I like to use parenthesis for clarity.  Am I missing something?  Do you know of a reason to prefer one or the other?</p>
+<p><strong>Update</strong>: Jay Fields has <a href="http://blog.jayfields.com/2007/08/ruby-operator-precedence-of-and-which.html">a post</a> about this same topic.  <a href="http://project.ioni.st/">Marcel Molina, Jr.</a> said in the comments that he prefers not to use either form as it is easy to introduce subtle errors.</p>

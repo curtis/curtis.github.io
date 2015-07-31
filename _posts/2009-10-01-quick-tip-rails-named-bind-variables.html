@@ -1,0 +1,32 @@
+---
+categories: [rails]
+date: 2009-10-01 09:30:28
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/quick-tip-rails-named-bind-variables/
+subtitle: "How to use named bind variables in a Ruby on Rails query to increase readability and reduce duplication."
+title: "Quick Tip: Rails Named Bind Variables"
+---
+<p>Have you ever come across a Ruby on Rails query that has so many conditions that it's hard to figure out what is being replaced where? While this can be somewhat mitigated by using <a href="http://millarian.com/rails/quick-tip-named_scope/">Rails named scopes</a>, you can also use named bind variables to make it easier to read. Named bind variables replace the question marks with symbols and you supply a hash with values for the matching symbol keys:</p>
+
+{% highlight ruby %}
+Company.find(:first, :conditions => [
+  "state = :state AND name = :name AND division = :division AND created_at > :some_date",
+  { :state => :approved, :name => '{{ site.company.name }}', :division => 'First', :some_date => '2009-02-27' }
+])
+{% endhighlight %}
+
+<p>This is also very handy when you have the same value for multiple parameters, since it will replace all matching bind variables with the value (e.g., the current time).</p>
+
+{% highlight ruby %}
+Event.find(:first, :conditions => [
+  "state = :state AND starts_at <= :now AND ends_at >= :now",
+  { :state => :active, :now => Time.zone.now }
+])
+{% endhighlight %}
+
+<h3>References</h3>
+<ul>
+<li><a rel="external" href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">ActiveRecord::Base API documentation</a>
+  </li>
+</ul>

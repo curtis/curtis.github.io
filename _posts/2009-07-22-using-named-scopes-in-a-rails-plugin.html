@@ -1,0 +1,18 @@
+---
+categories: [rails]
+date: 2009-07-22 10:00:23
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/using-named-scopes-in-a-rails-plugin/
+title: "Using Named Scopes in a Rails Plugin"
+subtitle: "After extracting common functionality with named scopes into a Rails plugin, I was seeing some strange behavior. I describe the cause and solution."
+---
+<p>After extracting some common functionality into a Rails plugin, I was quite pleased with the result. The code was now contained and could be used within a model with a single line. Awesome! Except, a problem cropped up that was quite strange. In production mode, we noticed that after modifying some objects to not be visible, they still appeared in the interface as visible objects. Turns out there was an insidious defect in the plugin code I extracted.</p>
+<p>The plugin code in question had two named scopes: one for the visible objects and one for the non-visible. The system uses a timestamp to determine if an object is visible or not, so part of the conditions of these named scopes was to check if the object had been marked as not visible earlier than the current time.</p>
+<p><script src="http://gist.github.com/151450.js"></script></p>
+<p><strong>So, you see the problem, right?</strong></p>
+<p>Since this code is contained within the plugin, it will be evaluated once in production mode, meaning that the time will remain whatever it was when the plugin was loaded. This will cause the strange behavior that we saw. By using a lambda, we can ensure that the code is evaluated every time it is run and not just once.</p>
+<p><script src="http://gist.github.com/151452.js"></script></p>
+<p>Note the use of double curly braces. The outer is for the lambda and the inner if for the hash. This is necessary for this code to work correctly.</p>
+<p>Thanks to <a rel="external" href="http://chrischandler.name">Chris Chandler</a> for helping me to figure this out.</p>
+<p><strong>Have you seen similar strange behavior in your Rails plugins?</strong></p>

@@ -1,0 +1,28 @@
+---
+categories: [ruby]
+date: 2007-02-10 18:20:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/ruby-time-limitations/
+title: "Ruby Time Limitations"
+---
+<p>I ran across a strange problem recently dealing with the Ruby Time class.  It seems that there is a limit imposed by various platforms as to the minimum value of a Ruby Time object.  The problem reared it's head when I was creating a Ruby on Rails application that contained a user birthday.  I mistakenly used Time for the birthday instead of Date.</p>
+<p>The zero, minimum, and maximum times on my Mac are, respectively:</p>
+<pre><code>>> Time.at(0)
+=> Wed Dec 31 17:00:00 MST 1969
+>> Time.at(-2147483648)
+=> Fri Dec 13 13:45:52 MST 1901
+>> Time.at(2147483647)
+=> Mon Jan 18 20:14:07 MST 2038</code></pre>
+<p>Not too bad, I can get back as far as 1901 and about 30 years into the future. However, when testing on my Windows XP machine I get:</p>
+<pre><code>>> Time.at(0)
+=> Wed Dec 31 17:00:00 MST 1969
+>> Time.at(-2147483648)
+=> ArgumentError: time must be positive
+        from (irb):4:in `at'
+        from (irb):4
+>> Time.at(2147483647)
+=> Mon Jan 18 20:14:07 MST 2038</code></pre>
+<p>The big difference here, of course, is that 1969 is the beginning of time for a Ruby Time object on Windows.  That's not very useful, so I switched from Time to Date for everything that did not need a time portion (duh!).  The Ruby Date class has a much broader range of values and should be sufficient for any date needed.  I would love to link to some other reference that verifies this so I know I'm not crazy, but I couldn't find anything that talked about this limitation.</p>
+<p><b>Update</b>: I found a <a href="http://dev.rubyonrails.org/ticket/6576">Ruby on Rails ticket</a> that talked about this problem, but it was closed as a Ruby problem, not a Rails problem.  I searched the Ruby tickets and was unable to find anything.  I opened <a href="http://rubyforge.org/tracker/?func=detail&#38;atid=1698&#38;aid=11417&#38;group_id=426">ticket 11417</a> to track it, but it was rejected on the grounds that it is actually an msvcrt problem.  Additionally, the <code>time_t</code> struct does not specify that negative values must be handled.</p>
+<p>I guess the only workaround at this point is to use a DateTime instead of Time.  However, this limitation on Windows does not allow you to use the ActiveSupport Time calculations like <code>50.years.ago</code>.  These operation will fail on Windows machines if they try to create a negative time.</p>

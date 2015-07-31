@@ -1,0 +1,17 @@
+---
+categories: [rails]
+date: 2008-08-25 05:51:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/quick-tip-capistrano-ssh-ports/
+title: "Quick Tip: Capistrano SSH Ports"
+---
+<p>If you have changed the <span class="caps">SSH</span> port number on your server, then you need to let Capistrano know how to connect.  Luckily, it's pretty easy.</p>
+<p>Add the following to your deployment file, replacing 8888 with your port number.</p>
+<h3>config/deploy.rb</h3>
+<pre><code class="ruby">ssh_options[:port] = 8888</code></pre>
+<p>This will apply that port number to connections made by Capistrano. If you need to specify the port for each server (app, web, db) then tack it on to the end of their declarations.</p>
+<pre><code class="ruby">role :app, "65.74.169.199:8030"
+role :web, "65.74.169.199:8031"
+role :db,  "65.74.169.199:8032", :primary =&gt; true</code></pre>
+<p>I haven't verified that one, but it supposedly works. <strong>Happy deployments!</strong></p>

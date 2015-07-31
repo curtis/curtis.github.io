@@ -1,0 +1,42 @@
+---
+categories: [rails]
+date: 2007-01-24 22:37:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/ruby-on-rails-testing-login-gotcha/
+title: "Ruby on Rails Testing - login gotcha"
+---
+<p>The Ruby on Rails web application I'm finishing has an administrator interface that allows an admin to manage users, generate reports, etc.  Some of these admin functions (like the reports) are not controlled by the admin controller.  Of course, to actually test any of the controllers I need to be logged in as an admin.  If the test doesn't log in as admin, then it simply gets redirected to the login screen with a flash that you must be logged in to access that screen.</p>
+<p>For testing the admin controller we're fine.  We can login as an administrator and proceed with testing the functionality.  However, because the admin controller handles the login request it is not possible to login from any other controller.  This happens because the <span class="caps">HTTP</span> post request does not allow you to specify the controller.  It only allows you to specify an action.  Fortunately for us there's a workaround.</p>
+<p>Like the Agile book suggests, I extracted my login method and placed it in the test_helper.rb file.  It looks something like this:</p>
+
+{% highlight ruby %}
+def admin_login(login='admin', password='foobar')
+    post :login, :admin => {:login => login, :password => password}
+    assert_redirected_to :action => 'index'
+    assert_not_nil(session['admin'])
+    admin = Admin.find(session['admin'])
+    assert_equal login, admin.login
+end
+{% endhighlight %}
+
+<p>To get the behavior we are looking for we must change this method to temporarily switch controllers.  This can be accomplished as follows:</p>
+
+{% highlight ruby %}
+def admin_login(login='admin', password='foobar')
+    old_controller = @controller
+    @controller = AdminsController.new
+
+    post :login, :admin => {:login => login, :password => password}
+    assert_redirected_to :action => 'index'
+    assert_not_nil(session['admin'])
+    admin = Admin.find(session['admin'])
+    assert_equal login, admin.login
+
+    @controller = old_controller
+end
+{% endhighlight %}
+
+<p>So we temporarily switch over to the admin controller to perform the login, then we switch back when we're done.</p>
+
+<p><i>Know a better way?  Share in the comments!</i></p>

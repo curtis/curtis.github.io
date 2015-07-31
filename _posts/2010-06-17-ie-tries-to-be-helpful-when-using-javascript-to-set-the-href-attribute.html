@@ -1,0 +1,20 @@
+---
+categories: [javascript]
+date: 2010-06-17 10:30:42
+layout: post
+redirect_from:
+  - /programming/ie-tries-to-be-helpful-when-using-javascript-to-set-the-href-attribute/
+subtitle: "When using JavaScript to set the href attribute of an anchor tag, IE sometimes updates the inner HTML. Why does this happen and what are some solutions?"
+title: "IE tries to be helpful when using JavaScript to set the href attribute"
+---
+
+<p>Have you ever tried to set an anchor tag's <code>href</code> attribute using JavaScript? It's pretty easy, even without a JavaScript library (jQuery, Prototype, etc.). All you need to do is find (or create) the element and then set the href attribute to the desired text.</p>
+<p><script src="http://gist.github.com/436998.js"></script></p>
+<p>Now, try executing the following in IE:</p>
+<p><script src="http://gist.github.com/437011.js"></script></p>
+<p>What would you expect to be the value of <code>link.innerHTML</code>? Turns out that it is the same as the href value, 'http://flatterline.com'. It seems that, on IE only, if the inner HTML of an anchor tag looks like a URL, then upon replacing the href, it will also replace the inner HTML. Try the same experiment, but with link text that does not look like a URL:</p>
+<p><script src="http://gist.github.com/437016.js"></script></p>
+<p>Inspecting the innerHTML value will show that it was not replaced.</p>
+<p>This is a browser level quirk, so using a JavaScript library won't save from this unless your library has specifically made a special case for this. I originally saw this when using jQuery and thought it might be a problem with the jQuery framework.</p>
+<p>I think the best workaround here is that when modifying an anchor tag with JavaScript, set attributes first, then set the link text.</p>
+<p><strong>What do you think? Have a different workaround or solution?</strong></p>

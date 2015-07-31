@@ -1,0 +1,20 @@
+---
+categories: [random]
+date: 2009-07-19 17:23:10
+layout: post
+redirect_from:
+  - /programming/enable-secure-admin-for-wordpress/
+subtitle: "Secure your Wordpress administration area using a self-signed certificate and Nginx webserver."
+title: "Enable Secure Admin for Wordpress"
+---
+<p><strong>Disclaimer</strong>: I'm not a security expert :)</p>
+<p>Since I work from unsecured wireless at coffee shops, etc. I wanted to have a way to access my Wordpress admin area without having to use something like <a rel="external" href="http://chrischandler.name">Chris Chandler</a>'s <a rel="external" href="http://velocitylabs.io/blog/2009/04/23/disposable-proxy-for-secure-coffee-shop-browsing/">secure proxy using Amazon EC2</a>. Here's are the steps I followed. </p>
+<ol>
+<li>Create a <a rel="external" href="http://sial.org/howto/openssl/self-signed/">self-signed certificate</a> on your webserver</li>
+<li>Tell <a rel="external" href="http://articles.slicehost.com/2007/12/19/ubuntu-gutsy-nginx-ssl-and-vhosts">Nginx how to handle the secure requests</a> by modifying your nginx.conf or virtual host files. Be sure to turn SSL on and point Nginx to the key and certificate you created in step 1</li>
+<li>Modify your wp-config.php file to turn on <a rel="external" href="http://codex.wordpress.org/Administration_Over_SSL">secure administration in Wordpress</a></li>
+<li>Restart Nginx</li>
+<li>Test it out by navigating to your wp-admin page; it should redirect you to the secure URL and ask you to make an exception for the self-signed certificate</li>
+</ol>
+<p>I'm pretty sure that's all I did, but my memory has proven to be faulty in the past. Is there anything I missed?</p>
+<p><strong>Do you have any other suggestions for securing the Wordpress admin area?</strong></p>

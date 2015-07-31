@@ -1,0 +1,31 @@
+---
+categories: [rails]
+date: 2008-09-02 01:11:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/quick-tip-form-partials/
+title: "Quick Tip: Form Partials"
+---
+<p>Partials are a great way to keep your view code separated logically.  Prior to Rails 2.1 if you wanted to reuse a form partial in, for example, a new and edit view, then you needed to pass the form into the partial somehow.</p>
+<p>Given the following form partial:</p>
+<h4>views/users/_form.html.erb</h4>
+<p>
+<pre><code class="ruby">&lt;div&gt;
+  &lt;%= form.label :name -%&gt;
+  &lt;%= form.text_field :name -%&gt;
+&lt;/div&gt;</code></pre></p>
+<h3>Pre-Rails 2.1</h3>
+<p>You might consider passing the form in as a local, like so.</p>
+<h4>views/users/new.html.erb or views/users/edit.html.erb</h4>
+<p>
+<pre><code class="ruby">&lt;% form_for @user do |form| -%&gt;
+  &lt;%= render :partial =&gt; 'form', :locals =&gt; { :form =&gt; form } -%&gt;
+&lt;% end -%&gt;</code></pre></p>
+<h3>Rails 2.1</h3>
+<p>There's now a shortcut for this common method of rendering a form partial.</p>
+<h4>views/users/new.html.erb or views/users/edit.html.erb</h4>
+<p>
+<pre><code class="ruby">&lt;% form_for @user do |form| -%&gt;
+  &lt;%= render :partial =&gt; form -%&gt;
+&lt;% end -%&gt;</code></pre></p>
+<p>Nice! Cleans things up a bit.</p>

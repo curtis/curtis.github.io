@@ -1,0 +1,60 @@
+---
+categories: [rails]
+date: 2008-04-11 20:40:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/rails-counter_cache-problem/
+title: Rails counter_cache problem
+---
+<p>I ran into a strange Ruby on Rails <a href="http://api.rubyonrails.com/classes/ActiveRecord/Associations/ClassMethods.html#M001105">counter_cache</a> problem today. Given the following example models:</p>
+
+{% highlight ruby %}
+class Poll < ActiveRecord::Base
+  has_many :poll_choices
+  has_many :poll_votes
+end
+
+class PollChoice < ActiveRecord::Base
+  belongs_to :poll
+  has_many :poll_votes
+end
+
+class PollVote < ActiveRecord::Base
+  belongs_to :poll, :counter_cache => :votes_count
+  belongs_to :poll_choice, :counter_cache => :votes_count
+end
+{% endhighlight %}
+
+<p>We want to ensure that the Poll maintains the total vote count.  We also want the PollChoice to maintain the votes for that specific choice.  In our controller we might be tempted to add a PollVote through either the Poll or PollChoice association with PollVote, but that's where the problem appears.</p>
+<p>It turns out that both of the following approaches will only update the votes_count for one or the other instance, but not both.</p>
+
+{% highlight ruby %}
+@poll.poll_votes.create(:poll_choice_id => @poll_choice.id)
+{% endhighlight %}
+
+<p>OR</p>
+
+{% highlight ruby %}
+@poll_choice.poll_votes.create(:poll_id => @poll.id)
+{% endhighlight %}
+
+<p>Instead, if we create the PollVote directly we will get the desired result of both the Poll and PollChoice having their votes_count updated appropriately.</p>
+
+{% highlight ruby %}
+PollVote.create(:poll_id => @poll.id, :poll_choice_id => @poll_choice.id)
+{% endhighlight %}
+
+<p>Strange behavior or expected result?</p>
+<p><strong>Update:</strong> Another solution is to not assign using the ID, but instead assign using the object itself.</p>
+
+{% highlight ruby %}
+@poll.poll_votes.create(:poll_choice => @poll_choice)
+{% endhighlight %}
+
+<p>OR</p>
+
+{% highlight ruby %}
+@poll_choice.poll_votes.create(:poll => @poll)
+{% endhighlight %}
+
+<p>A quick test showed this worked as well. (Thanks <a href="http://unboundimagination.com/">Arya A</a>)</p>

@@ -1,0 +1,66 @@
+---
+categories: [rails]
+date: 2008-08-26 05:29:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/quick-tip-has_many-through-checkboxes/
+title: "Quick Tip: has_many :through => checkboxes"
+---
+<p>It's really easy to create a many-to-many relationship that can be assigned through checkboxes. Check it out!</p>
+<p>Let's say you have Users and Groups. A User can belong to a Group and a Group can have many Users – we call this a Membership, like so (migrations omitted for brevity):</p>
+<h4>app/models/user.rb</h4>
+
+{% highlight ruby %}
+class User < ActiveRecord::Base
+  has_many :memberships, :dependent => :destroy
+  has_many :groups, :through => :memberships
+end
+{% endhighlight %}
+
+<h4>app/models/group.rb</h4>
+
+{% highlight ruby %}
+class Group < ActiveRecord::Base
+  has_many :memberships, :dependent => :destroy
+  has_many :users, :through => :memberships
+end
+{% endhighlight %}
+
+<h4>app/models/membership.rb</h4>
+
+{% highlight ruby %}
+class Membership < ActiveRecord::Base
+  belongs_to :group
+  belongs_to :user
+end
+{% endhighlight %}
+
+<p>We can now assign groups to members in a relatively easy manner with no extra work needed in the models. Behold!</p>
+<h4>app/views/users/edit.html.erb</h4>
+
+{% highlight erb %}
+<h1>User <%= @user.id -%></h1>
+
+<h2>Group Memberships</h2>
+<% form_for @user do -%>
+  <% Group.all.each do |group| -%>
+    <div>
+      <%= check_box_tag :group_ids, group.id, @user.groups.include?(group), :name => 'user[group_ids][]' -%>
+      <%= label_tag :group_ids, group.id -%>
+    </div>
+  <% end -%>
+  <%= submit_tag -%>
+<% end -%>
+{% endhighlight %}
+
+<p>Errr… something like that. Anyway, the important thing to note is the use of <code>group_ids</code>. The values will get submitted as <code>group_ids</code>, a member of the User. Where did that come from? We don't have an attribute or method on the model for it, so where'd it come from?  Well, seems that it is auto-generated for you to allow something like I just showed.</p>
+<p>When this form is submitted, any checked Groups will be associated through Memberships to the User by way of the magic <code>*_ids=</code> method. Should work the other way too with <code>user_ids</code> checkboxes on a group. No extra code needed. Awesome, right?</p>
+<p><strong>Bonus</strong>: If you uncheck all the checkboxes, then nothing gets posted, doh! So make sure to merge a default value with your parameters like this to ensure the <code>*_ids=</code> method gets called:</p>
+<h4>app/controllers/users_controller.rb</h4>
+
+{% highlight ruby %}
+@user.attributes = {'group_ids' => []}.merge(params[:user] || {})
+{% endhighlight %}
+
+<p><strong>Super Bonus</strong>: When you're defaulting the <code>group_ids</code> in the controller make sure to use the key as a string, not a symbol. Or if you do use a symbol then make it a Hash <code>with_indifferent_access</code>.</p>
+<p><strong>Super Monkey Ball</strong>: A monkey encased in a ball who collects bananas.</p>

@@ -1,0 +1,52 @@
+---
+categories: [rails]
+date: 2007-08-21 14:42:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/testing-a-helper-with-a-block/
+title: Testing a helper with a block
+---
+<p>I've been doing a lot of <a href="http://rspec.rubyforge.org">Rspec</a> testing lately.  Although I've been using it for a while to do <acronym title="Behaviour Driven Development">BDD</acronym> I realize that I have not been testing things as well as I should.  Yesterday I was trying to add tests for a helper method that ensures the passed in block is only output if the user is logged in and an administrator.  It's a fairly simple helper method.</p>
+
+{% highlight ruby linenos %}
+def admin_accessible(&block)
+  if logged_in? and current_user.admin
+    concat(capture(&block), block.binding)
+  end
+end
+{% endhighlight %}
+
+<p>I stumbled in the test though as I was unsure of how to test a helper that accepts a block.  With the help of <a href="http://heidmotron.com/">my colleague</a> we came up with the following two solutions to this problem.</p>
+
+{% highlight ruby linenos %}
+describe ApplicationHelper, 'invoke admin_accessible helper, when logged in as admin' do
+  before(:each) do
+    @user = mock("user")
+    @user.stub!(:admin).and_return(true)
+
+    self.stub!(:logged_in?).and_return(true)
+    @block = "Testing admin_accessible"
+  end
+
+  # Solution 1
+  it 'shall return captured block' do
+    html = eval_erb <<-ERB
+      <% admin_accessible do %>
+        <div><%= @block %></div>
+      <% end %>
+    ERB
+    html.should have_tag('div', @block)
+  end
+
+  # Solution 2
+  it 'shall return captured block' do
+    _erbout = ""
+    html = admin_accessible do
+       _erbout << "<div>#{@block}</div>"
+    end
+    html.should have_tag('div', @block)
+  end
+end
+{% endhighlight %}
+
+<p><strong>Do you know of a better solution?</strong></p>

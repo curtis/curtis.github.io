@@ -1,0 +1,70 @@
+---
+categories: [rails]
+date: 2006-11-19 22:40:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/rails-sweetness/
+title: Rails Sweetness
+---
+<p>I was recently adding addresses to my site data.  For example, a user may have a home address and/or work address, whereas a business may have a physical address and/or mailing address.  I wanted to have a single database table that held the information about an address since that seems pretty standard.  Not surprisingly, it was called <code>addresses</code>.</p>
+<p>How then do you hook up your users and business with this common table?  Enter Rails single-table inheritance implementation.  Martin Fowler has a <a href="http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html">nice diagram</a> explaining the idea behind single table inheritance.  You basically take your modeled inheritance hierarchy and smash it into a single database table.</p>
+<p>I added my address table, ensuring that it contained the magic field &#8216;type'.  The type column in the address table will automatically insert the class associated with the object being saved to the database.  <strong><em>This is key</em></strong>.</p>
+<p>Next, I generated the Address model.  Along with the Address model, I also created some inheritance models:</p>
+
+{% highlight ruby %}
+class Address < ActiveRecord::Base ; end
+
+class BusinessAddress < Address ; end
+
+class UserAddress < Address ; end
+
+class UserHomeAddress < UserAddress ; end
+
+class UserWorkAddress < UserAddress ; end
+{% endhighlight %}
+
+<p>The inheritance hierarchy allows you to do things like finds within a particular branch of a hierarchy.  For instance, if we were to do a</p>
+
+{% highlight ruby %}
+UserAddress.find(:all)
+{% endhighlight %}
+
+<p>The results would be all UserAddress, UserHomeAddress, and UserWorkAddress entries in the database.</p>
+<p>I then added a join table called users_addresses and connected a user to an address through a <code>has_and_belongs_to_many</code> relationship:</p>
+
+{% highlight ruby %}
+has_and_belongs_to_many :useraddresses,
+                        :class_name => 'UserAddress',
+                        :join_table => 'users_addresses',
+                        :foreign_key => "user_id",
+                        :association_foreign_key => "address_id"
+                        {% endhighlight %}
+
+<p>If you wanted easier access to the addresses of the user, then just add a simple method to the User model.  For example, if you wanted the ability to get the home and work address like so</p>
+
+{% highlight ruby %}
+user = User.find(:first)
+user.homeaddress
+user.workaddress
+{% endhighlight %}
+
+<p>This could be accomplished by a few simple methods in the User model class:</p>
+
+{% highlight ruby %}
+def homeaddress
+  self.useraddresses.find(:first, :conditions => "type = 'UserHomeAddress'")
+end
+
+def workaddress
+  self.useraddresses.find(:first, :conditions => "type = 'UserWorkAddress'")
+end
+{% endhighlight %}
+
+<p>The <code>self.useraddresses</code> portion gets all of the UserAddress objects associated with this User id.  This means UserAddress, UserHomeAddress and UserWorkAddress objects.</p>
+<p>There may be another way to do this, but this seems pretty freakin sweet to me.  this is also the tip of the iceberg with inheritance and I realize my prototype does not use it nearly enough.  Oh well, guess it can wait for refactoring. Here are a few other resources about <acronym title="Single Table Inheritance">STI</acronym>:</p>
+<ul>
+<li><a href="http://brianfox.wordpress.com/2006/08/03/single-table-inheritance-in-ruby-on-rails/">RoR <span class="caps">STI</span></a></li>
+<li><a href="http://www.jeroenvandoorn.nl/index.php/2006/11/09/single-table-inheritance-for-ruby-on-rails/">More RoR <span class="caps">STI</span></a></li>
+<li><a href="http://www.voodootikigod.com/?p=25">Even More <span class="caps">STI</span></a></li>
+</ul>
+<p>Let me know what you think.</p>

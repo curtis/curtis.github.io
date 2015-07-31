@@ -1,0 +1,45 @@
+---
+categories: [rails]
+date: 2008-08-31 22:49:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/quick-tip-named_scope/
+title: "Quick Tip: named_scope"
+---
+<p>Have you ever found yourself writing queries like this?</p>
+<p>
+<pre><code class="ruby">User.find(:all, :conditions =&gt; ['state = ? AND created_at &gt; ? AND created_at &lt;= ?', 'active', start_date, end_date], :limit =&gt; 5)</code></pre></p>
+<p>I suppose you could refactor this into a custom finder that did the heavy lifting for you…</p>
+<p>
+<pre><code class="ruby">User.find_all_active_in_date_range(start_date, end_date)</code></pre></p>
+<p>But what if you need that same query where the state is &#8216;pending'? Create another custom finder? Modify it so it takes another parameter for state?  Wouldn't it be nice if you could create some kind of reusable snippet that could be chained together to create a custom finder?  Well, look no further. As of Rails 2.1, such a thing exists and it's called named_scope.</p>
+<p>Let's refactor that code using named_scope.</p>
+<h4>app/models/user.rb</h4>
+<p>
+<pre><code class="ruby">class User &lt; ActiveRecord::Base
+  named_scope :active, :conditions =&gt; { :state =&gt; 'active' }
+  named_scope :between, lambda { |starts, ends| { :conditions =&gt; ['created_at &gt; ? AND created_at &lt;= ?', starts, ends] } }
+end
+</code></pre></p>
+<p>The <code>lambda</code> is simply so we can accept parameters into the named scope call. Named scopes are easily chainable, so to get the desired query we can call:</p>
+<p>
+<pre><code class="ruby">User.active.between(start_date, end_date)</code></pre></p>
+<p>Plus, if we want to add another condition, we just created another reusable named_scope and add it to the end.</p>
+<h4>app/models/user.rb</h4>
+<p>
+<pre><code class="ruby">class User &lt; ActiveRecord::Base
+  named_scope :active, :conditions =&gt; { :state =&gt; 'active' }
+  named_scope :between, lambda { |starts, ends| { :conditions =&gt; ['created_at &gt; ? AND created_at &lt;= ?', starts, ends] } }
+  named_scope :limit, lambda { |num| { :limit =&gt; num } }
+end
+</code></pre></p>
+<p>And we have our original query. This is much more readable and maintainable than the previous code we were looking at. The named scopes can also be reused when another query comes up with those conditions.</p>
+<p>
+<pre><code class="ruby">User.active.between(start_date, end_date).limit(5)</code></pre></p>
+<p>There's so much more you can do with named_scope, so check it out.</p>
+<h3>References</h3>
+<ul>
+<li><a href="http://ryandaigle.com/articles/2008/3/24/what-s-new-in-edge-rails-has-finder-functionality">Has finder functionality</a></li>
+<li><a href="http://ryandaigle.com/articles/2008/8/20/named-scope-it-s-not-just-for-conditions-ya-know">Named scope: It's not just for conditions, ya know?</a></li>
+<li><a href="http://railscasts.com/episodes/108">Railscasts: named_scope</a></li>
+</ul>

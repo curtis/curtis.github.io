@@ -1,0 +1,15 @@
+---
+categories: [ops]
+date: 2008-09-25 22:52:00
+layout: post
+redirect_from:
+  - /programming/installing-aspell-and-raspell-for-ultrasphinx/
+title: "Installing aspell and raspell for Ultrasphinx"
+---
+<p>We've been playing around with <a href="http://www.sphinxsearch.com">the Sphinx full-text search engine</a> and Ultrasphinx, the <a href="http://blog.evanweaver.com/files/doc/fauna/ultrasphinx/files/README.html">Ruby on Rails configurator and client to the Sphinx full text search engine</a>. Sadly, it was giving us a warning about spell checking:</p>
+<pre>ultrasphinx: spelling support not available (raspell configuration raised "uninitialized constant Ultrasphinx::Spell::Aspell")</pre>
+<p>This is pretty easy to get rid of, though. You just need to install the <a href="http://aspell.net">aspell, spell checking library</a> and <a href="http://sourceforge.net/projects/raspell">raspell, the Ruby interface to aspell</a>. The raspell <span class="caps">README</span> has instructions for <a href="http://blog.evanweaver.com/files/doc/fauna/raspell/files/README.html">installing aspell and raspell on both Mac and Ubuntu</a>.</p>
+<p>After we did this, we got one additional error:</p>
+<pre>ultrasphinx: spelling support not available (raspell configuration raised "No word lists can be found for the language "ap".")</pre>
+<p>Follow the instructions for setting up the <a href="http://blog.evanweaver.com/files/doc/fauna/ultrasphinx/classes/Ultrasphinx/Spell.html">custom wordlist needed by Ultrasphinx</a> and you should be good to go.</p>
+<p>Good luck and happy searching!</p>

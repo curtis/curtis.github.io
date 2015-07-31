@@ -1,0 +1,28 @@
+---
+categories: [rails]
+date: 2006-10-27 20:45:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/rails-link_to-and-html-options/
+title: Rails link_to and HTML options
+---
+<p>Just a small thing, but I needed to know how to do this and it took me a while to find.  Hopefully this will help someone else out.</p>
+<p>In <span class="caps">HTML</span>, we might declare a link like so</p>
+
+{% highlight html %}
+<a title="Example" href="/controller/action">Click Here!</a>
+{% endhighlight %}
+
+<p>Now, in Ruby on Rails, we want to declare a link, so we use the built in <a href="http://api.rubyonrails.org/classes/ActionView/Helpers/UrlHelper.html#M000378">link_to</a> method like this</p>
+
+{% highlight erb %}
+<%= link_to "Click Here!", :controller => "controller", :action => "action" %>
+{% endhighlight %}
+
+<p>Hmmm… how do we squeeze a title in there?  Luckily, the third parameter to <code>link_to</code> is a hash of <span class="caps">HTML</span> options.</p>
+
+{% highlight erb %}
+<%= link_to "Click Here!", {:controller => "controller", :action => "action"}, {:title => "Example"} %>
+{% endhighlight %}
+
+<p>That should do it.  I feel like I still have so much to learn about Ruby on Rails, but the more I learn the more I <strong>want</strong> to learn!</p>

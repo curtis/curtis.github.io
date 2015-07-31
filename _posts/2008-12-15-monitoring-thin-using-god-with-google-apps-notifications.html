@@ -1,0 +1,143 @@
+---
+categories: [code]
+date: 2008-12-15 04:08:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/monitoring-thin-using-god-with-google-apps-notifications/
+title: "Monitoring Thin using God, with Google Apps Notifications"
+---
+<p>We've been using <a href="http://god.rubyforge.org">God</a> to monitor our <a href="http://code.macournoyer.com/thin/">Thin</a> processes on <a href="http://freebootr.com">Freebootr</a> and set it up to notify us through our Google Apps account. Thought our God config file might be useful to anyone trying to use God with Thin and Google Apps.</p>
+
+<h3 class="clearfix">Thin configuration</h3>
+
+{% highlight ruby %}
+# == God config file
+# http://god.rubyforge.org/
+# Authors: Gump and michael@glauche.de
+#
+# Config file for god that configures watches for each instance of a thin server for
+# each thin configuration file found in /etc/thin.
+# In order to get it working on Ubuntu, I had to make a change to god as noted at
+# the following blog:
+# http://blog.alexgirard.com/2007/10/25/ruby-one-line-to-save-god/
+#
+require 'yaml'
+config_path = "/etc/thin"
+
+Dir[config_path + "/*.yml"].each do |file|
+  config = YAML.load_file(file)
+  num_servers = config["servers"] ||= 1
+
+  (0...num_servers).each do |i|
+    # UNIX socket cluster use number 0 to 2 (for 3 servers)
+    # and tcp cluster use port number 3000 to 3002.
+    number = config['socket'] ? i : (config['port'] + i)
+
+    God.watch do |w|
+      w.group = "thin-" + File.basename(file, ".yml")
+      w.name = w.group + "-#{number}"
+
+      w.interval = 30.seconds
+
+      w.uid = config["user"]
+      w.gid = config["group"]
+
+      w.start = "thin start -C #{file} -o #{number}"
+      w.start_grace = 10.seconds
+
+      w.stop = "thin stop -C #{file} -o #{number}"
+      w.stop_grace = 10.seconds
+
+      w.restart = "thin restart -C #{file} -o #{number}"
+
+      pid_path = config["pid"]
+      ext = File.extname(pid_path)
+
+      w.pid_file = pid_path.gsub(/#{ext}$/, ".#{number}#{ext}")
+
+      w.behavior(:clean_pid_file)
+
+      w.start_if do |start|
+        start.condition(:process_running) do |c|
+          c.interval = 5.seconds
+          c.running  = false
+          c.notify   = 'developers'
+        end
+      end
+
+      w.restart_if do |restart|
+        restart.condition(:memory_usage) do |c|
+          c.above  = 150.megabytes
+          c.times  = [3,5] # 3 out of 5 intervals
+          c.notify = 'developers'
+        end
+
+        restart.condition(:cpu_usage) do |c|
+          c.above  = 50.percent
+          c.times  = 5
+          c.notify = 'developers'
+        end
+      end
+
+      w.lifecycle do |on|
+        on.condition(:flapping) do |c|
+          c.to_state     = [:start, :restart]
+          c.times        = 5
+          c.within       = 5.minutes
+          c.transition   = :unmonitored
+          c.retry_in     = 10.minutes
+          c.retry_times  = 5
+          c.retry_within = 2.hours
+          c.notify       = 'developers'
+        end
+      end
+
+      w.transition(:up, :start) do |on|
+        on.condition(:process_exits) do |c|
+          c.notify = 'developers'
+        end
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+<h3>Email through Google Apps configuration</h3>
+
+{% highlight ruby %}
+require 'tlsmail'
+Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
+
+God::Contacts::Email.message_settings = {
+  :from => 'user@domain.com'
+}
+
+God::Contacts::Email.server_settings = {
+  :address        => 'smtp.gmail.com',
+  :tls            => 'true',
+  :port           => 587,
+  :domain         => 'domain.com',
+  :user_name      => 'user@domain.com',
+  :password       => '******',
+  :authentication => :plain
+}
+
+God.contact(:email) do |c|
+  c.name  = 'Dev 1'
+  c.email = 'dev1@domain.com'
+  c.group = 'developers'
+end
+
+God.contact(:email) do |c|
+  c.name  = 'Dev 2'
+  c.email = 'dev2@domain.com'
+  c.group = 'developers'
+end
+{% endhighlight %}
+
+<h3>References</h3>
+<ul>
+<li><a href="http://god.rubyforge.org">God</a></li>
+<li><a href="http://glauche.de/2008/02/15/a-thin-god/">A Thin God</a></li>
+<li><a href="http://railsforum.com/viewtopic.php?pid=75511">A Gmail God</a></li>
+</ul>

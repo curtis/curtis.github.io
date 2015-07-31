@@ -1,0 +1,18 @@
+---
+categories: [rails]
+date: 2010-04-12 16:10:03
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/honeypot-captchas-for-rails/
+subtitle: "A simple, unobtrusive way to try to combat automated form spam. "
+title: "Honeypot Captchas for Rails"
+---
+<p>A while ago, I read a few articles on the technique of honeypot captchas and thought it was a pretty simple, but interesting, technique.</p>
+<p>Essentially, with honeypot captchas you add fields into public facing forms that you expect to <strong>not</strong> be filled in, then you hide them through CSS (or other means). Since spam bots don't usually apply CSS styles, the fields are visible to them, yet styled away for normal users. And we all know how spam bots love to fill in whatever fields they find... When the form is submitted, you simply check for these honeypot captcha fields to have values. If they do, then you stop processing the request and return as if everything completed a-okay.</p>
+<p>I used this technique on a site several years ago and meant to package it into a gem. This weekend, I finally checked that off my todo list! Now, I'd like your feedback on whether this is useful and what I can do to make it better. Feel free to fork the repository and mess with the code. If you add a feature, please send me a pull request. Thanks!</p>
+<p>You can find the repository here: <a rel="external" href="http://github.com/curtis/honeypot-captcha">Honeypot Captcha on Github</a>.</p>
+<h3>References</h3>
+<ul>
+<li><a rel="external" href="http://haacked.com/archive/2007/09/11/honeypot-captcha.aspx">Honeypot Captcha by Phil Haack</a></li>
+<li><a rel="external" href="http://nedbatchelder.com/text/stopbots.html">Stopping spambots with hashes and honeypots</a></li>
+</ul>

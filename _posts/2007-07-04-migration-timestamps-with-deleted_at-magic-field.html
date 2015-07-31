@@ -1,0 +1,78 @@
+---
+categories: [rails]
+date: 2007-07-04 01:40:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/migration-timestamps-with-deleted_at-magic-field/
+title: Migration Timestamps deleted_at Magic Field
+---
+<p>I was recently working on a project using edge rails and saw that it supported something like what used to be called <cite><a href="http://errtheblog.com/post/2381">sexy migrations</a></cite>. Basically, you can make your migration files look a whole lot cleaner.</p>
+
+<h4>Before</h4>
+
+{% highlight ruby linenos %}
+class CreateUsers < ActiveRecord::Migration
+  def self.up
+    create_table :users do |t|
+      t.column :first_name, string
+      t.column :last_name, string
+      t.column :birthday, date
+      t.column :created_at, datetime
+      t.column :updated_at, datetime
+    end
+  end
+
+  def self.down
+    drop_table :users
+  end
+end
+{% endhighlight %}
+
+<h4>After</h4>
+
+{% highlight ruby linenos %}
+class CreateUsers < ActiveRecord::Migration
+  def self.up
+    create_table :users do |t|
+      t.string      :first_name, :last_name
+      t.date        :birthday
+      t.timestamps
+    end
+  end
+
+  def self.down
+    drop_table :users
+  end
+end
+{% endhighlight %}
+
+<p>Looks much better doesn't it?  For what I was doing though, I wanted to use the <a href="http://ar-paranoid.rubyforge.org/">acts_as_paranoid</a> functionality to never delete anything.  The acts_as_paranoid plugin updates the row with a deleted_at timestamp and then filters out 'deleted' ones whenever it queries the database.  Of course, I could just add <code>t.datetime :deleted_at</code> to each table.  But instead of going back to the old way of doing things, I simply extended the built in timestamps functionality by placing the following in a file in the lib directory and then requiring it in the environment.</p>
+
+<h4>lib/custom_schema_definitions.rb</h4>
+
+{% highlight ruby linenos %}
+module ActiveRecord
+  module ConnectionAdapters #:nodoc:
+    class TableDefinition
+
+      # Adds a deleted_at column when timestamps is called from a migration.
+      def timestamps_with_deleted_at
+        timestamps_without_deleted_at
+        column(:deleted_at, :datetime)
+      end
+
+      alias_method_chain :timestamps, :deleted_at
+    end
+  end
+end
+{% endhighlight %}
+
+<h4>config/environment.rb (add)</h4>
+
+{% highlight ruby %}
+require "custom_schema_definitions"
+{% endhighlight %}
+
+<p>Now, we can run our migration as we did before and the <code>t.timestamps</code> line will also give us a <code>deleted_at</code> column.  Share your paranoid ramblings in the comments.</p>
+
+<p><i>Note: I believe this only works in <a href="http://wiki.rubyonrails.org/rails/pages/EdgeRails">Edge Rails</a> for the moment as the new migrations and alias_method_chain are not present in the latest stable version of Rails.</i></p>

@@ -1,0 +1,25 @@
+---
+categories: [code]
+date: 2008-09-23 07:09:00
+layout: post
+redirect_from:
+  - /programming/setting-an-spf-record-for-google-apps/
+title: "Quick Tip: Setting an SPF record"
+---
+<p>I recently noticed a lot of rejected emails coming from a production app that had just switched to send mail through Google Apps. For some reason Google felt we might be spammers, so it began rejecting our emails out-of-hand. We would continuously get the following error message:</p>
+<p>
+<pre>Technical details of permanent failure:
+Message rejected.  See http://mail.google.com/support/bin/answer.py?answer=69585 for more information.</pre></p>
+<p>That wasn't very helpful, but with a little digging it led me to find out about something called an <acronym title="Sender Policy Framework">SPF</acronym> and convinced me that I should set this up. It was really easy and I suggest you do it if you're sending mail from your Ruby on Rails application through Google Apps (or some other means).</p>
+<p>When using Google Apps, simply add a <span class="caps">TXT</span> record to your <span class="caps">DNS</span> settings with the following value:</p>
+<p><strong>v=spf1 mx include:aspmx.googlemail.com &#126;all</strong></p>
+<p>Note also that Google wants you to use include and specify all with a tilde(~), not a plus(+) or minus(-).</p>
+<blockquote>
+Publishing an <span class="caps">SPF</span> record that lacks include:aspmx.googlemail.com or specifying -all instead of ~all may result in delivery problems.
+</blockquote>
+<p>I also contacted Google to let them know of the error and if you start seeing this, be sure to let them know, too. Either that or setting the <span class="caps">SPF</span> record corrected our problem and we no longer get the rejected emails…</p>
+<h3>References</h3>
+<ul>
+<li><a href="http://articles.slicehost.com/2008/8/8/email-setting-a-sender-policy-framework-spf-record">Setting a sender policy framework (SPF) record</a></li>
+<li><a href="http://www.google.com/support/a/bin/answer.py?hl=en&#38;answer=33786">How do I set my <span class="caps">SPF</span> record?</a></li>
+</ul>

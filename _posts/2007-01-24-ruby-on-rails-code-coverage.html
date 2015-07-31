@@ -1,0 +1,17 @@
+---
+categories: [rails]
+date: 2007-01-24 18:44:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/ruby-on-rails-code-coverage/
+title: Ruby on Rails Code Coverage
+---
+<p>I realized that I would need to track my progress over time and began looking for a code coverage tool for Ruby on Rails.  It did not take me long to find the <a href="http://rubyforge.org/projects/aeditor/">coverage tool</a>.  However, coverage states that they are not making any changes and that <a href="http://eigenclass.org/hiki.rb?rcov">rcov</a> is better.  I checked out rcov and it is pretty sweet and easy to use.</p>
+<p>It replaces the command line invocation you would normally use to execute your tests and outputs the results as <span class="caps">HTML</span> into a coverage directory in your project.  It is as easy as executing</p>
+<pre><code>rcov test/**/*.rb</code></pre>
+<p>to execute all of your tests and then browse the coverage directory with your favorite browser (i.e., Firefox).</p>
+<p>If you are in the market for a free, easy to use code coverage utility for Ruby on Rails, I suggest rcov.</p>
+<p>To install coverage</p>
+<pre><code>sudo gem install coverage</code></pre>
+<p>To install rcov</p>
+<pre><code>sudo gem install rcov</code></pre>

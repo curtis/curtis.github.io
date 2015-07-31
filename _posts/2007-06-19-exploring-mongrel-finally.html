@@ -1,0 +1,31 @@
+---
+categories: [rails]
+date: 2007-06-19 20:49:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/exploring-mongrel-finally/
+title: "Exploring Mongrel... Finally"
+---
+<p>Well, it's time for me to learn about <a href="http://mongrel.rubyforge.org">mongrel</a> and <a href="http://mongrel.rubyforge.org/docs/mongrel_cluster.html">mongrel cluster</a>.</p>
+<h3>What is Mongrel?</h3>
+<blockquote>
+Mongrel is a fast <span class="caps">HTTP</span> library and server for Ruby that is intended for hosting Ruby web applications of any kind using plain <span class="caps">HTTP</span> rather than FastCGI or <span class="caps">SCGI</span>.
+</blockquote>
+<p>Mongrel was created by <a href="http://www.zedshaw.com">Zed Shaw</a> and modeled after a Java web server framework called <a href="http://simpleweb.sourceforge.net">Simple</a>.  It is written in C and Ruby with an <span class="caps">HTTP 1</span>.1 parser written in <a href="http://www.cs.queensu.ca/~thurston/ragel">Ragel</a>.  Mongrel is open-source, so you can modify it to fit <a href="http://mongrel.rubyforge.org/not_mongrel.html">your own needs</a>, but it also supports using <a href="http://mongrel.rubyforge.org/gem_plugin_rdoc/classes/GemPlugin.html">GemPlugin</a> as an extension mechanism.</p>
+<p>First, install Mongrel from the gem.</p>
+<pre>sudo gem install mongrel</pre>
+<p>Now create an application to test that we can use Mongrel.</p>
+<pre>rails test_mongrel
+cd test_mongrel
+mongrel_rails start</pre>
+<p>You should see Mongrel start the development environment on 0.0.0.0:3000.  That's it…  Well, there are other options that you can pass to Mongrel if you want to customize, find them <a href="http://mongrel.rubyforge.org/docs/howto.html">here</a>.  What we have right now is good enough for development purposes.</p>
+<h3>What is Mongrel Cluster?</h3>
+<p><a href="http://mongrel.rubyforge.org/docs/mongrel_cluster.html">Mongrel cluster</a> is a wrapper around Mongrel to allow you to run a &#8220;pack of mongrels&#8221;.  It basically lets you configure and run multiple Mongrel servers.  Add to this a load balancing reverse proxy solution (e.g., <a href="http://mongrel.rubyforge.org/docs/apache.html">Apache</a>) and you can have multiple Mongrels running with requests balanced between them.  Mongrel cluster was created by <a href="http://fluxura.com">Bradley Taylor</a> of <a href="http://railsmachine.com">RailsMachine</a>.</p>
+<p>First, install Mongrel cluster from the gem.</p>
+<pre>sudo gem install mongrel_cluster</pre>
+<p>Now, using our application created earlier, we configure Mongrel cluster. (From the test_mongrel directory)</p>
+<pre>mongrel_rails cluster::configure -p 8000 -N 3</pre>
+<p>This creates a configuration file in <code>config/mongrel_cluster.yml</code>. The configuration file is chock full of defaults except for the two items we specified on the command line.  The first option (<code>-p 8000</code>) specifies the beginning port number.  The second option (<code>-N 3</code>) specifies that there will be 3 mongrel instances. Now you can start your cluster.</p>
+<pre>mongrel_rails cluster::start</pre>
+<p>You should be able to navigate to your localhost on ports 8000, 8001 and 8002.  Give it a try.  To see the other options when creating the configuration files, see the <a href="http://mongrel.rubyforge.org/docs/mongrel_cluster.html">docs</a>.</p>
+<p>The only thing missing at this point is configuring your load balancing proxy, so your users don't need to specify the port number of the instance they want to make requests on.  I have not done this yet, but it looks like the Mongrel site has good documentation for <a href="http://mongrel.rubyforge.org/docs/apache.html">Apache</a>, <a href="http://mongrel.rubyforge.org/docs/lighttpd.html">Lighttpd</a>, <a href="http://mongrel.rubyforge.org/docs/pound.html">Pound</a> and <a href="http://mongrel.rubyforge.org/docs/pen_balance.html">Pen/Balance</a>.</p>

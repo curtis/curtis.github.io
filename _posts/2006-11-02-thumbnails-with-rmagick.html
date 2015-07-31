@@ -1,0 +1,57 @@
+---
+categories: [rails]
+date: 2006-11-02 12:50:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/thumbnails-with-rmagick/
+title: Thumbnails with RMagick
+---
+<p>I continue to prototype my site in order to have something to show potential investors.  Recently, I tackled uploading images into a user's gallery.  The ability to upload images was pretty straightforward.  You create a form that has a <code>file_field</code> element.  For example, you may have something like this:</p>
+
+{% highlight erb %}
+<%= form_tag({:action => 'gallery'}, :multipart => true) %>
+  <label for="picture_comment">Comment</label><br />
+  <%= text_field('picture', 'comment') %>
+  <%= file_field('picture', 'picture') %><br />
+  <%= submit_tag("Upload") %>
+</form>
+{% endhighlight %}
+
+<p>Notice that we set multipart to true which results in <code>enctype="multipart/form-data"</code>.  Without this, I don't think you'll get anything on submit.</p>
+<p>The controller code for the gallery action is pretty straightforward too:</p>
+
+{% highlight ruby %}
+def gallery
+  # Create a new Picture object from the parameters
+  @picture = Picture.new(params[:picture])
+
+  # Try to save the picture.
+  begin
+    @picture.save!
+  rescue
+    flash.now[:notice] = "Unable to upload picture"
+  end
+end
+{% endhighlight %}
+
+<p>There is some more information on this, and a few other related things, in the <a href="http://manuals.rubyonrails.com/read/chapter/56">Ruby on Rails manual</a>, so I won't go into more detail.</p>
+<p>What I noticed with my simplistic approach is that I needed to scale images for display, but instead of doing something like setting the width and height of the image tag, I looked at <a href="http://rmagick.rubyforge.org">RMagick</a>.  RMagick is a Ruby interface to the <a href="http://www.imagemagick.org">ImageMagick</a> or <a href="http://www.graphicsmagick.org">GraphicsMagick</a> library.</p>
+<p>The first thing I have to say about the ImageMagick and GraphicsMagick libraries is they have <strong>a lot</strong> of dependencies.  This is good if you need to support a million different file formats, most of which you've never heard of.  Not so good if you are just prototyping an application.  I chose to try ImageMagick first.</p>
+<p>Unless you want to download, build (possibly), and install all of the dependencies then you need to get the source tarball and build ImageMagick yourself.  Part of the configure script detects the libraries you have installed and sets up the makefile accordingly.  Now I have a scaled down version of ImageMagick to use for prototyping.</p>
+<p>The <a href="http://www.amazon.com/Rails-Recipes-Pragmatic-Programmers-Fowler/dp/0977616606/sr=8-1/qid=1162496075/ref=pd_bbs_sr_1/104-2305102-2783144?ie=UTF8&#38;s=books">Rails Recipes book</a>  has a recipe (#57) that describes a way to create separate thumbnails for each image that is uploaded.  This looks great, but I found that particular recipe was only good for images greater than the &#8220;maximum&#8221; size.  If an image was smaller, then it stretched it out of shape.  Not good.</p>
+<p>Building on the RoR recipe above, I modified it slightly to do a better job for images of all sizes.  The approach is very simple and may not be suitable for all needs, but it suits me for now.  I modified the <code>create_thumbnail</code> method to the following:</p>
+
+{% highlight ruby %}
+def create_thumbnail
+  img = Magick::Image.read(path).first
+
+  scaling_factor = MAX_HEIGHT / img.rows
+  size = [img.columns * scaling_factor, img.rows * scaling_factor]
+
+  thumbnail = img.thumbnail(*size)
+  thumbnail.write thumbnail_path
+end
+{% endhighlight %}
+
+<p>This will force the created thumbnails to all have the same height, <code>MAX_HEIGHT</code>.  To get there, we must apply the scaling factor to the image height (rows).  To keep the image proportional, I also applied the scaling factor to the image width (columns).  This allows me to maintain nice rows of images since all of their heights are the same.  They may have differing widths, but that's okay if it keeps the image proportional.</p>
+<p>The imageMagick library looks very robust and powerful and RMagick looks like a great interface to it.  I look forward to working with it more.  Let me know what you think about this approach.</p>

@@ -1,0 +1,14 @@
+---
+categories: [javascript]
+date: 2010-06-14 09:30:39
+layout: post
+redirect_from:
+  - /programming/ie7-resize-window-problem/
+subtitle: "I describe a problem encountered in IE7 when dealing with a centered body and relatively positioned elements that appeared to have a fixed position."
+title: "IE7 resize window problem"
+---
+<p>While developing an embeddable JavaScript widget, I ran across a problem in IE7 recently that was pretty strange. Some of the elements on the page appeared to be fixed (i.e., <code>position: fixed</code>) when really they were not.</p>
+<p>I was able to track it down to the use of <code>position: relative</code> on these particular elements. If I added <code>position: relative</code> to other elements, they would also appear to be fixed. I proceed to try relative positioning on surrounding elements, but it was only at the body level that all elements behaved as they should.</p>
+<p>Armed with these clues, I was able to find a post by <a rel="external" href="http://friendlybit.com/css/ie6-resize-bug/">Emil Stenström</a> that documented the existence of this bug in IE6 and IE7 beta 2. He has a great explanation about how to recreate it. His suggestion was to add relative positioning to the body tag, but the real problem, as he explained, was the use of auto margin to center the body element.</p>
+<p>Seeing as how this was an embeddable widget, I didn't really want to have the widget affect any elements outside of itself. So I opted to advise the embedding page to add a centered div around their content and remove the centering on the body tag. This corrected the problem and, once again, all was right in the world.</p>
+<p><strong>Or was it?</strong></p>

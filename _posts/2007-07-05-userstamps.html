@@ -1,0 +1,53 @@
+---
+categories: [rails]
+date: 2007-07-05 01:13:12
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/userstamps/
+title: Userstamps
+---
+<p>In my <a href="/rails/migration-timestamps-with-deleted_at-magic-field">last article</a> I talked about adding a <code>deleted_at</code> field to the migration <code>timestamps</code> method for use with acts_as_paranoid.  One of the additional things I wanted to do was not only capture the timestamp information, but also the user information. This way, I can be really paranoid and see who did what when.  To add userstamps, I did the following.</p>
+
+<h4>lib/userstamps.rb</h4>
+
+{% highlight ruby linenos %}
+module ActiveRecord
+  module Userstamp
+    def self.included(base) #:nodoc:
+      base.class_eval do
+        alias_method_chain :create, :userstamps
+        alias_method_chain :update, :userstamps
+
+        def current_user
+          Thread.current['user']
+        end
+      end
+    end
+
+  private
+    def create_with_userstamps #:nodoc:
+      user = current_user
+      if not user.nil?
+        write_attribute('created_by', user.id) if respond_to?(:created_by) and created_by.nil?
+        write_attribute('updated_by', user.id) if respond_to?(:updated_by) and updated_by.nil?
+      end
+      create_without_userstamps
+    end
+
+    def update_with_userstamps #:nodoc:
+      user = current_user
+      write_attribute('updated_by', user.id) if respond_to?(:updated_by) and (not user.nil?)
+      update_without_userstamps
+    end
+  end
+end
+{% endhighlight %}
+
+<h4>config/environment.rb (add)</h4>
+
+{% highlight ruby linenos %}
+require 'userstamp'
+ActiveRecord::Base.class_eval do
+  include ActiveRecord::Userstamp
+end
+{% endhighlight %}

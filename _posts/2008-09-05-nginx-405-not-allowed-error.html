@@ -1,0 +1,35 @@
+---
+categories: [ops]
+date: 2008-09-05 08:06:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/nginx-405-not-allowed-error/
+title: "Nginx 405 Not Allowed Error"
+---
+<p>So, I got this error today and it took me a few minutes to track down why. Seems like the kind of thing that might be interesting to people. I'm using nginx on a project and this error was being thrown by nginx, not by Rails.  What could be the cause?</p>
+<h3>Nginx configuration and <span class="caps">REST</span></h3>
+<p>Do you have something in your nginx config file that looks like this?</p>
+<p>
+<pre><code class="sh">if (-f $request_filename) {
+  break;
+}</code></pre></p>
+<p>Basically, render an existing, static file directly, aka. bypass Rails. This is great, we don't incur the overhead of hitting Rails for static files, including cached files, right?  Wrong.</p>
+<p>You see, with <span class="caps">REST</span>, your <span class="caps">URL</span> will be the same for a <strong><span class="caps">POST</span> to create</strong> as it will for a <strong><span class="caps">GET</span> to index</strong>.  For example, viewing the users index and creating a user:</p>
+<p>
+<pre><code class="sh">GET  /users &lt;= user's index
+POST /users &lt;= create a user</code></pre></p>
+<p>See the problem?</p>
+<p>That's right, if you cache the user's index using a technique like <code>caches_page</code> then you have a static file (e.g., users.html) that matches regardless of the <span class="caps">HTTP</span> method. Therefore, it will bypass rails and attempt to serve the static file on a <span class="caps">POST</span> request, resulting in a 405 error. Whew!</p>
+<h3>Caching with nginx</h3>
+<p>So what do you do? I don't know. But this is what I did and I hope it helps.  Add the following to your nginx config prior to the serving of static files.</p>
+<p>
+<pre><code class="sh">if ($request_method != GET) {
+  proxy_pass http://foobar;
+  break;
+}</code></pre></p>
+<p>Uh, where <code>foobar</code> is the name you specified in the upstream declaration in the nginx config. This should pass any non-GET request to Rails immediately since we don't want to statically serve files for anything other than <span class="caps">GET</span>.</p>
+<h3>References</h3>
+<ul>
+<li><a href="http://brainspl.at/nginx.conf.txt">Ezra's nginx config</a></li>
+<li><a href="http://www.irseek.com/show.php?pageid=760ab7acd8d211dca6f7cf66f0d562a5&#38;hilite=405%20Not%20Allowed"><span class="caps">IRC</span> conversation from February 6, 2008</a></li>
+</ul>

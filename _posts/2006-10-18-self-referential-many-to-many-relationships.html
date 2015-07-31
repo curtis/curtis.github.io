@@ -1,0 +1,54 @@
+---
+categories: [rails]
+date: 2006-10-18 00:39:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/self-referential-many-to-many-relationships/
+title: Self-Referential, Many-to-Many Relationships
+---
+<p>Wow, that title is a mouthful!  Yet, it refers to a concept that I explored today in my <a href="http://www.rubyonrails.com">Ruby on Rails</a> studies.</p>
+<p>So, just a quick background on the topic.  A self-referential relationship refers to a relationship between a class and itself.  For example, every social networking website has the concept of a User (Member, Person, whatever).  Now, it wouldn't be very social if those users could not have friends, so Users are allowed to add Friends.  But what is a Friend, really?  A Friend is just another User on the site.  Therefore, a User has a relationship to another User (or many Users).</p>
+<p>In the Ruby on Rails framework we need to change this slightly to allow us to use the built in semantics that is offered for traversing a relationship.  See <a href="http://wiki.rubyonrails.com/rails/pages/belongs_to">belongs_to</a>, <a href="http://wiki.rubyonrails.org/rails/pages/has_one">has_one</a>, <a href="http://wiki.rubyonrails.org/rails/pages/has_many">has_many</a>, and <a href="http://wiki.rubyonrails.com/rails/pages/has_and_belongs_to_many">has_and_belongs_to_many</a>.  In Ruby on Rails we add a table to join the User with his/her Friends (i.e., other Users).</p>
+<p>So, how do we make use of this?  In your Users model, add the following:</p>
+
+{% highlight ruby %}
+class User < ActiveRecord::Base
+  has_and_belongs_to_many :friends,
+                          :class_name => "User",
+                          :join_table => "users_friends",
+                          :foreign_key => "user_id",
+                          :association_foreign_key => "friend_id"
+end
+{% endhighlight %}
+
+<p>This creates the relationship between the User and other Users.  The symbol <code>:friends</code> describes how this relationship should be referred to.  That is, <code>user.friends</code>.  The <code>:join_table</code> option specifies the route taken to get to the class specified by <code>:class_name</code>.  Lastly, <code>:foreign_key</code> and <code>:association_foreign_key</code> are the two keys that will be used during the traversal.  You can also add <code>:after_add</code> or <code>:after_remove</code> options specifying a method that should be called after an add or remove respectively.  For example, you may want the friendship to be bi-directional, meaning if I add you as a friend, then you add me as a friend automatically.</p>
+<p>Now we can do something like add a new method to add a friend from within the User model.</p>
+
+{% highlight ruby %}
+def add_friend(friend)
+  self.friends << friend unless self.friends.include?(friend) || friend == self
+end
+{% endhighlight %}
+
+<p>Then just invoke this method when we receive an action that involves adding a friend.</p>
+<p>So, what if you wanted to add another attribute to your join table?  Say we want to record the date and time that the two Users became friends.  We add an column called <code>friends_since</code> to the users_friends table.  What do we need to modify in the User model file?  Not much it turns out, the <code>add_friend</code> method becomes:</p>
+
+{% highlight ruby %}
+def add_friend(friend)
+  self.friends.push_with_attributes(friend, :friends_since => Time.now()) unless self.friends.include?(friend) || friend == self
+end
+{% endhighlight %}
+
+<p>Slightly more complicated, but not by much.</p>
+<p>So, what about updating the join table?  For example, in some social networking sites it is not allowed to create a bi-directional relationship automatically.  The User on the other end must accept the originating User's request to be friends.  Even if I consider you my friend, you may not consider me as your friend.  C'est la vie…</p>
+<p>We should add an attribute that indicates acceptance of the friendship, otherwise it is in a pending state.  We add <code>accepted</code> to our users_friends join table.  It's okay for the requester to accept automatically, so we just need to add that to the code above.  Pretty trivial.  Except, now we need to have some way to update the join table when the friend User accepts the request.  How do we do that?</p>
+<p>This is where I am a little fuzzy, but here is what I tried:</p>
+
+{% highlight ruby %}
+def accept_friend(friend)
+  sql = User.sanitize(["UPDATE users_friends SET friends_since = ?, accepted = ? WHERE member_id = ? AND friend_id = ?", Time.now(), 1, self.id, friend].flatten)
+  self.connection.update(sql, "Accept Friend")
+end
+{% endhighlight %}
+
+<p>Doesn't exactly look elegant, so if you know of another way to accomplish this, please let me know.</p>

@@ -1,0 +1,49 @@
+---
+categories: [rails]
+date: 2008-08-24 00:02:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/rails-class-collisions/
+title: "Rails Class Collisions"
+---
+<p>While trying to use the oh-so-nifty <a href="/rails/discover-your-missing-specs">missing spec finder</a> on a recent project, I discovered that it was not working.  Hmmm… seems that somewhere along the way Rails added detection for existing constants and won't allow you to re-generate something.  Instead it calls <code>raise_class_collision</code>, which raises a <code>UsageError</code>. Damn them.</p>
+<p>Anyway, to work around this for now, you can add the following somewhere (e.g., an initializer):</p>
+
+{% highlight ruby %}
+require 'rails_generator/base'
+require 'rails_generator/commands'
+
+module Rails
+  module Generator
+    module Commands
+      class Create
+        def raise_class_collision(class_name)
+          # Do Nothing
+        end
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+<p>This should get around that inconvenience. Plus, you won't be exposed to nefarious suggestions like I was:</p>
+
+{% highlight bash %}
+$ rake spec:sync
+  The name 'User' is either already used in your application or reserved by Ruby on Rails.
+  Please choose an alternative and run this generator again.
+
+  Suggestions:
+
+exploiter
+drug user
+substance abuser
+{% endhighlight %}
+
+<p>Thanks Rails, you're so helpful! I just don't understand how it could have known I was building a Facebook clone for junkies…</p>
+
+<h3>Other Resources</h3>
+<ul>
+<li><a href="http://rails.lighthouseapp.com/projects/8994/tickets/545-bug-colliding-classes-when-they-shouldn-t">Rails Ticket #545: Bug colliding classes &#40;when they shouldn't&#41;</a></li>
+<li><a href="http://groups.google.com/group/resource_controller/browse_thread/thread/99025ab805c78141">resource_controller Google group: Reserved resource names?</a></li>
+</ul>

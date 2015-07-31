@@ -1,0 +1,59 @@
+.small, small {
+  font-size: 70%;
+}
+
+.intro-header {
+  background-position: top center;
+}
+
+.navbar-header .navbar-brand {
+  font-family: "Open Sans";
+  font-weight: 300;
+  font-size: 1.25em;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+ol li,
+ul li {
+  margin-bottom: 1em;
+}
+
+ul.nav li {
+  margin-bottom: 0;
+}
+
+li a,
+blockquote a,
+.update a {
+  text-decoration: underline;
+}
+
+ul.nav li a,
+ul.pager li a {
+  text-decoration: none;
+}
+
+img.pull-left {
+  margin: 0 1em 1em 0;
+}
+
+img.pull-right {
+  margin: 0 0 1em 1em;
+}
+
+.gist {
+  clear: both;
+}
+
+.hire {
+  border: 1px solid #ddd;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 0.8em;
+  margin: 2em 0 2em 2em;
+  padding: 1em;
+}
+
+.hire p {
+  margin-top: 0;
+}

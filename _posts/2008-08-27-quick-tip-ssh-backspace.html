@@ -1,0 +1,21 @@
+---
+categories: [code]
+date: 2008-08-27 04:22:00
+layout: post
+redirect_from:
+  - /programming/quick-tip-ssh-backspace/
+title: "Quick Tip: SSH Backspace"
+---
+<p>I just ran across this <a href="http://jonathan.tron.name/2008/02/23/bad-key-bindings-over-ssh-from-a-mac">informative post by Jonathan Tron</a> that solved an annoyance I've had for a while: backspace not doing what I want when I use <span class="caps">SSH</span>.</p>
+<h3>Change your Terminal Preferences</h3>
+<ol>
+<li>In Terminal, select Preferences | Settings | Advanced.</li>
+<li>Select &#8216;Delete sends Ctrl-H'</li>
+</ol>
+<p>You may need to do this again if you change your terminal style.</p>
+<h3>Specify a setting for nano</h3>
+<ol>
+<li>On your server open ~/.nanorc</li>
+<li>Add &#8216;set rebinddelete'</li>
+</ol>
+<p>And now you should have backspace working correctly for at least a few things…</p>

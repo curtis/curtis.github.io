@@ -1,0 +1,18 @@
+---
+categories: [rails]
+date: 2006-11-30 21:12:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/render-partial-for-email-template/
+title: Render Partial for Email Template
+---
+<p>As I create more automated email responses for my system, I realized I should follow the <span class="caps">DRY</span> (Don't Repeat Yourself) principle.  So I started down a path to create a separate file containing a header and footer for my emails.  At least that part I could rip out, right?  Well…not exactly.</p>
+<p>Turns out that rendering from within a mail template is not yet supported.  In fact there is a <a href="http://dev.rubyonrails.org/ticket/2926">Rails ticket</a> open to address it, but it has not been corrected yet.</p>
+<p>So, what to do?  A <a href="http://www.ruby-forum.com/topic/59024">suggestion from the Ruby Forums</a> from the forums involves using a relative path when invoking render.  For example:</p>
+
+{% highlight erb %}
+<%= render :partial => '../foo' %>
+{% endhighlight %}
+
+<p>Where &#8216;foo' refers to &#8216;_foo.rhtml' in the &#8216;app/views/' directory.  This seems to work for me, but apparently this is only a workaround.</p>
+<p>Hopefully this will be helpful to someone else who has the same problem.</p>

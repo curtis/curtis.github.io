@@ -1,0 +1,36 @@
+---
+categories: [code]
+date: 2006-12-05 22:20:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/dissecting-a-regular-expression/
+title: Dissecting a Regular Expression
+---
+<p>I am a beginner at regular expressions, but recently found the need to create one.  My goal was to take in a file name, split it at the dot ('.') just before the file extension and then hash everything to the left to get a unique name to store on the server.</p>
+<p>I thought I had an okay solution until a user uploaded a file with a name similar to <b>Oct. 24 2006 040.jpg</b>.  Notice that there is white space as well as multiple dots in the string.  So how do you accomplish the goal under those conditions?</p>
+<p>I eventually came up with the following solution:</p>
+
+{% highlight ruby %}
+def sanitize_filename(file_name)
+  /(^)(.*?)(\.[^\.]{3,5})$/.match(file_name)
+  "#{(Digest::SHA1.hexdigest('#{Time.now}#{$2}')[0..39]).to_s}#{$3}"
+end
+{% endhighlight %}
+
+<p>Clearly, it is not the worst regular expression out there, but can be complicated to a n00b like me.  So, let's dissect it.</p>
+<p>The regular expression is given by</p>
+
+{% highlight ruby %}
+/(^)(.*?)(\.[^\.]{3,5})$/
+{% endhighlight %}
+
+<p>Everything between the enclosing slash characters ('/') is considered part of the regular expression.  The beginning of the string in the regular expression is signified by the caret character ('^') and the end of the string is signified by the dollar sign character ('$').  In our case the caret is enclosed in parenthesis. Anything enclosed in parenthesis in a regular expression is called a capture.  Anything captured can be referred to later as we will see.</p>
+<p>To accomplish our goal we are looking for</p>
+<ul>
+<li>any number of characters => (.*?)</li>
+<li>followed by a dot and a file extension => (\.[^\.]{3,5})</li>
+</ul>
+<p>In <b>(.*?)</b>, the dot means any character, the asterisk ('*') means zero or more, and the question mark ('?') means for the expression to be greedy (i.e., find this pattern multiple times).  So we end up with an English expression something like &#8216;zero or more of any character repeated many times'.</p>
+<p>In <b>(\.[^\.]{3,5})</b>, slash-dot ('\.') is just an escaped dot character.  This is done because, as we saw earlier, a plain dot means any character.  If we want to match a dot in our string, then we must escape the dot character.  The '[^\.]' means any character except a dot.  In this context the caret is used for negation.  Finally, the &#8216;{3,5}' just means of length between 3 and 5.  So we end with an English expression similar to &#8216;a dot followed by 3 to 5 characters that are not dots'.</p>
+<p>The second part of the function above shows the actual usage of the captured parts of the expression. Ruby automatically gives you special variables to access the captured elements of a regular expression.  They follow the naming convention of $1, $2, $3, ..., $n.  In our regular expression $2 is everything to the left of the dot character and $3 is the dot and file extension.</p>
+<p>Please let me know if you have a better solution.</p>

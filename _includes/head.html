@@ -2,20 +2,25 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{{ site.description }}">
+  <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.full_description }}{% endif %}">
 
-  <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.full_title }}{% endif %}</title>
 
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
 
   <!-- Bootstrap Core CSS -->
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Custom CSS -->
+  <!-- Clean Blog CSS -->
   <link rel="stylesheet" href="{{ "/css/clean-blog.css" | prepend: site.baseurl }}">
 
   <!-- Pygments Github CSS -->
   <link rel="stylesheet" href="{{ "/css/syntax.css" | prepend: site.baseurl }}">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ "/css/style.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "/css/justifiedGallery.min.css" | prepend: site.baseurl }}">
+  <link rel="stylesheet" href="{{ "/css/swipebox.min.css" | prepend: site.baseurl }}">
 
   <!-- Custom Fonts -->
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">

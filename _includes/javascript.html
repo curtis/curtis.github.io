@@ -6,3 +6,14 @@
 
 <!-- Custom Theme JavaScript -->
 <script src="{{ " /js/clean-blog.min.js " | prepend: site.baseurl }}"></script>
+
+<!-- Plugin JS -->
+<script src="{{ " /js/jquery.justifiedGallery.min.js " | prepend: site.baseurl }}"></script>
+<script src="{{ " /js/jquery.swipebox.min.js " | prepend: site.baseurl }}"></script>
+<script src="{{ " /js/flickr.js " | prepend: site.baseurl }}"></script>
+
+<script>
+  $(function() {
+    $('#gallery').flickrPhotoStream();
+  });
+</script>

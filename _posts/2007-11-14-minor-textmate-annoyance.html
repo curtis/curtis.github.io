@@ -1,0 +1,19 @@
+---
+categories: [code]
+date: 2007-11-14 00:48:00
+layout: post
+redirect_from:
+  - /programming/minor-textmate-annoyance/
+title: "Minor TextMate Annoyance"
+---
+<p>A recent update to Textmate added a variable to the <code class="ruby">do</code> snippet.  So when you type 'do' followed by a tab, you get</p>
+<pre><code class="ruby">do |variable|
+
+end</code></pre>
+<p>Most of the time I don't need a variable, so I want the default 'do' snippet to not have a variable.</p>
+<p>Open TextMate and use the keyboard shortcut to open the Snippet editor (Ctrl+Alt+&#8984;)  Click Ruby in the Snippets area, click the plus sign (+) in the bottom left corner and click 'New Snippet'.</p>
+<p>Name the snippet 'Insert do … end', assign Activation (Tab Trigger) the value 'do' and Scope Selector the value 'source.ruby'.  The snippet text should be</p>
+<pre><code class="ruby">do
+  $0
+end</code></pre>
+<p>Finally, change the existing Snippet named 'Insert do |variable| ... end' Activation (Tab Trigger) the value 'dov'.  Now when you type 'do[tab]' you will get the 'do … end' block without a variable.  When you type 'dov[tab]' you will get the 'do |variable| ... end' block.</p>

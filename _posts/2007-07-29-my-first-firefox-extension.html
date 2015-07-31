@@ -1,0 +1,31 @@
+---
+categories: [code]
+date: 2007-07-29 22:47:00
+layout: post
+redirect_from:
+  - /programming/my-first-firefox-extension/
+title: "Nads: My First Firefox Extension"
+update:
+  title: This extension is no longer available.
+  body: Sorry, but this was so long ago, it has been lost to the ages!
+---
+
+<p>Yesterday, I desired to learn more about building an extension for Firefox.  It seemed like it would be something worthwhile to check out.  I decided that I would try to create something small, just to see the process behind creating one and get familiar with the technologies used in the implementation of the extension.</p>
+<p>Firefox extensions are implemented in <acronym title="XML User Interface Language">XUL</acronym> and JavaScript.  I found the information on the <a href="http://developer.mozilla.org/en/docs/Extensions">Mozilla developer site</a> to be most helpful while playing around with this; especially the <a href="http://developer.mozilla.org/en/docs/Building_an_Extension">tutorial</a> and <a href="http://developer.mozilla.org/en/docs/Extension_Frequently_Asked_Questions"><span class="caps">FAQ</span></a>.  I also downloaded and perused the <a href="http://getfirebug.com">Firebug</a> source code to use as an example of how to add an item to the statusbar, etc.</p>
+<p><strong>Update</strong>: I forgot to link to another great tool that I found useful during the development of this extension.  It is called <a href="http://ted.mielczarek.org/code/mozilla/extensiondev/">Extension Developer's Extension</a>.</p>
+<p>The small project I decided to attempt for this first extension was based around modifying <acronym title="Document Object Model">DOM</acronym> objects from the Firefox extension.  Basically, I wanted to be able to hide ads on a page by enabling the extension.  In this way I not only create an extension to Firefox, but also learned how to manipulate the content in the browser through the extension.  I called it Nads, short for No Ads.  This is by no means a great extension, but it taught me quite a bit about how to create a Firefox extension.</p>
+<h3>Licensing</h3>
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/">Creative Commons Attribution-Share Alike 3.0 United States License</a>.</p>
+<p>That being said, you may download the code from my subversion repository:</p>
+<div class="alert alert-danger">Sorry, this project died... :(</div>
+
+<h3>Installation</h3>
+<p>If you want to install Nads, just click on the link below.  It should follow the standard installation procedure for a Firefox extension.  You may see a Firefox message that tells you Firefox prevented the site from installing the extension.  If that happens, then click the 'Edit Options' button and add millarian.com to the list of trusted sites.  Then click the installation link again.  This is a necessary part of the installation procedure.</p>
+<p>If you want to remove millarian.com from the list of trusted sites after installing, just go to the Firefox preferences window (On Windows =&gt; Tools | Options) and click 'Security'.  Click the 'Exceptions' button next to the checkbox labeled &#8220;Warn me when sites try to install add-ons&#8221;.  Select millarian.com in the list and click 'Remove Site'.</p>
+<p>After you install the extension, it will ask you to restart Firefox.  When Firefox is back up, you will see an orange asterisk in the lower right corner of the screen on the status bar.  If you don't see the status bar, it may be disabled. Click View | Status Bar to enable it.  The orange asterisk indicates that Nads is currently turned off.  Clicking on the orange asterisk will enable Nads (and make the icon yellow); clicking again will disable it.  You can turn it on or off as you like and it will retain that preference in the current window (across all tabs).  Upon closing Firefox or opening a new window, the preference again defaults to off.</p>
+<p>After you install, try it out on <a href="http://google.com">Google</a>, <a href="http://yahoo.com">Yahoo!</a>, <a href="http://techcrunch.com">Techcrunch</a>, etc.  Admittedly it does not work for all ads, but it catches a fair portion.</p>
+<div class="alert alert-danger">Sorry, this project died... :(</div>
+<h3>Contribute</h3>
+<p>Since this is my first Firefox extension, I am really interested in hearing ideas to improve it.  I would like to see the implementation change to account for more ads without resorting to manual addition of the ad class or id.  I found that on some sites, ads are simply smashed forcefully into the page and don't have an id or class.  In these cases, Nads will not remove them.  Ideas for how to solve this problem would be greatly appreciated.</p>
+<p>Leave your comments below or contact me using the information in the footer.</p>
+<p>If nothing else, I hope this can serve as a starting point for other people interested in learning a little about extensions in Firefox.</p>

@@ -1,0 +1,31 @@
+---
+categories: [rails]
+date: 2007-09-05 04:48:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/discover-your-missing-specs/
+title: "Discover your missing specs"
+---
+<p>Have you ever had the feeling that something was missing, but you weren't quite sure what it was?  I was looking at my code coverage the other day and thought to myself that it seemed like I was missing something.  Rather than go through each file manually to see if it had an associated spec, I created a small rake task that does this for you.</p>
+<p>The rake task looks at all the files in your app directory and tries to find an associated file in the spec directory.  It follows the current <a href="http://rspec.rubyforge.org">Rspec</a> generator naming conventions and if it doesn't find the associated file it runs the generator to create it.  It assumes that your app directory and spec directory follow the same directory structure and that you should at least have one test file for every application file.</p>
+<p>You may find this as part of the <a href="http://svn.integrumtech.com/public/plugins/rake_tasks/">Rake Tasks plugin</a>.</p>
+
+<p>To install:</p>
+<pre><code>script/plugin install http://svn.integrumtech.com/public/plugins/rake_tasks/</code></pre>
+<p>OR</p>
+<pre><code>piston import http://svn.integrumtech.com/public/plugins/rake_tasks/ vendro/plugins/rake_tasks</code></pre>
+<p>(<a href="http://piston.rubyforge.org">Piston</a> is one of my new favorite tools)</p>
+<p>My additions are two rake tasks:</p>
+<pre><code>rake spec:check     # Check files in the app directory for corresponding test files in the spec directory.
+rake spec:sync      # Check for missing test files in the spec directory and create them if they don't exist.</code></pre>
+<p>If you're using <a href="http://subversion.tigris.org">Subversion</a>, then you can also use the Subversion tasks that come with the Rake Tasks plugin to add the new spec files to your repository:</p>
+<pre><code>rake svn:add        # Adds new files to subversion
+rake svn:remove     # Removes missing files from subversion
+rake svn:ignore     # Configures svn:ignore properties on log, tmp, db/schema.rb and config/database.yml
+rake svn:conflicts  # Resolves all svn conflicts by keeping the working file</code></pre>
+<p>This plugin was also the original home of some tasks that you may already be familiar with (I use them all the time):</p>
+<pre><code>rake db:create      # Creates the databases defined in your config/database.yml (unless they already exist)
+rake db:drop        # Drops the database for your currenet RAILS_ENV as defined in config/database.yml
+rake db:reset       # Drops, creates and then migrates the database for your current RAILS_ENV</code></pre>
+<p>Those three were merged into Rails edge in May of this year.</p>
+<p>Thanks to <a href="http://joshknowles.com">Josh Knowles</a>, <a href="http://derekneighbors.com">Derek Neighbors</a>, and <a href="http://joshhuckabee.com">Josh Huckabee</a> for their feedback on the addition.  If you have any comments, bugs, patches, questions, etc. please send them my way.</p>

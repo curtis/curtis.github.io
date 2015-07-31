@@ -1,0 +1,68 @@
+---
+categories: [rails]
+date: 2007-08-25 19:38:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/gravatars/
+title: "Gravatar Problems"
+---
+<p>When I switched the blog to <a href="http://mephistoblog.com">Mephisto</a> I had installed the <a href="http://www.matthewhutchinson.net/articles/2007/3/24/mephisto-gravatar-caching-plugin">Gravatar caching plugin</a>.  It seemed to be working fine prior to deployment, but once in production it was not working as expected.  Today I finally tried to track down what was wrong.  hopefully this will fix any problems with Gravatar images, creating comments, etc.  I won't be so bold as to say this will work for everyone, but it works for me :)</p>
+<p>My first problem was that Gravatar images were not displaying at all, even when the email address had an associated Gravatar and the plugin had cached the file.  I could navigate to the image directly and see it was correct, but the plugin was not finding it. After some debugging, I noticed the file exists check was using a relative path.  By changing this to an absolute path I was able to see images. Woohoo!</p>
+<h4>lib/mephisto_gravatar_cache.rb (line 14)</h4>
+
+{% highlight diff linenos %}
+- if File.exists?("#{GravatarAPI.cache_dir}#{md5_email}.gif")
++ if File.exists?(File.expand_path("../#{GravatarAPI.cache_dir}#{md5_email}.gif"))
+{% endhighlight %}
+
+<p>Next up was an annoying error message that was appearing whenever someone posted a comment.  It looked something like this:</p>
+<pre>Cache Gravatar for => somebody@gmail.com
+=> gravatar NOT FOUND at www.gravatar.com
+Content-Type: text/html; charset=utf-8
+Status: 302 Found
+Location: http://millarian.com/2007/8/22/striving-for-100-percent/comments/121#comment-121
+X-Runtime: 8.55324
+Cache-Control: no-cache
+Content-Length: 146
+
+<html><body>You are being <a href="http://millarian.com/2007/8/22/striving-for-100-percent/comments/121#comment-121">redirected</a>.</body></html></pre>
+<p>Same thing happened even when a Gravatar image was found…  Nobody was safe from this problem.  I did a search in the source for where &#8220;gravatar <span class="caps">NOT FOUND</span>&#8221; was being output.  This message was being logged and put to the console, so I simply wrapped it in a conditional to output the results only in development mode, like so:</p>
+<h4>lib/gravatar_api.rb</h4>
+
+{% highlight diff linenos %}
+def self.explain(msg)
+  # create a new logger if it doesnt already exist
++ if ENV['RAILS_ENV'] == 'development'
+    log.info(msg)
+    puts(msg)
++ end
+end
+{% endhighlight %}
+
+<p>This seemed to solve that problem.</p>
+<p>While I was exploring the Gravatar cache plugin I also rewrote the cache_gravatars rake task to be a little more efficient and, since I exclude the explain for production, to output a listing of what's happening.</p>
+<h4>tasks/mephisto_gravatar_cache_tasks.rake</h4>
+
+{% highlight diff linenos %}
+desc "WGET all gravatars for all email addresses in contents table (comments). Call with RAILS_ENV=production (else defaults to development env)"
+task :cache_gravatars => :environment do |t|
+
+  # get all the comments that have an email address
+  ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+- comments = (Comment.find :all).collect {|c| c if c.author_email?}.compact
++ comments = Comment.find(:all, :select => "author_email", :conditions => "author_email IS NOT NULL AND author_email != ''", :group => "author_email")
+
++ puts "Caching Gravatars for:"
+
+  # try caching a gravatar for each comment
+  comments.each do |comment|
++   puts " - #{comment.author_email}"
+    GravatarAPI.cache_gravatar comment.author_email
+
+    # be nice to gravatar.com, wait a second before next request
+    sleep(1)
+  end
+end
+{% endhighlight %}
+
+<p>Please let me know of any other oddities. Thanks!</p>

@@ -1,0 +1,18 @@
+---
+categories: [rails]
+date: 2007-06-19 22:14:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/tuning-a-pack-of-mongrels/
+title: "Tuning a Pack of Mongrels"
+---
+<p>After having installed mongrel and mongrel_cluster, I began reading the <a href="http://mongrel.rubyforge.org/docs/how_many_mongrels.html">Tuning article</a>.  This article is basically in response to people asking &#8220;How many mongrels should I have?&#8221;  The quick answer is it depends.</p>
+<p>The article talks about how to determine what you need because every situation is different. Some of the steps they talk about:</p>
+<ul>
+<li>Baseline your server by requesting a static file.  If your site was entirely static content, then this is the performance you would get.  Rarely is a site entirely static these days, but it gives you an idea about what you're shooting for.</li>
+<li>Run your tests multiple times.  This allows for a warm up run and helps reduce the chance you're seeing anomalous behavior.</li>
+<li>Increase the number of connections until the test runs for 10 seconds.</li>
+<li>Add mongrel instances to your setup to see the rate increase/decrease.  This allows you to tune into how many instances you need.</li>
+<li>Continuously measure against your benchmark.  They use httperf.</li>
+</ul>
+<p>The examples use <a href="http://www.hpl.hp.com/research/linux/httperf">httperf</a> as a tool for adjusting the inputs and gathering the outputs of adding more mongrels, concurrent connections, etc.  I did not have httperf installed on my Mac, but it seems that the <a href="http://httpd.apache.org/docs/2.0/programs/ab.html">Apache <span class="caps">HTTP</span> server benchmarking tool</a> is already installed with <span class="caps">OS X</span>.  You can find it and it's options by typing <code>man ab</code>.  It gives you some pretty nice information and allows you to specify the number of concurrent connections, number of requests, etc.</p>

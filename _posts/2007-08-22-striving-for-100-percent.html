@@ -1,0 +1,12 @@
+---
+categories: [code]
+date: 2007-08-22 14:26:00
+layout: post
+redirect_from:
+  - /programming/striving-for-100-percent/
+title: "Striving for 100 percent"
+---
+<p>If it wasn't obvious from my <a href="/rails/testing-a-helper-with-a-block">last</a> two <a href="/rails/stubbing-controller-methods-in-a-helper-test">posts</a> I've been doing a lot of testing.  In fact, I spent almost the entire day yesterday writing tests.  This got me thinking about the value of testing.</p>
+<p>With the testing I've done recently, I feel like I've uncovered several problems that would have made it through to production.  This is good.  Testing first forces you to think about what you'll be developing before you ever develop it.  I think this has helped me to write better code and, to me, this has value.</p>
+<p>However, when I consider the quest for attaining 100% code coverage I start to waffle on the value of that activity. It seems like a blind generalization such as &#8220;we must have 100% code coverage&#8221; is neither practical nor valuable.  When it comes to coverage, it seems that high profile functionality should be well tested, probably 100% covered.  High profile functionality being functionality that is executed easily and often, functionality with high consequences, etc.  But does it really make sense to spend a lot of time trying to get code coverage on something that will probably never happen and where, even if it does, it has little to no impact on the system?  To me, this doesn't seem like a valuable activity.  If it's easy to test, then go for it.  But if it starts to become a time-sink then it might be time to think about whether you're really adding value.</p>
+<p><strong>If testing should be as easy to do as not, then should 100% really be the goal?  Is not striving for 100% a cop-out?</strong></p>

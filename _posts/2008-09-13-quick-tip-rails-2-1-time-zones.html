@@ -1,0 +1,26 @@
+---
+categories: [rails]
+date: 2008-09-13 22:29:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/quick-tip-rails-2-1-time-zones/
+title: 'Quick Tip: Rails 2.1 Time Zones'
+---
+<p>My last quick tip involved <a href="/ops/quick-tip-setting-timezone-on-ubuntu-hardy">setting your time zone in Ubuntu Hardy</a>, so now, how do you set your time zone in a Ruby on Rails application? Rails 2.1 makes it much easier to manage time zone settings than it was previously.</p>
+<p>Add the following to your environment configuration file:</p>
+<h3>config/environment.rb</h3>
+<p>
+<pre><code class="ruby">config.time_zone = 'Arizona'</code></pre></p>
+<p>Replace Arizona with your own time zone. You can find a list of valid values by running any of the following rake tasks:</p>
+<p>
+<pre><code class="sh">rake time:zones:all
+rake time:zones:local
+rake time:zones:us</code></pre></p>
+<p>Your data will still be stored in <span class="caps">UTC</span> time, but it will be converted into the specified time zone when it is type cast on retrieval.</p>
+<p><strong>Update:</strong> If you set both your server's time zone and your applications time zone then you may see some incorrect times. I believe this is because you'll be storing local times and the Rails app will be trying to convert them to local – a double conversion. So be careful.</p>
+<h3>References</h3>
+<ul>
+<li><a href="http://ryandaigle.com/articles/2008/1/25/what-s-new-in-edge-rails-easier-timezones">What's New in Edge Rails: Easier Timezones</a></li>
+<li><a href="http://mad.ly/2008/04/09/rails-21-time-zone-support-an-overview/">Rails 2.1 Time Zone Support: An Overview</a></li>
+<li><a href="http://metautonomo.us/2008/06/02/updating-mysql-datetimes-for-rails-21-time-zones/">Updating MySQL DATETIMEs for Rails 2.1 Time Zones</a></li>
+</ul>

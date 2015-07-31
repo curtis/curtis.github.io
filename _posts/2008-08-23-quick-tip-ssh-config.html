@@ -1,0 +1,30 @@
+---
+categories: [code]
+date: 2008-08-23 05:42:00
+layout: post
+redirect_from:
+  - /programming/quick-tip-ssh-config/
+title: "Quick Tip: SSH Config"
+---
+<p>It's easy to create shortcuts for all those servers you need to <span class="caps">SSH</span> into. There should be a file in your <code>.ssh</code> directory called <code>config</code>.  Simply add a few lines to this file and you can refer to those servers by their short name.</p>
+
+<h4>Example (~/.ssh/config)</h4>
+{% highlight bash %}
+Host foo
+  Hostname some.long.hostname.you.cannot.remember.com
+  User myuser
+  Port 1234
+  {% endhighlight %}
+<p>Now you can use your new host when you <span class="caps">SSH</span>.</p>
+
+{% highlight bash %}
+$ ssh foo
+{% endhighlight %}
+
+<p>If you want to get even fancier, read the man page for additional options.</p>
+
+{% highlight bash %}
+$ man ssh_config
+{% endhighlight %}
+
+<p>Setup as many as you need and free yourself from <span class="caps">SSH</span> hostname hell!</p>

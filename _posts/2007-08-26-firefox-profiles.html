@@ -1,0 +1,35 @@
+---
+categories: [code]
+date: 2007-08-26 20:15:00
+layout: post
+redirect_from:
+  - /programming/firefox-profiles/
+title: "Firefox Profiles"
+---
+<p><a href="http://www.mozilla.com/en-US/firefox/">Firefox</a> is my development browser of choice.  With <a href="http://www.getfirebug">Firebug</a>, <a href="https://addons.mozilla.org/en-US/firefox/addon/60">Web Developer</a> and <a href="https://addons.mozilla.org/en-US/firefox/addon/5369">ySlow</a>, what more could any developer want?  It is also my personal browser of choice and when I'm not developing then I don't really need all those things, right?  For personal browsing they will only slow things down.  I suppose I could disable them every time… but no!  There's a better solution and it's called <a href="http://www.mozilla.org/support/firefox/profile">Firefox Profiles</a>.</p>
+<p>Firefox profiles allows you to create multiple personas to use when starting Firefox.  If you have Firefox, then you've already been using Firefox profiles, you just didn't know it.  Most people will probably only need the default profile and will never create others, but for web developers this is a must.  So what do you do?  It's easy.</p>
+<p>On your Mac (go <a href="http://www.mozilla.org/support/firefox/profile#locate">here</a> for Windows/Linux instructions), simply execute the following from the command line:</p>
+<pre>/Applications/Firefox.app/Contents/MacOS/firefox -profilemanager</pre>
+<p>A Firefox profile chooser will appear (it may appear behind your terminal window).  This is where you manage your profiles.  From this screen you may create, rename or delete profiles.  There is also a checkbox that allows you to specify that the profile chooser should be consulted when starting Firefox.  That's not such a big deal.  If you're like me, you open Firefox from the Dock and the icon only allows a single instance.  That's okay, we'll get around that in a second.</p>
+<p>So, now you need to create some profiles.  Here are the profiles I currently have:</p>
+<ul>
+<li>Personal – This was originally the default profile; it has my personal stuff on it and of course <a href="/code/my-first-firefox-extension">Nads</a> :)</li>
+<li>Test User – A plain, vanilla Firefox instance; no extensions.  This is what I use mainly for testing web applications.  I didn't have this one at first and had simply split personal from development. After seeing some strange behavior with applications when Firebug was installed, I decided I needed a profile that has no extensions to use for testing.</li>
+<li>Debugger – Firefox with Firebug, Web Developer, and ySlow.  This is what I use for development.</li>
+</ul>
+
+<p>Firefox will keep these profiles separate, so if you want extensions in the new ones you will need to add them yourself.  And don't forget to remove all those unnecessary extensions from your personal profile.  It will speed it up and get rid of that occasional Firebug interference (tabbing and return not working, etc.).</p>
+<p>Now, how do we start multiple instances of Firefox?  The way I do it currently is through a command line alias. This alias will open the Firefox profile chooser and then you're off.  To do this, you need to edit your <code>.bashrc</code> file.  This file resides in your home directory. Open it in your favorite text editor, or if you don't have a favorite then allow me to walk you through using vi. From the command line type:</p>
+<pre>vi ~/.bashrc</pre>
+<p>This opens the vi text editor. Type the letter
+<pre>i</pre>
+<p> to enter input mode.  Paste the following into the screen:</p>
+<pre>alias f='/Applications/Firefox.app/Contents/MacOS/firefox -profilemanager'</pre>
+<p>Press the Esc key to exit input mode.  Type
+<pre>:wq</pre>
+<p> to write the file and quit the editor.  You should now be back at the command prompt, so the last thing we need to do is source the file.  Type
+<pre>. ~/.bashrc</pre>
+<p> and press enter.  To try it out just type the letter
+<pre>f</pre>
+<p> from the command line and then press enter.  You should see the profile chooser appear.  Now you may start multiple instances of Firefox from the command line.  Note that you can only have one instance per profile open at a time.</p>
+<p>Hopefully this makes your personal browsing and web development more enjoyable!</p>

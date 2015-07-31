@@ -1,0 +1,47 @@
+---
+categories: [rails]
+date: 2008-04-12 03:52:00
+layout: post
+redirect_from:
+  - /programming/ruby-on-rails/precision-and-scale-for-ruby-on-rails-migrations/
+title: "Rails Tip: Precision and scale for decimals"
+---
+<p>For when you need that little bit of extra accuracy, specifying precision and scale for a decimal column in your Ruby on Rails migration is pretty simple.  The precision represents the total number of digits in the number, whereas scale represents the number of digits following the decimal point.  To specify the precision and scale, simply pass those as options to your column definition.</p>
+<p>For example:</p>
+
+{% highlight ruby %}
+class AddLatLngToAddresses < ActiveRecord::Migration
+  def self.up
+    add_column :addresses, :lat, :decimal, :precision => 15, :scale => 10
+    add_column :addresses, :lng, :decimal, :precision => 15, :scale => 10
+  end
+
+  def self.down
+    remove_column :addresses, :lat
+    remove_column :addresses, :lng
+  end
+end
+{% endhighlight %}
+
+<p>This will allow you to have 10 digits after the decimal point and 15 digits max.</p>
+<p>One thing to note, however is that Rails will use <a href="http://www.ruby-doc.org/stdlib/libdoc/bigdecimal/rdoc/index.html">BigDecimal</a> as the type for the column.  BigDecimal provides support for very large or very accurate floating point numbers. Remember those pesky floating point imprecision errors?</p>
+
+{% highlight ruby %}
+>> 1.2 - 1.0 == 0.2
+=> false
+{% endhighlight %}
+
+<p>Yep, BigDecimal handles that…</p>
+
+{% highlight ruby %}
+>> BigDecimal.new('1.2') - BigDecimal.new('1.0') == BigDecimal.new('0.2')
+=> true
+{% endhighlight %}
+
+<p>So now, go forth and be accurate.</p>
+<p>Also see</p>
+<ul>
+<li><a href="http://api.rubyonrails.org/classes/ActiveRecord/ConnectionAdapters/TableDefinition.html#M001222">ActiveRecord::ConnectionAdapters::TableDefinition.column</a></li>
+<li><a href="http://www.ruby-doc.org/stdlib/libdoc/bigdecimal/rdoc/index.html">BigDecimal</a></li>
+<li><a href="http://earthcode.com/blog/2006/12/latitude_and_longitude_columns.html">Latitude and Longitude in Rails</a></li>
+</ul>
