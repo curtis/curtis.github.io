@@ -2,6 +2,10 @@
   font-size: 70%;
 }
 
+.inline-block {
+  display: inline-block;
+}
+
 .intro-header {
   background-position: top center;
 }
@@ -46,14 +50,23 @@ img.pull-right {
   clear: both;
 }
 
-.hire {
+#hire {
   border: 1px solid #ddd;
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 0.8em;
-  margin: 2em 0 2em 2em;
-  padding: 1em;
+  padding: 2em;
+  width: 275px;
 }
 
-.hire p {
+#hire.affix {
+  position: fixed!important;
+  top: 20px;
+}
+
+#hire p {
   margin-top: 0;
+}
+
+.post-preview {
+  padding: 1px 0 1em 0;
 }
