@@ -25,7 +25,8 @@ permalink: /:categories/:title/
 paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 
-gems:
+plugins:
   - jekyll-feed
+  - jekyll-paginate
   - jekyll-redirect-from
   - jekyll-sitemap
