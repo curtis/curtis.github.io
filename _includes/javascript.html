@@ -26,5 +26,12 @@
 <script>
   $(function() {
     $('#gallery').flickrPhotoStream();
+
+    $('#hire').affix({
+      offset: {
+        top: $('body header.intro-header').outerHeight() + 50,
+        bottom: $('body footer').outerHeight() + 100
+      }
+    })
   });
 </script>
