@@ -19,7 +19,6 @@
           rowHeight: 160,
           lastRow: 'justify'
         }).on('jg.complete', function() {
-          debugger
           $('#' + el.prop('id') + ' a').swipebox();
         });
       });
