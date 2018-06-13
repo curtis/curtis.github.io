@@ -20,7 +20,7 @@ company:
 
 # Build Settings
 markdown: kramdown
-highlighter: pygments
+highlighter: rouge
 permalink: /:categories/:title/
 paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
