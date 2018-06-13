@@ -16,12 +16,10 @@ comments: true
 
           <span class="meta">
             Posted by
-            {% if page.author %}
-              {{ page.author }}
-            {% else %}
+            <a href="https://twitter.com/{{ site.twitter_username }}">
+              <img src="https://s.gravatar.com/avatar/{{ site.gravatar_hash }}?s=24" alt="{{ site.author }}" class="img-responsive img-circle inline-block" />
               {{ site.author }}
-            {% endif %}
-            on {{ page.date | date: "%B %-d, %Y" }}
+            </a>
           </span>
         </div>
       </div>
