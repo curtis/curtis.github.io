@@ -1,5 +1,6 @@
 ---
 layout: page
+nav: false
 title: Privacy Policy
 description: This Privacy Policy describes how your personal information is collected, used, and shared when you visit, or make a purchase from, our site.
 ---

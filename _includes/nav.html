@@ -19,7 +19,8 @@
           <a href="{{ site.baseurl }}/">Home</a>
         </li>
 
-        {% for page in site.pages %}
+        {% assign pages = site.pages | where:"nav",true %}
+        {% for page in pages %}
           {% if page.title %}
             <li>
               <a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>

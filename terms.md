@@ -1,5 +1,6 @@
 ---
 layout: page
+nav: false
 title: Terms of Use
 description: This Terms of Service describes the terms and conditions you agree to be bound by when accessing or using any part of the site.
 ---
