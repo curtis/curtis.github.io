@@ -5,7 +5,7 @@
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <ul class="list-inline text-center">
           <li>
-            <a href="{{ " /feed.xml " | prepend: site.baseurl }}">
+            <a href="{{ "/feed.xml" | prepend: site.baseurl }}">
               <span class="fa-stack fa-lg">
                 <i class="fa fa-circle fa-stack-2x"></i>
                 <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
@@ -49,6 +49,9 @@
 
         <p class="copyright text-muted">
           Copyright &copy; {{ site.author }} 2006-{{ site.time | date: '%Y' }}
+          <br/>
+          <a href="{{ "/privacy-policy" | prepend: site.baseurl }}">Privacy Policy</a> |
+          <a href="{{ "/terms" | prepend: site.baseurl }}">Terms of Use</a>
         </p>
       </div>
     </div>
