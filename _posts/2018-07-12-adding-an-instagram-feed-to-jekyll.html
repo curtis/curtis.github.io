@@ -1,0 +1,95 @@
+---
+categories: [code]
+date: 2018-07-12 16:00:00
+layout: post
+subtitle: "How to easily add an Instagram feed to your Jekyll site, while avoiding the gotchas."
+title: "Easily Add An Instagram Feed To Jekyll"
+---
+
+<p class="lead">
+  I've had a Flickr integration on here for years, but don't post there much anymore. Felt it was time to update my photo stream to Instagram.
+</p>
+
+<p>
+  The process is fairly straightforward, but you'll need a few pieces of information first and a bit of setup.
+</p>
+
+<h3>Your Instagram User ID</h3>
+
+<p>
+  You'll need the numeric ID of your Instagram account. I used this tool to
+  <a href="https://codeofaninja.com/tools/find-instagram-user-id">find my Instagram User ID</a>. Copy that somewhere, you'll need it soon.
+</p>
+
+<h3>A Registered Instagram Client</h3>
+
+<p>
+  Sign into your Instagram account and then head over to
+  <a href="https://www.instagram.com/developer/clients/register/">register your client</a>.
+  There will be a few required pieces of information to create the client:
+</p>
+
+<dl>
+  <dt>Application Name</dt>
+  <dd>You can just use your website name.</dd>
+</dl>
+
+<dl>
+  <dt>Description</dt>
+  <dd>Something descriptive…</dd>
+</dl>
+
+<dl>
+  <dt>Website URL</dt>
+  <dd>Your website's URL.</dd>
+</dl>
+
+<dl>
+  <dt>Valid redirect URIs</dt>
+  <dd>Your website's URL, again.</dd>
+</dl>
+
+<p>
+  Next, there will be a <i>Security</i> tab at the top. It's easy to miss, but you need to uncheck <b>Disable implicit OAuth</b>. This is important!
+</p>
+
+<p>
+  Once you've submitted the registration, you should see your client, with a Client ID. You'll need this ID for the next step.
+</p>
+
+<h3>Get Your Access Token</h3>
+
+<p>
+  Copy and paste the following URL into your browser, replacing <code>CLIENT_ID</code> and <code>REDIRECT_URI</code> with your values:
+</p>
+
+<p>
+  <code>https://instagram.com/oauth/authorize/?client_id=CLIENT_ID&redirect_uri=REDIRECT_URI&response_type=token</code>
+</p>
+
+<p>
+  If all goes correctly, you should be on your redirect URI and there should be an access token as part of the path. Copy the access token, as you'll need it to make requests to Instagram.
+</p>
+
+<h3>Displaying Images</h3>
+
+<p>
+  There's a simple JavaScript library that you can use to display Instagram images, called
+  <a href="http://instafeedjs.com/">Instafeed.js</a>. Follow their installation instructions to add the JavaScript to your Jekyll site. You can always refer to
+  <a href="https://github.com/curtis/curtis.github.io">the source of this site</a>
+  if you want to see what I did.
+</p>
+
+<p>
+  Next, add a <code>div</code> with an id of <code>instafeed</code> where you'd like your images to display. Regenerate your Jekyll site and viola, Instagram images! Style them as you like.
+</p>
+
+<p>
+  By default, it will return the latest 20 images, which for my purposes, was more than enough. You can see
+  <a href="/photos">my photos page here</a>.
+</p>
+
+<p>
+  <b>One thing to note, that caused me some trouble.</b>
+  If you want to use a different template to display your images, be sure to escape the <code>{</code> and <code>}</code> characters, or Jekyll will try to process them first and your template won't work. See <a href="http://instafeedjs.com/#templating">templating</a>.
+</p>
