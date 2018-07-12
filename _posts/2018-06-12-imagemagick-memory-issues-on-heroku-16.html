@@ -1,0 +1,49 @@
+---
+categories: [ops]
+date: 2011-12-21 16:44:10
+layout: post
+subtitle: "I recently encountered some strange memory issues after upgrading to Heroku-16 from Cedar-14, that were causing Heroku R15 issues. I was a little surprised at what I found regarding Imagemagick on Heroku."
+title: "Imagemagick On Heroku-16"
+---
+
+<p class="lead">
+  We recently upgraded from Heroku's Cedar-14 stack to their Heroku-16 stack after receiving a stack deprecation warning.
+</p>
+
+<p>
+  First we prototyped this upgrade with our staging server and, after a week, did not encounter any issues. Feeling pretty confident with Heroku, we initiated the update. Within 24 hours we were experiencing extreme memory issues (<a href="https://devcenter.heroku.com/articles/error-codes#r15-memory-quota-vastly-exceeded">R15 - Memory quota vastly exceeded</a>), causing the site to be unreachable.
+</p>
+
+<h3>Break Out The Fire Extenguisher</h3>
+
+<p>
+  Okay, so we set our app on fire…
+  <b>this is fine.</b>
+</p>
+
+<p>
+  We looked at a lot of different possibilities, added extra monitoring, and ultimately made some changes to help improve the memory usage of the app. I may detail that in separate posts. However, something strange stuck out to us when we were investigating Imagemagick on Heroku.
+</p>
+
+<p>
+  Heroku typically gives each user a slice of the total system resources, a dyno. Unless you're on a performance dyno, you'll share the overall system resources with other applications. It seems like Heroku gives apps a little leeway when it comes to resources. For example, an app might temporarily use more memory than it was alloted, without serious repercussions, just some warnings.
+</p>
+
+<p>
+  We expected that Imagemagick would have some reasonable default limits in place that corresponded to the dyno size, but what we found surprised us. There were no limits set at all.
+</p>
+
+<script src="https://gist.github.com/curtis/33093c66bb62703f1f0a1cd63c7e0541.js"></script>
+
+<p>
+  So, if you do want to prevent Imagemagick from using too many resources, you can user Heroku's config option to set <a href="http://www.imagemagick.org/script/resources.php#environment">Imagemagick environment variables</a>.
+</p>
+
+<script src="https://gist.github.com/curtis/eb097af4c9d1853269ecedda29854dde.js"></script>
+
+<p>
+  <strong>
+    What do you think? Have a different workaround or solution?
+  </strong>
+</p>
+
