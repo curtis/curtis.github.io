@@ -70,3 +70,11 @@ img.pull-right {
 .post-preview {
   padding: 1px 0 1em 0;
 }
+
+#instafeed {
+  text-align: center;
+}
+
+#instafeed img {
+  padding: 20px;
+}

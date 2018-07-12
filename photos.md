@@ -5,4 +5,4 @@ nav: true
 title: Photos
 ---
 
-<div id="gallery"></div>
+<div id="instafeed"></div>

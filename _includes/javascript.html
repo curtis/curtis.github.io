@@ -8,9 +8,9 @@
 <script src="{{ "/js/clean-blog.min.js" | prepend: site.baseurl }}"></script>
 
 <!-- Plugin JS -->
-<script src="{{ " /js/flickr.js " | prepend: site.baseurl }}"></script>
 <script src="{{ "/js/jquery.justifiedGallery.min.js" | prepend: site.baseurl }}"></script>
 <script src="{{ "/js/jquery.swipebox.min.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/instafeed.min.js" | prepend: site.baseurl }}"></script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -25,13 +25,20 @@
 
 <script>
   $(function() {
-    $('#gallery').flickrPhotoStream();
+    if($('#instafeed').length > 0) {
+      var feed = new Instafeed({
+        get: 'user',
+        accessToken: '5876975400.8ab019e.b135cb5e2feb4265be6fd668ae936e7b',
+        userId: '5876975400',
+        clientId: '8ab019ed8d094d97bf316e255e69d689',
+        resolution: 'low_resolution',
+        template: '<a target="_blank" href="\{\{link\}\}"><img src="\{\{image\}\}" width="210" height="210" alt="\{\{caption\}\}" /></a>',
+        success: function(response){
+          console.log("Instafeed.js response", response);
+        }
+      });
 
-    $('#hire').affix({
-      offset: {
-        top: $('body header.intro-header').outerHeight() + 50,
-        bottom: $('body footer').outerHeight() + 100
-      }
-    })
+      feed.run();
+    }
   });
 </script>
