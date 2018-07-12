@@ -20,12 +20,12 @@ title: "Gravatar Problems"
 => gravatar NOT FOUND at www.gravatar.com
 Content-Type: text/html; charset=utf-8
 Status: 302 Found
-Location: http://millarian.com/2007/8/22/striving-for-100-percent/comments/121#comment-121
+Location: https://millarian.com/2007/8/22/striving-for-100-percent/comments/121#comment-121
 X-Runtime: 8.55324
 Cache-Control: no-cache
 Content-Length: 146
 
-<html><body>You are being <a href="http://millarian.com/2007/8/22/striving-for-100-percent/comments/121#comment-121">redirected</a>.</body></html></pre>
+<html><body>You are being <a href="https://millarian.com/2007/8/22/striving-for-100-percent/comments/121#comment-121">redirected</a>.</body></html></pre>
 <p>Same thing happened even when a Gravatar image was found…  Nobody was safe from this problem.  I did a search in the source for where &#8220;gravatar <span class="caps">NOT FOUND</span>&#8221; was being output.  This message was being logged and put to the console, so I simply wrapped it in a conditional to output the results only in development mode, like so:</p>
 <h4>lib/gravatar_api.rb</h4>
 
