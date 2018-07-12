@@ -137,7 +137,7 @@ description: This Terms of Service describes the terms and conditions you agree 
 
 <p>
   Your submission of personal information through the site is governed by our
-  <a href="/privacy-policy">Privacy Policy</a>
+  <a href="{{ "/privacy" | prepend: site.baseurl }}">Privacy Policy</a>
 </p>
 
 <h3>SECTION 9 - ERRORS, INACCURACIES AND OMISSIONS</h3>
