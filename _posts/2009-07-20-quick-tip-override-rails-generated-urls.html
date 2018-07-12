@@ -10,11 +10,11 @@ title: "Quick Tip: Override Rails Generated URLs"
 <p>By default Ruby on Rails resources use the controller name for the URL. For example:</p>
 <pre>map.resources :time_entries</pre>
 <p>would yield the following URLs</p>
-<p><script src="http://gist.github.com/151034.js"></script></p>
+<p><script src="https://gist.github.com/151034.js"></script></p>
 <p>What if you want them to be something else entirely? I guess you could rename your controller, update your routes.rb file and everywhere you use a URL helper... or, <strong>just use the "as" modifier</strong>!</p>
 <pre>map.resources :time_entries, :as => :time</pre>
 <p>now yields the following URLs</p>
-<p><script src="http://gist.github.com/151040.js"></script></p>
+<p><script src="https://gist.github.com/151040.js"></script></p>
 <p><strong>All of your existing uses of the URL helpers can remain the same and it will generate all URLs correctly. Quick, simple and painless!</strong></p>
 <h3>References</h3>
 <ul>

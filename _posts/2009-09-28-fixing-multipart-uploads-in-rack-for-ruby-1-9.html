@@ -8,9 +8,9 @@ subtitle: "Patch your Rack installation after seeing an 'invalid byte sequence i
 title: "Fixing Multipart Uploads in Rack for Ruby 1.9"
 ---
 <p>There is a slight problem in Rack 1.0.0 that causes a fatal error to be produced when uploading files <= 110K in size. You may need to patch Rack if you see the following error when uploading a file (I saw it with Paperclip):</p>
-<p><script src="http://gist.github.com/197155.js"></script></p>
+<p><script src="https://gist.github.com/197155.js"></script></p>
 <p><strong>Here's what you do to patch Rack:</strong></p>
-<p><script src="http://gist.github.com/197215.js"></script></p>
+<p><script src="https://gist.github.com/197215.js"></script></p>
 <p>You should now be back in business. Hopefully it won't be too long before an update is released for Rack that includes the patch.</p>
 <p>Happy uploading!</p>
 <h3>References</h3>

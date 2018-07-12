@@ -9,8 +9,8 @@ title: "Quick Tip: Rails Singularization of -ess"
 ---
 <p>Have you ever created a Ruby on Rails application dealing with businesses or addresses? I'd be hard pressed to find someone who hasn't.</p>
 <p>Strangely, though, Rails does not have an inflection that deals with the singularization of these words correctly. From the command line, try singularizing the word "business":</p>
-<p><script src="http://gist.github.com/194495.js"></script></p>
+<p><script src="https://gist.github.com/194495.js"></script></p>
 <p>While this seems like a contrived situation, it's actually not as hard to hit as you'd think (e.g., common code that needs to singularize the incoming argument). I saw this while using Acl9, a <a rel="external" href="http://github.com/be9/acl9">role-based authorization system for Rails</a>...</p>
 <p><strong>Here's a quick fix that you can add to your config/initializers/inflections.rb:</strong></p>
-<p><script src="http://gist.github.com/194493.js"></script></p>
+<p><script src="https://gist.github.com/194493.js"></script></p>
 <p>You can read more about how this won't be fixed in this <a rel="external" href="https://rails.lighthouseapp.com/projects/8994/tickets/2399-incorrect-inflectors-for-business-or-ness">ticket</a>.</p>
