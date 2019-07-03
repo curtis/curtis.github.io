@@ -1,0 +1,43 @@
+---
+categories: [ops]
+date: 2019-07-03 08:00:00
+layout: post
+subtitle: "Importing a Heroku PostgreSQL database to your local machine, quickly and easily."
+title: "Importing Heroku PostgreSQL to localhost"
+---
+
+<p>
+  It can sometimes be useful to operate against a more robust set of data on your local machine, especially when you're seeing different behavior locally vs on staging/production. If you're using Heroku with PostgreSQL, this can be very easy with the right set of commands.
+</p>
+
+<p>
+  From the root directory of your project request that a new backup be created on Heroku.
+<p>
+
+{% highlight shell %}
+  heroku pg:backups:capture
+{% endhighlight %}
+
+<p>
+  NOTE: If you have more than one Heroku app available, then you'll need to specify which one by using the `-a APP` or `-r REMOTE` options.
+</p>
+
+<p>
+  You should now have a backup available to you, which you'll want to download to your local machine. Heroku also offers a command to help with grabbing the latest backup. Again, you may need to specify the app or remote here.
+</p>
+
+{% highlight shell %}
+  heroku pg:backups:download
+{% endhighlight %}
+
+<p>
+  Finally, you can restore this backup (<code>latest.dump</code>) to your local PostgreSQL database. This will overwrite the database specified, so be cautious.
+</p>
+
+{% highlight shell %}
+  pg_restore --verbose --clean --no-acl --no-owner -h localhost -d [DATABASE NAME] latest.dump
+{% endhighlight %}
+
+<p>
+  Happy debugging!
+</p>
