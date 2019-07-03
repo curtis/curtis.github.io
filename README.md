@@ -1,6 +1,6 @@
 # millarian.com
 
-A blog by [Curtis Miller][], co-founder of Velocity Labs, a [web development][] company.
+A blog by [Curtis Miller][], co-founder of Velocity Labs, a [Ruby on Rails development company][].
 
 [Curtis Miller]: https://millarian.com/
-[web development]: http://velocitylabs.io/
+[Ruby on Rails development company]: http://velocitylabs.io/
