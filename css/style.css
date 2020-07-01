@@ -38,6 +38,10 @@ ul.pager li a {
   text-decoration: none;
 }
 
+li > figure.highlight {
+  margin: 15px 0;
+}
+
 img.pull-left {
   margin: 0 1em 1em 0;
 }
