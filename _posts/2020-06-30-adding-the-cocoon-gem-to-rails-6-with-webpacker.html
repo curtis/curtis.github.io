@@ -1,0 +1,54 @@
+---
+categories: [rails]
+comments: true
+date: 2020-06-30 08:00:00
+layout: post
+subtitle: "A straightforward way to use the Cocoon gem in your Rails 6 project, using Webpacker."
+title: "Rails 6, Webpacker, and the Cocoon gem"
+---
+
+<p>
+  If you're not familiar with the <a rel="nofollow" href="https://github.com/nathanvda/cocoon">Cocoon gem</a>, it's an awesome little gem to help with easily handling nested forms. We've used it with great success on many of our Rails projects.
+</p>
+
+<p>
+  The docs currently say that it supports Rails 3, 4, and 5, but there's no mention of Rails 6, or Webpacker. Having started a new Rails 6 project recently, this was unfortunate. Luckily, it was pretty easy to get Cocoon installed and working.
+<p>
+
+<p>
+  Buried in an <a rel="nofollow" href="https://github.com/nathanvda/cocoon/issues/555#issuecomment-640256856">open issue</a> is some information on how to get set up. Here's what we did:
+</p>
+
+<ol>
+  <li>
+    You will need the gem, so add
+
+{% highlight ruby %}
+gem 'cocoon'
+{% endhighlight %}
+
+    to your Gemfile, then bundle as normal.
+  </li>
+  <li>
+    You will also need the JavaScript package, so from the root of your Rails app, run
+
+{% highlight shell %}
+yarn add github:nathanvda/cocoon#c24ba53
+{% endhighlight %}
+
+    If you check your <code>package.json</code> you should see Cocoon is now listed.
+  </li>
+  <li>
+    Then, add Cocoon to your list of requires in the <code>app/javascript/packs/application.js</code> file, like so:
+
+{% highlight javascript %}
+require("cocoon")
+{% endhighlight %}
+  </li>
+</ol>
+
+<p>
+  One last note, Cocoon currently requires jQuery, so be sure that's installed as well. If you need help with that, check out how to
+  <a href="{% post_url /rails/2020-06-15-adding-jquery-to-rails6-webpacker %}">install jQuery using Webpacker in Rails 6</a>.
+  You should be all set to handle nested forms in your Rails app now. If I missed anything, let me know in the comments!
+</p>

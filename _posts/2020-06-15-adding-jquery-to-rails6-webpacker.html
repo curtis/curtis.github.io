@@ -1,0 +1,62 @@
+---
+categories: [rails]
+comments: true
+date: 2020-06-15 10:00:00
+layout: post
+subtitle: "Quickly add jQuery to your Rails 6 application using Webpacker"
+title: "Rails 6, Webpacker, and jQuery"
+---
+
+<p>
+  I'm finally getting around to using Rails 6 (hooray for legacy projects!) and learning about some of the differences. One of those, I encountered was how to add jQuery to our application.
+</p>
+
+<p>
+  Most of our legacy projects include the <code>jquery-rails</code> gem. You might be able to guess how old those projects are! Looks like the new, preferred way is to use yarn to add JavaScript dependencies. No problem!
+</p>
+
+<p>
+  From the root of your Rails directory run:
+</p>
+
+{% highlight shell %}
+yarn add jquery
+{% endhighlight %}
+
+<p>
+  You should now see jquery listed in your <code>package.json</code> file. Awesome! Now let's add it to <code>/app/assets/javascripts/application.js</code>. What do you mean that file doesn't exist??
+</p>
+
+<p>
+  Okay, so our JavaScript files have moved from <code>/app/assets/javascript</code> to <code>/app/javascript/packs</code> and there's a new way to include them in your views using <code>javascript_pack_tag</code> instead of <code>javascript_include_tag</code>. Right, no problem.
+<p>
+
+<p>
+  In <code>/app/javascript/packs/application.js</code> add jQuery to your list of requires:
+</p>
+
+{% highlight javascript %}
+require("jquery")
+{% endhighlight %}
+
+<p>
+  Just one last thing we need to do to be able to use jQuery, though. In your <code>/config/webpack/environment.js</code> file add:
+</p>
+
+{% highlight javascript %}
+const webpack = require('webpack')
+environment.plugins.prepend('Provide',
+  new webpack.ProvidePlugin({
+    $: 'jquery/src/jquery',
+    jQuery: 'jquery/src/jquery'
+  })
+)
+{% endhighlight %}
+
+<p>
+  This should go just before the line that exports the environment. Think of this file as similar to your Rails <code>/config/environment.rb</code>, in that it contains the common JS stuff across all environments. You may notice that there are per environment JS files (development.js, production.js, test.js) there as well to allow you to specify JS per environment.
+</p>
+
+<p>
+  You should be all set to use jQuery in your Rails app now. If I missed anything, let me know in the comments!
+</p>
