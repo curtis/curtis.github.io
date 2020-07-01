@@ -5,4 +5,6 @@ nav: true
 title: Photos
 ---
 
-<div id="instafeed"></div>
+<div id="instafeed">
+  <img src="/img/instagram-loading.svg" class="center-block img-responsive" />
+</div>
