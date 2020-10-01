@@ -11,7 +11,6 @@
 <script src="{{ "/js/jquery.justifiedGallery.min.js" | prepend: site.baseurl }}"></script>
 <script src="{{ "/js/jquery.swipebox.min.js" | prepend: site.baseurl }}"></script>
 <script src="{{ "/js/instafeed.min.js" | prepend: site.baseurl }}"></script>
-<script src="https://millarian-instagram-photos.herokuapp.com/token.js"></script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -26,12 +25,19 @@
 <script>
   $(function() {
     if($('#instafeed').length > 0) {
-      var feed = new Instafeed({
-        accessToken: InstagramToken,
-        limit: 24,
-        template: '<a target="_blank" href="\{\{link\}\}"><img src="\{\{image\}\}" width="210" height="210" alt="\{\{caption\}\}" /></a>'
-      });
-      feed.run();
+      fetch('https://ig.instant-tokens.com/users/8e59f628-0ed5-4171-a7c2-97d92becd8ff/instagram/17841405982014620/token?userSecret=yq2sgrbfd22fgejrafu2r')
+        .then(resp => resp.json())
+        .then(data => {
+          const feed = new Instafeed({
+            accessToken: data.Token,
+            limit: 24,
+            template: '<a target="_blank" href="\{\{link\}\}"><img src="\{\{image\}\}" width="210" height="210" alt="\{\{caption\}\}" /></a>'
+          });
+          feed.run();
+        })
+        .catch((error) => {
+          console.log(error)
+        });
     }
   });
 </script>
