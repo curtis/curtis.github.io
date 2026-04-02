@@ -943,6 +943,7 @@ nav {
   overflow: hidden;
   border-radius: 2px;
   text-decoration: none;
+  position: relative;
 
   img {
     width: 100%;
@@ -952,8 +953,35 @@ nav {
   }
 
   &:hover img {
-    opacity: 0.8;
+    opacity: 0.3;
     transform: scale(1.03);
+  }
+
+  &:hover .photo-overlay {
+    opacity: 1;
+  }
+}
+
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  opacity: 0;
+  @include transition-all;
+  pointer-events: none;
+
+  span {
+    @include sans;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    i {
+      margin-right: 0.3em;
+    }
   }
 }
 
@@ -961,6 +989,97 @@ nav {
   .photo-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+// ============================================================
+// Lightbox
+// ============================================================
+
+.lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.95);
+  align-items: center;
+  justify-content: center;
+
+  &.is-open {
+    display: flex;
+  }
+}
+
+.lightbox-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.lightbox-caption {
+  @include sans;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: 0.75rem;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.4;
+}
+
+.lightbox-instagram {
+  @include mono;
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-decoration: none;
+  margin-top: 0.5rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+  position: fixed;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1.5rem;
+  padding: 1rem;
+  z-index: 10000;
+  @include transition-all;
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
+.lightbox-close {
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 2rem;
+}
+
+.lightbox-prev {
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.lightbox-next {
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 // ============================================================

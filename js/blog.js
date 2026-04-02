@@ -57,5 +57,60 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-});
+  // Lightbox
+  var lightbox = document.getElementById('lightbox');
+  if (lightbox) {
+    var items = document.querySelectorAll('.photo-grid-item');
+    var img = lightbox.querySelector('.lightbox-img');
+    var caption = lightbox.querySelector('.lightbox-caption');
+    var permalink = lightbox.querySelector('.lightbox-instagram');
+    var current = 0;
 
+    function showPhoto(index) {
+      if (index < 0) index = items.length - 1;
+      if (index >= items.length) index = 0;
+      current = index;
+      var item = items[current];
+      img.src = item.href;
+      img.alt = item.querySelector('img').alt;
+      caption.textContent = item.getAttribute('data-caption') || '';
+      permalink.href = item.getAttribute('data-permalink') || '';
+    }
+
+    function openLightbox(index) {
+      showPhoto(index);
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    items.forEach(function(item, i) {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        openLightbox(i);
+      });
+    });
+
+    lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    lightbox.querySelector('.lightbox-prev').addEventListener('click', function() { showPhoto(current - 1); });
+    lightbox.querySelector('.lightbox-next').addEventListener('click', function() { showPhoto(current + 1); });
+
+    lightbox.addEventListener('click', function(e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (!lightbox.classList.contains('is-open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPhoto(current - 1);
+      if (e.key === 'ArrowRight') showPhoto(current + 1);
+    });
+  }
+
+});
