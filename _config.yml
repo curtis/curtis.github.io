@@ -25,6 +25,10 @@ permalink: /posts/:title/
 paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 
+sass:
+  sass_dir: _sass
+  style: compressed
+
 plugins:
   - jekyll-feed
   - jekyll-paginate
