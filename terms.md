@@ -19,7 +19,7 @@ If you leave comments, keep it civil. I reserve the right to remove anything tha
 
 ### Links
 
-I link to other sites. I'm not responsible for their content or practices. If a link is broken or points somewhere sketchy, [let me know](mailto:curtm95@gmail.com).
+I link to other sites. I'm not responsible for their content or practices. If a link is broken or points somewhere sketchy, <a class="obfuscated-email" data-e="NTltdHJ1Y0BsaWFtZy5jb20=">let me know</a>.
 
 ### Copyright
 
@@ -31,4 +31,4 @@ I might update these terms if something changes. This is a blog, not a SaaS prod
 
 ### Questions
 
-Email me at [curtm95@gmail.com](mailto:curtm95@gmail.com).
+<a class="obfuscated-email" data-e="NTltdHJ1Y0BsaWFtZy5jb20=">Email me</a>.

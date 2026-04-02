@@ -28,4 +28,4 @@ If you're in the EU or another jurisdiction with data rights, you can ask me to 
 
 ### Questions
 
-Email me at [curtm95@gmail.com](mailto:curtm95@gmail.com) if you have concerns.
+<a class="obfuscated-email" data-e="NTltdHJ1Y0BsaWFtZy5jb20=">Email me</a> if you have concerns.

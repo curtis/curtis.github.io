@@ -27,6 +27,17 @@ document.addEventListener('DOMContentLoaded', function() {
     return new bootstrap.Tooltip(el);
   });
 
+  // Email obfuscation
+  document.querySelectorAll('.obfuscated-email').forEach(function(el) {
+    var parts = atob(el.getAttribute('data-e')).split('@');
+    var user = parts[0].split('').reverse().join('');
+    var domain = parts[1].split('.');
+    var tld = domain.pop();
+    var email = user + '@' + domain.map(function(p) { return p.split('').reverse().join(''); }).concat(tld).join('.');
+    el.href = 'mailto:' + email;
+    if (!el.textContent.trim()) el.textContent = email;
+  });
+
   // Make all images responsive
   document.querySelectorAll('.post-content img').forEach(function(img) {
     img.classList.add('img-responsive');
