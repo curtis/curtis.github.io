@@ -928,16 +928,39 @@ nav {
 }
 
 // ============================================================
-// Instagram feed
+// Photo grid
 // ============================================================
 
-#instafeed {
-  text-align: center;
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 1rem;
 }
 
-#instafeed img {
-  padding: 10px;
-  max-width: 210px;
+.photo-grid-item {
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 2px;
+  text-decoration: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    @include transition-all;
+  }
+
+  &:hover img {
+    opacity: 0.8;
+    transform: scale(1.03);
+  }
+}
+
+@media (max-width: 480px) {
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 // ============================================================
