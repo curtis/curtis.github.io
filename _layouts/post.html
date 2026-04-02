@@ -21,7 +21,13 @@ comments: true
   "publisher": {
     "@type": "Person",
     "name": {{ site.author | jsonify }}
-  }
+  }{% if page.series %}{% assign series_info = site.data.series[page.series] %},
+  "position": {{ page.series_part }},
+  "isPartOf": {
+    "@type": "CreativeWorkSeries",
+    "name": {{ series_info.title | jsonify }},
+    "url": "{{ site.url }}{{ site.baseurl }}/series/{{ page.series }}/"
+  }{% endif %}
 }
 </script>
 
@@ -52,6 +58,8 @@ comments: true
       <div class="update-body">{{ page.update.body }}</div>
     </div>
   {% endif %}
+
+  {% include series-nav.html %}
 
   {{ content }}
 

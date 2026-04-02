@@ -1193,6 +1193,105 @@ nav {
 }
 
 // ============================================================
+// Series Navigation
+// ============================================================
+
+.series-nav {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  background: var(--code-bg);
+}
+
+.series-nav-label {
+  @include mono;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.series-nav-title {
+  @include mono;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.75rem;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.series-nav-part {
+  font-weight: 400;
+}
+
+.series-nav-parts {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.75rem;
+  counter-reset: series-part;
+
+  li {
+    counter-increment: series-part;
+    @include mono;
+    font-size: 0.8rem;
+    padding: 0.3rem 0;
+    color: var(--text-secondary);
+    margin: 0;
+
+    &::before {
+      content: counter(series-part) ". ";
+      color: var(--text-secondary);
+    }
+
+    &.is-current {
+      color: var(--text);
+      font-weight: 600;
+
+      &::before {
+        color: var(--accent);
+      }
+
+      .series-nav-here {
+        color: var(--accent);
+        font-weight: 400;
+        font-size: 0.75rem;
+        margin-left: 0.3rem;
+      }
+    }
+
+    a {
+      color: var(--text-secondary);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+.series-part-label {
+  @include mono;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+// ============================================================
 // Cursor blink animation (optional decorative)
 // ============================================================
 

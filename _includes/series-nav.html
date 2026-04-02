@@ -1,0 +1,27 @@
+{% if page.series %}
+  {% assign series_info = site.data.series[page.series] %}
+  {% assign series_posts = site.posts | where: "series", page.series | sort: "series_part" %}
+  {% assign total_parts = series_posts | size %}
+
+  {% if series_info and total_parts > 0 %}
+    <nav class="series-nav" aria-label="Series: {{ series_info.title }}">
+      <div class="series-nav-label">
+        <span>Series</span>
+        <span class="series-nav-part">Part {{ page.series_part }} of {{ total_parts }}</span>
+      </div>
+      <a href="{{ site.baseurl }}/series/{{ page.series }}/" class="series-nav-title">{{ series_info.title }}</a>
+
+      <ol class="series-nav-parts">
+        {% for post in series_posts %}
+          <li{% if post.url == page.url %} class="is-current" aria-current="page"{% endif %}>
+            {% if post.url == page.url %}
+              <span>{{ post.title | split: ": " | last }} <span class="series-nav-here" aria-hidden="true">&larr; you are here</span></span>
+            {% else %}
+              <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title | split: ": " | last }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </nav>
+  {% endif %}
+{% endif %}

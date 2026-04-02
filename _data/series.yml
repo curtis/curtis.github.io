@@ -1,0 +1,7 @@
+railsconf-2007:
+  title: "RailsConf 2007"
+  description: "Recapping my experience at RailsConf 2007 in Portland, from the technology track highlights to the community discussions that shaped the Rails ecosystem."
+
+rails-testing-tips:
+  title: "Rails Testing Tips"
+  description: "Practical testing gotchas and patterns I ran into while testing Rails applications, from code coverage and flash messages to helper tests with RSpec."
