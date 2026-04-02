@@ -169,10 +169,11 @@ DEPENDENCIES
   jekyll-paginate
   jekyll-redirect-from
   jekyll-sitemap
+  logger
   webrick
 
 RUBY VERSION
-   ruby 3.4.6p54
+   ruby 4.0.2p0
 
 BUNDLED WITH
    2.7.2

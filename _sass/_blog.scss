@@ -531,8 +531,7 @@ nav {
   cursor: not-allowed;
 
   &::before {
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
+    font: var(--fa-font-solid);
     content: "\f127"; // fa-link-slash
     font-size: 0.75em;
     margin-right: 0.3em;
