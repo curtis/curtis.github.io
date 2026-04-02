@@ -11,7 +11,7 @@ This is a personal blog, not a legal minefield. Here's the short version.
 
 Everything I write here reflects my own opinions and experiences. Posts about code, tools, or techniques are shared in good faith, but I can't guarantee they'll work perfectly in your situation. Use your judgment.
 
-Older posts may reference outdated tools, libraries, or practices. Tech moves fast -- something that worked in 2007 might not be the best approach today.
+Older posts may reference outdated tools, libraries, or practices. Tech moves fast, and something that worked in 2007 might not be the best approach today.
 
 ### Comments
 
