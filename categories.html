@@ -1,0 +1,53 @@
+---
+layout: page
+title: Categories
+description: Browse posts by topic.
+nav: true
+---
+
+{% comment %}
+  Build an array of categories sorted by post count (descending).
+  Liquid doesn't have a sort_by filter for hashes, so we build a
+  sortable string array and split it back out.
+{% endcomment %}
+{% assign cat_entries = "" %}
+{% for cat_pair in site.categories %}
+  {% assign cat_slug = cat_pair[0] %}
+  {% assign cat_size = cat_pair[1].size %}
+  {% assign padded = cat_size | prepend: "0000" | slice: -4, 4 %}
+  {% assign entry = padded | append: ":" | append: cat_slug %}
+  {% if cat_entries == "" %}
+    {% assign cat_entries = entry %}
+  {% else %}
+    {% assign cat_entries = cat_entries | append: "," | append: entry %}
+  {% endif %}
+{% endfor %}
+{% assign sorted_entries = cat_entries | split: "," | sort | reverse %}
+
+<div class="categories-index">
+  {% for entry in sorted_entries %}
+    {% assign cat_slug = entry | split: ":" | last %}
+    {% assign cat_posts = site.categories[cat_slug] | sort: 'date' | reverse %}
+    {% assign cat_info = site.data.categories[cat_slug] %}
+    <div class="category-section">
+      <h2 class="category-section-title">
+        <a href="{{ site.baseurl }}/{{ cat_slug }}/">{{ cat_info.name | default: cat_slug }}</a>
+        <span class="category-count">{{ cat_posts.size }}</span>
+      </h2>
+      <p class="category-section-desc">{{ cat_info.description }}</p>
+
+      {% for post in cat_posts limit:3 %}
+        <div class="category-preview">
+          <a href="{{ post.url | prepend: site.baseurl }}" class="category-preview-title">{{ post.title }}</a>
+          {% if post.subtitle %}
+            <p class="category-preview-subtitle">{{ post.subtitle }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      {% if cat_posts.size > 3 %}
+        <a href="{{ site.baseurl }}/{{ cat_slug }}/" class="category-see-all">See all {{ cat_posts.size }} posts &rarr;</a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

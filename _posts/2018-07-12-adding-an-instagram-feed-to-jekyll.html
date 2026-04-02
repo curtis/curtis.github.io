@@ -1,9 +1,14 @@
 ---
-categories: [code]
+categories: [code, javascript, how-to]
 date: 2018-07-12 16:00:00
 layout: post
 subtitle: "How to easily add an Instagram feed to your Jekyll site, while avoiding the gotchas."
 title: "Easily Add An Instagram Feed To Jekyll"
+redirect_from:
+  - "/code/adding-an-instagram-feed-to-jekyll/"
+  - "/javascript/adding-an-instagram-feed-to-jekyll/"
+  - "/how-to/adding-an-instagram-feed-to-jekyll/"
+  - "/code/javascript/how-to/adding-an-instagram-feed-to-jekyll/"
 ---
 
 <p class="lead">
@@ -14,14 +19,14 @@ title: "Easily Add An Instagram Feed To Jekyll"
   The process is fairly straightforward, but you'll need a few pieces of information first and a bit of setup.
 </p>
 
-<h3>Your Instagram User ID</h3>
+<h2>Your Instagram User ID</h2>
 
 <p>
   You'll need the numeric ID of your Instagram account. I used this tool to
   <a href="https://codeofaninja.com/tools/find-instagram-user-id">find my Instagram User ID</a>. Copy that somewhere, you'll need it soon.
 </p>
 
-<h3>A Registered Instagram Client</h3>
+<h2>A Registered Instagram Client</h2>
 
 <p>
   Sign into your Instagram account and then head over to
@@ -57,7 +62,7 @@ title: "Easily Add An Instagram Feed To Jekyll"
   Once you've submitted the registration, you should see your client, with a Client ID. You'll need this ID for the next step.
 </p>
 
-<h3>Get Your Access Token</h3>
+<h2>Get Your Access Token</h2>
 
 <p>
   Copy and paste the following URL into your browser, replacing <code>CLIENT_ID</code> and <code>REDIRECT_URI</code> with your values:
@@ -71,7 +76,7 @@ title: "Easily Add An Instagram Feed To Jekyll"
   If all goes correctly, you should be on your redirect URI and there should be an access token as part of the path. Copy the access token, as you'll need it to make requests to Instagram.
 </p>
 
-<h3>Displaying Images</h3>
+<h2>Displaying Images</h2>
 
 <p>
   There's a simple JavaScript library that you can use to display Instagram images, called

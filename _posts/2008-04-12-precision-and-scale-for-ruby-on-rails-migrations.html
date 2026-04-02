@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2008-04-12 03:52:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/precision-and-scale-for-ruby-on-rails-migrations/
 title: "Rails Tip: Precision and scale for decimals"
+subtitle: "How to specify precision and scale for decimal columns in Rails migrations using BigDecimal"
+redirect_from:
+  - "/rails/precision-and-scale-for-ruby-on-rails-migrations/"
+  - "/how-to/precision-and-scale-for-ruby-on-rails-migrations/"
+  - "/rails/how-to/precision-and-scale-for-ruby-on-rails-migrations/"
+  - "/programming/ruby-on-rails/precision-and-scale-for-ruby-on-rails-migrations/"
 ---
 <p>For when you need that little bit of extra accuracy, specifying precision and scale for a decimal column in your Ruby on Rails migration is pretty simple.  The precision represents the total number of digits in the number, whereas scale represents the number of digits following the decimal point.  To specify the precision and scale, simply pass those as options to your column definition.</p>
 <p>For example:</p>

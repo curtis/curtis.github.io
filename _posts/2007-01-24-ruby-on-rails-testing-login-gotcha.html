@@ -1,10 +1,15 @@
 ---
-categories: [rails]
+categories: [rails, testing, how-to]
 date: 2007-01-24 22:37:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/ruby-on-rails-testing-login-gotcha/
 title: "Ruby on Rails Testing - login gotcha"
+subtitle: "A workaround for testing controllers that require admin login from a different controller"
+redirect_from:
+  - "/rails/ruby-on-rails-testing-login-gotcha/"
+  - "/testing/ruby-on-rails-testing-login-gotcha/"
+  - "/how-to/ruby-on-rails-testing-login-gotcha/"
+  - "/rails/testing/how-to/ruby-on-rails-testing-login-gotcha/"
+  - "/programming/ruby-on-rails/ruby-on-rails-testing-login-gotcha/"
 ---
 <p>The Ruby on Rails web application I'm finishing has an administrator interface that allows an admin to manage users, generate reports, etc.  Some of these admin functions (like the reports) are not controlled by the admin controller.  Of course, to actually test any of the controllers I need to be logged in as an admin.  If the test doesn't log in as admin, then it simply gets redirected to the login screen with a flash that you must be logged in to access that screen.</p>
 <p>For testing the admin controller we're fine.  We can login as an administrator and proceed with testing the functionality.  However, because the admin controller handles the login request it is not possible to login from any other controller.  This happens because the <span class="caps">HTTP</span> post request does not allow you to specify the controller.  It only allows you to specify an action.  Fortunately for us there's a workaround.</p>

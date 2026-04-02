@@ -1,0 +1,37 @@
+---
+layout: default
+---
+
+<div class="site-content">
+  <div class="category-header">
+    <h1>{{ page.category_name }}</h1>
+    <p class="category-description">{{ page.description }}</p>
+  </div>
+
+  <div class="post-list">
+    {% assign cat_posts = site.categories[page.category] | sort: 'date' | reverse %}
+    {% for post in cat_posts %}
+      <div class="post-list-item">
+        <h2 class="post-list-title">
+          <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        </h2>
+
+        {% if post.subtitle %}
+          <p class="post-list-subtitle">{{ post.subtitle }}</p>
+        {% endif %}
+
+        {% if post.categories.size > 0 %}
+          <div class="post-list-categories">
+            {% for cat in post.categories %}
+              <a href="{{ site.baseurl }}/{{ cat }}/" class="category-tag">{{ cat }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {% if cat_posts.size == 0 %}
+      <p class="empty-state">No posts in this category yet.</p>
+    {% endif %}
+  </div>
+</div>

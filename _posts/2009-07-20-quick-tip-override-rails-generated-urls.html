@@ -1,11 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2009-07-20 19:00:08
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/quick-tip-override-rails-generated-urls/
 subtitle: "Override the default Ruby on Rails generated URLs for a resource. It is a quick and simple way to change your URLs without changing your code."
 title: "Quick Tip: Override Rails Generated URLs"
+redirect_from:
+  - "/rails/quick-tip-override-rails-generated-urls/"
+  - "/how-to/quick-tip-override-rails-generated-urls/"
+  - "/rails/how-to/quick-tip-override-rails-generated-urls/"
+  - "/programming/ruby-on-rails/quick-tip-override-rails-generated-urls/"
 ---
 <p>By default Ruby on Rails resources use the controller name for the URL. For example:</p>
 <pre>map.resources :time_entries</pre>
@@ -16,7 +19,7 @@ title: "Quick Tip: Override Rails Generated URLs"
 <p>now yields the following URLs</p>
 <p><script src="https://gist.github.com/151040.js"></script></p>
 <p><strong>All of your existing uses of the URL helpers can remain the same and it will generate all URLs correctly. Quick, simple and painless!</strong></p>
-<h3>References</h3>
+<h2>References</h2>
 <ul>
-<li><a rel="external" href="http://api.rubyonrails.org/classes/ActionController/Resources.html#M000522">Module ActionController::Resources</a></li>
+<li><span class="dead-link" title="http://api.rubyonrails.org/classes/ActionController/Resources.html#M000522">Module ActionController::Resources</span></li>
 </ul>

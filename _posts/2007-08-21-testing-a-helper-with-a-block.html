@@ -1,12 +1,17 @@
 ---
-categories: [rails]
+categories: [rails, testing, how-to]
 date: 2007-08-21 14:42:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/testing-a-helper-with-a-block/
 title: Testing a helper with a block
+subtitle: "Two approaches to testing a Rails helper method that accepts a block using RSpec"
+redirect_from:
+  - "/rails/testing-a-helper-with-a-block/"
+  - "/testing/testing-a-helper-with-a-block/"
+  - "/how-to/testing-a-helper-with-a-block/"
+  - "/rails/testing/how-to/testing-a-helper-with-a-block/"
+  - "/programming/ruby-on-rails/testing-a-helper-with-a-block/"
 ---
-<p>I've been doing a lot of <a href="http://rspec.rubyforge.org">Rspec</a> testing lately.  Although I've been using it for a while to do <acronym title="Behaviour Driven Development">BDD</acronym> I realize that I have not been testing things as well as I should.  Yesterday I was trying to add tests for a helper method that ensures the passed in block is only output if the user is logged in and an administrator.  It's a fairly simple helper method.</p>
+<p>I've been doing a lot of <span class="dead-link" title="http://rspec.rubyforge.org">Rspec</span> testing lately.  Although I've been using it for a while to do <acronym title="Behaviour Driven Development">BDD</acronym> I realize that I have not been testing things as well as I should.  Yesterday I was trying to add tests for a helper method that ensures the passed in block is only output if the user is logged in and an administrator.  It's a fairly simple helper method.</p>
 
 {% highlight ruby linenos %}
 def admin_accessible(&block)

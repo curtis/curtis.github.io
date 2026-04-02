@@ -1,0 +1,20 @@
+// Mixins --  Developer Mono (Prototype C)
+
+@mixin mono() {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+@mixin sans() {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@mixin transition-all() {
+  @media (prefers-reduced-motion: no-preference) {
+    transition: all 0.2s ease;
+  }
+}
+
+@mixin focus-ring() {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

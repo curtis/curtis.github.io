@@ -1,10 +1,14 @@
 ---
-categories: [ops]
+categories: [ops, how-to]
 date: 2010-04-18 14:00:09
 layout: post
 published: false
 subtitle: "At some point you're probably going to need to rotate your Ruby on Rails log files, so why not set this up automatically?"
 title: "Quick Tip: Easy Log Rotation in Ubuntu"
+redirect_from:
+  - "/ops/quick-tip-easy-log-rotation-in-ubuntu/"
+  - "/how-to/quick-tip-easy-log-rotation-in-ubuntu/"
+  - "/ops/how-to/quick-tip-easy-log-rotation-in-ubuntu/"
 ---
 <p>In Ubuntu, there's a <a rel="external" href="http://manpages.ubuntu.com/manpages/jaunty/man8/logrotate.8.html">logrotate</a> command that makes this pretty easy. You simply need to create a configuration file that will be processed by the logrotate process. For example:</p>
 <h4>/etc/logrotate.d/myapp</h4>

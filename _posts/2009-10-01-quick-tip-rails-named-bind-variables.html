@@ -1,11 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2009-10-01 09:30:28
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/quick-tip-rails-named-bind-variables/
 subtitle: "How to use named bind variables in a Ruby on Rails query to increase readability and reduce duplication."
 title: "Quick Tip: Rails Named Bind Variables"
+redirect_from:
+  - "/rails/quick-tip-rails-named-bind-variables/"
+  - "/how-to/quick-tip-rails-named-bind-variables/"
+  - "/rails/how-to/quick-tip-rails-named-bind-variables/"
+  - "/programming/ruby-on-rails/quick-tip-rails-named-bind-variables/"
 ---
 <p>Have you ever come across a Ruby on Rails query that has so many conditions that it's hard to figure out what is being replaced where? While this can be somewhat mitigated by using <a href="https://millarian.com/rails/quick-tip-named_scope/">Rails named scopes</a>, you can also use named bind variables to make it easier to read. Named bind variables replace the question marks with symbols and you supply a hash with values for the matching symbol keys:</p>
 
@@ -25,7 +28,7 @@ Event.find(:first, :conditions => [
 ])
 {% endhighlight %}
 
-<h3>References</h3>
+<h2>References</h2>
 <ul>
 <li><a rel="external" href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">ActiveRecord::Base API documentation</a>
   </li>

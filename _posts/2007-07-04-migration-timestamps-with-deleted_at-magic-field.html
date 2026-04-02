@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2007-07-04 01:40:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/migration-timestamps-with-deleted_at-magic-field/
 title: Migration Timestamps deleted_at Magic Field
+subtitle: "Extending Rails migration timestamps to automatically include a deleted_at column for acts_as_paranoid"
+redirect_from:
+  - "/rails/migration-timestamps-with-deleted_at-magic-field/"
+  - "/how-to/migration-timestamps-with-deleted_at-magic-field/"
+  - "/rails/how-to/migration-timestamps-with-deleted_at-magic-field/"
+  - "/programming/ruby-on-rails/migration-timestamps-with-deleted_at-magic-field/"
 ---
 <p>I was recently working on a project using edge rails and saw that it supported something like what used to be called <cite><a href="http://errtheblog.com/post/2381">sexy migrations</a></cite>. Basically, you can make your migration files look a whole lot cleaner.</p>
 
@@ -46,7 +50,7 @@ class CreateUsers < ActiveRecord::Migration
 end
 {% endhighlight %}
 
-<p>Looks much better doesn't it?  For what I was doing though, I wanted to use the <a href="http://ar-paranoid.rubyforge.org/">acts_as_paranoid</a> functionality to never delete anything.  The acts_as_paranoid plugin updates the row with a deleted_at timestamp and then filters out 'deleted' ones whenever it queries the database.  Of course, I could just add <code>t.datetime :deleted_at</code> to each table.  But instead of going back to the old way of doing things, I simply extended the built in timestamps functionality by placing the following in a file in the lib directory and then requiring it in the environment.</p>
+<p>Looks much better doesn't it?  For what I was doing though, I wanted to use the <span class="dead-link" title="http://ar-paranoid.rubyforge.org/">acts_as_paranoid</span> functionality to never delete anything.  The acts_as_paranoid plugin updates the row with a deleted_at timestamp and then filters out 'deleted' ones whenever it queries the database.  Of course, I could just add <code>t.datetime :deleted_at</code> to each table.  But instead of going back to the old way of doing things, I simply extended the built in timestamps functionality by placing the following in a file in the lib directory and then requiring it in the environment.</p>
 
 <h4>lib/custom_schema_definitions.rb</h4>
 

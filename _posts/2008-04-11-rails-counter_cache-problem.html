@@ -1,12 +1,16 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2008-04-11 20:40:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/rails-counter_cache-problem/
 title: Rails counter_cache problem
+subtitle: "Why counter_cache only updates one parent when creating through an association, and how to fix it"
+redirect_from:
+  - "/rails/rails-counter_cache-problem/"
+  - "/how-to/rails-counter_cache-problem/"
+  - "/rails/how-to/rails-counter_cache-problem/"
+  - "/programming/ruby-on-rails/rails-counter_cache-problem/"
 ---
-<p>I ran into a strange Ruby on Rails <a href="http://api.rubyonrails.com/classes/ActiveRecord/Associations/ClassMethods.html#M001105">counter_cache</a> problem today. Given the following example models:</p>
+<p>I ran into a strange Ruby on Rails <span class="dead-link" title="http://api.rubyonrails.com/classes/ActiveRecord/Associations/ClassMethods.html#M001105">counter_cache</span> problem today. Given the following example models:</p>
 
 {% highlight ruby %}
 class Poll < ActiveRecord::Base

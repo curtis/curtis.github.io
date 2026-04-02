@@ -1,0 +1,55 @@
+rails:
+  name: Ruby on Rails
+  description: Building web applications with Rails -- from quick tips on migrations and routes to deployment patterns and gem integrations.
+
+ruby:
+  name: Ruby
+  description: Ruby language fundamentals, quirks, and ecosystem tools beyond the Rails framework.
+
+javascript:
+  name: JavaScript
+  description: Front-end development, browser quirks, and JavaScript tooling.
+
+code:
+  name: Code
+  description: General programming practices, developer tools, and lessons learned writing software.
+
+ops:
+  name: Ops
+  description: Server management, deployment, infrastructure, and keeping things running in production.
+
+startups:
+  name: Startups
+  description: The entrepreneurial journey -- launching products, raising funding, and learning from failure.
+
+business:
+  name: Business
+  description: Company culture, hiring, management, and growing a services business.
+
+community:
+  name: Community
+  description: The Phoenix tech scene, meetups, coworking spaces, and building connections offline.
+
+events:
+  name: Events
+  description: Conferences, hackathons, and tech gatherings -- recaps, takeaways, and recommendations.
+
+personal:
+  name: Personal
+  description: Life reflections, philosophy, and the occasional non-tech musing.
+
+how-to:
+  name: How-To
+  description: Practical guides and quick tips for solving specific problems.
+
+testing:
+  name: Testing
+  description: Test-driven development, code coverage, and writing better specs.
+
+seo:
+  name: SEO
+  description: Search engine optimization techniques and resources for developers.
+
+photography:
+  name: Photography
+  description: Observations and lessons from behind the camera.

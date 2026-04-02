@@ -4,7 +4,7 @@ description: "Musings of a startup junkie and Ruby on Rails nerd."
 header-img: /img/home-bg.jpg
 title: Millarian
 full_description: "Curtis Miller is a Ruby on Rails and JavaScript web developer based in Phoenix, Arizona."
-full_title: Curtis Miller | Ruby on Rails | JavaScript | Web Development
+full_title: Millarian -- Curtis Miller's Developer Blog
 url: "https://millarian.com"
 
 # My Info
@@ -21,7 +21,7 @@ company:
 # Build Settings
 markdown: kramdown
 highlighter: rouge
-permalink: /:categories/:title/
+permalink: /posts/:title/
 paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 

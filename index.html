@@ -2,19 +2,27 @@
 layout: page
 ---
 
-{% for post in paginator.posts %}
-  <div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-      <h2 class="post-title">{{ post.title }}</h2>
+<div class="post-list">
+  {% for post in paginator.posts %}
+    <div class="post-list-item">
+      <h2 class="post-list-title">
+        <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+      </h2>
 
       {% if post.subtitle %}
-        <h3 class="post-subtitle">{{ post.subtitle }}</h3>
+        <p class="post-list-subtitle">{{ post.subtitle }}</p>
       {% endif %}
-    </a>
-  </div>
 
-  <hr/>
-{% endfor %}
+      {% if post.categories.size > 0 %}
+        <div class="post-list-categories">
+          {% for cat in post.categories %}
+            <a href="{{ site.baseurl }}/{{ cat }}/" class="category-tag">{{ cat }}</a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
 
 <!-- Pager -->
 {% if paginator.total_pages > 1 %}

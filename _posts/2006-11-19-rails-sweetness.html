@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2006-11-19 22:40:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/rails-sweetness/
 title: Rails Sweetness
+subtitle: "Using single-table inheritance in Rails to model different address types for users and businesses"
+redirect_from:
+  - "/rails/rails-sweetness/"
+  - "/how-to/rails-sweetness/"
+  - "/rails/how-to/rails-sweetness/"
+  - "/programming/ruby-on-rails/rails-sweetness/"
 ---
 <p>I was recently adding addresses to my site data.  For example, a user may have a home address and/or work address, whereas a business may have a physical address and/or mailing address.  I wanted to have a single database table that held the information about an address since that seems pretty standard.  Not surprisingly, it was called <code>addresses</code>.</p>
 <p>How then do you hook up your users and business with this common table?  Enter Rails single-table inheritance implementation.  Martin Fowler has a <a href="http://www.martinfowler.com/eaaCatalog/singleTableInheritance.html">nice diagram</a> explaining the idea behind single table inheritance.  You basically take your modeled inheritance hierarchy and smash it into a single database table.</p>

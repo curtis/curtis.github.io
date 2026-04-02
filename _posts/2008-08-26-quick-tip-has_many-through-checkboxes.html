@@ -1,13 +1,17 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2008-08-26 05:29:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/quick-tip-has_many-through-checkboxes/
 title: "Quick Tip: has_many :through => checkboxes"
+subtitle: "Using Rails' auto-generated *_ids= setter to manage many-to-many associations via checkboxes"
+redirect_from:
+  - "/rails/quick-tip-has_many-through-checkboxes/"
+  - "/how-to/quick-tip-has_many-through-checkboxes/"
+  - "/rails/how-to/quick-tip-has_many-through-checkboxes/"
+  - "/programming/ruby-on-rails/quick-tip-has_many-through-checkboxes/"
 ---
 <p>It's really easy to create a many-to-many relationship that can be assigned through checkboxes. Check it out!</p>
-<p>Let's say you have Users and Groups. A User can belong to a Group and a Group can have many Users – we call this a Membership, like so (migrations omitted for brevity):</p>
+<p>Let's say you have Users and Groups. A User can belong to a Group and a Group can have many Users - we call this a Membership, like so (migrations omitted for brevity):</p>
 <h4>app/models/user.rb</h4>
 
 {% highlight ruby %}

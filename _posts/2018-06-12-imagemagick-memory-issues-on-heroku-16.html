@@ -1,9 +1,14 @@
 ---
-categories: [ops]
+categories: [ops, rails, how-to]
 date: 2018-06-12 10:00:00
 layout: post
 subtitle: "I recently encountered some strange memory issues after upgrading to Heroku-16. I was a little surprised at what I found regarding Imagemagick on Heroku."
 title: "Imagemagick On Heroku-16"
+redirect_from:
+  - "/ops/imagemagick-memory-issues-on-heroku-16/"
+  - "/rails/imagemagick-memory-issues-on-heroku-16/"
+  - "/how-to/imagemagick-memory-issues-on-heroku-16/"
+  - "/ops/rails/how-to/imagemagick-memory-issues-on-heroku-16/"
 ---
 
 <p class="lead">
@@ -14,7 +19,7 @@ title: "Imagemagick On Heroku-16"
   First we prototyped this upgrade with our staging server and, after a week, did not encounter any issues. Feeling pretty confident with Heroku, we initiated the update. Within 24 hours we were experiencing extreme memory issues (<a href="https://devcenter.heroku.com/articles/error-codes#r15-memory-quota-vastly-exceeded">R15 - Memory quota vastly exceeded</a>), causing the site to be unreachable.
 </p>
 
-<h3>Break Out The Fire Extenguisher</h3>
+<h2>Break Out The Fire Extenguisher</h2>
 
 <p>
   Okay, so we set our app on fire…

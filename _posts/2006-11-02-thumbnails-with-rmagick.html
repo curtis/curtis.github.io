@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2006-11-02 12:50:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/thumbnails-with-rmagick/
 title: Thumbnails with RMagick
+subtitle: "Generating proportionally scaled image thumbnails in Rails using ImageMagick and RMagick"
+redirect_from:
+  - "/rails/thumbnails-with-rmagick/"
+  - "/how-to/thumbnails-with-rmagick/"
+  - "/rails/how-to/thumbnails-with-rmagick/"
+  - "/programming/ruby-on-rails/thumbnails-with-rmagick/"
 ---
 <p>I continue to prototype my site in order to have something to show potential investors.  Recently, I tackled uploading images into a user's gallery.  The ability to upload images was pretty straightforward.  You create a form that has a <code>file_field</code> element.  For example, you may have something like this:</p>
 
@@ -35,7 +39,7 @@ end
 {% endhighlight %}
 
 <p>There is some more information on this, and a few other related things, in the <a href="http://manuals.rubyonrails.com/read/chapter/56">Ruby on Rails manual</a>, so I won't go into more detail.</p>
-<p>What I noticed with my simplistic approach is that I needed to scale images for display, but instead of doing something like setting the width and height of the image tag, I looked at <a href="http://rmagick.rubyforge.org">RMagick</a>.  RMagick is a Ruby interface to the <a href="http://www.imagemagick.org">ImageMagick</a> or <a href="http://www.graphicsmagick.org">GraphicsMagick</a> library.</p>
+<p>What I noticed with my simplistic approach is that I needed to scale images for display, but instead of doing something like setting the width and height of the image tag, I looked at <span class="dead-link" title="http://rmagick.rubyforge.org">RMagick</span>.  RMagick is a Ruby interface to the <a href="http://www.imagemagick.org">ImageMagick</a> or <a href="http://www.graphicsmagick.org">GraphicsMagick</a> library.</p>
 <p>The first thing I have to say about the ImageMagick and GraphicsMagick libraries is they have <strong>a lot</strong> of dependencies.  This is good if you need to support a million different file formats, most of which you've never heard of.  Not so good if you are just prototyping an application.  I chose to try ImageMagick first.</p>
 <p>Unless you want to download, build (possibly), and install all of the dependencies then you need to get the source tarball and build ImageMagick yourself.  Part of the configure script detects the libraries you have installed and sets up the makefile accordingly.  Now I have a scaled down version of ImageMagick to use for prototyping.</p>
 <p>The <a href="http://www.amazon.com/Rails-Recipes-Pragmatic-Programmers-Fowler/dp/0977616606/sr=8-1/qid=1162496075/ref=pd_bbs_sr_1/104-2305102-2783144?ie=UTF8&#38;s=books">Rails Recipes book</a>  has a recipe (#57) that describes a way to create separate thumbnails for each image that is uploaded.  This looks great, but I found that particular recipe was only good for images greater than the &#8220;maximum&#8221; size.  If an image was smaller, then it stretched it out of shape.  Not good.</p>

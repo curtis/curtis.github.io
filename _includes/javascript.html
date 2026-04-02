@@ -1,16 +1,8 @@
-<!-- jQuery -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<!-- Bootstrap 5.3.3 Bundle (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-<!-- Bootstrap Core JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="{{ "/js/clean-blog.min.js" | prepend: site.baseurl }}"></script>
-
-<!-- Plugin JS -->
-<script src="{{ "/js/jquery.justifiedGallery.min.js" | prepend: site.baseurl }}"></script>
-<script src="{{ "/js/jquery.swipebox.min.js" | prepend: site.baseurl }}"></script>
-<script src="{{ "/js/instafeed.min.js" | prepend: site.baseurl }}"></script>
+<!-- Theme JavaScript -->
+<script src="{{ "/js/blog.js" | prepend: site.baseurl }}"></script>
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -23,20 +15,21 @@
 </script>
 
 <script>
-  $(function() {
-    if($('#instafeed').length > 0) {
+  document.addEventListener('DOMContentLoaded', function() {
+    var instafeed = document.getElementById('instafeed');
+    if (instafeed) {
       fetch('https://ig.instant-tokens.com/users/8e59f628-0ed5-4171-a7c2-97d92becd8ff/instagram/17841405982014620/token?userSecret=yq2sgrbfd22fgejrafu2r')
-        .then(resp => resp.json())
-        .then(data => {
-          const feed = new Instafeed({
+        .then(function(resp) { return resp.json(); })
+        .then(function(data) {
+          var feed = new Instafeed({
             accessToken: data.Token,
             limit: 24,
-            template: '<a target="_blank" href="\{\{link\}\}"><img src="\{\{image\}\}" width="210" height="210" alt="\{\{caption\}\}" /></a>'
+            template: '<a target="_blank" href="{{link}}"><img src="{{image}}" width="210" height="210" alt="{{caption}}" /></a>'
           });
           feed.run();
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(function(error) {
+          console.log(error);
         });
     }
   });

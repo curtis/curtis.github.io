@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2006-10-18 00:39:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/self-referential-many-to-many-relationships/
 title: Self-Referential, Many-to-Many Relationships
+subtitle: "Modeling a friends list in Rails using has_and_belongs_to_many with a self-referencing join table"
+redirect_from:
+  - "/rails/self-referential-many-to-many-relationships/"
+  - "/how-to/self-referential-many-to-many-relationships/"
+  - "/rails/how-to/self-referential-many-to-many-relationships/"
+  - "/programming/ruby-on-rails/self-referential-many-to-many-relationships/"
 ---
 <p>Wow, that title is a mouthful!  Yet, it refers to a concept that I explored today in my <a href="http://www.rubyonrails.com">Ruby on Rails</a> studies.</p>
 <p>So, just a quick background on the topic.  A self-referential relationship refers to a relationship between a class and itself.  For example, every social networking website has the concept of a User (Member, Person, whatever).  Now, it wouldn't be very social if those users could not have friends, so Users are allowed to add Friends.  But what is a Friend, really?  A Friend is just another User on the site.  Therefore, a User has a relationship to another User (or many Users).</p>

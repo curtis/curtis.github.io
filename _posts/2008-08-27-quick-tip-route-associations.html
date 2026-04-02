@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2008-08-27 03:39:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/quick-tip-route-associations/
 title: 'Quick Tip: Route Associations'
+subtitle: "Simplify nested resource routes with has_one and has_many shorthand options"
+redirect_from:
+  - "/rails/quick-tip-route-associations/"
+  - "/how-to/quick-tip-route-associations/"
+  - "/rails/how-to/quick-tip-route-associations/"
+  - "/programming/ruby-on-rails/quick-tip-route-associations/"
 ---
 <p>Are you used to writing your routes like this?</p>
 <pre><code class="ruby">map.resources :notes do |notes|
@@ -14,14 +18,14 @@ title: 'Quick Tip: Route Associations'
 end</code></pre>
 <p>Don't fret, there may be hope for you yet.  For these simple routes you can use the <code>has_one</code> or <code>has_many</code> route association options.</p>
 <ul>
-<li>has_one – use it for a singleton resource</li>
-<li>has_many – use it for plural resources</li>
+<li>has_one - use it for a singleton resource</li>
+<li>has_many - use it for plural resources</li>
 </ul>
-<h3>Refactored routes</h3>
+<h2>Refactored routes</h2>
 <pre><code class="ruby">map.resources :notes, :has_one =&gt; :author, :has_many =&gt; [:comments, :attachments]</code></pre>
 <p>Give it a try!</p>
 <p>Keep in mind I said <em>simple</em>. If you're doing something more complex they might not be the best choice.</p>
-<h3>Additional Resources</h3>
+<h2>Additional Resources</h2>
 <ul>
-<li><a href="http://api.rubyonrails.org/classes/ActionController/Resources.html">Module ActionController::Resources</a></li>
+<li><span class="dead-link" title="http://api.rubyonrails.org/classes/ActionController/Resources.html">Module ActionController::Resources</span></li>
 </ul>

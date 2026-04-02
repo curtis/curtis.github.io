@@ -1,14 +1,19 @@
 ---
-categories: [code]
+categories: [ops, rails, how-to]
 date: 2008-12-15 04:08:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/monitoring-thin-using-god-with-google-apps-notifications/
 title: "Monitoring Thin using God, with Google Apps Notifications"
+subtitle: "A complete God config for monitoring Thin processes with email alerts via Google Apps SMTP"
+redirect_from:
+  - "/ops/monitoring-thin-using-god-with-google-apps-notifications/"
+  - "/rails/monitoring-thin-using-god-with-google-apps-notifications/"
+  - "/how-to/monitoring-thin-using-god-with-google-apps-notifications/"
+  - "/ops/rails/how-to/monitoring-thin-using-god-with-google-apps-notifications/"
+  - "/programming/ruby-on-rails/monitoring-thin-using-god-with-google-apps-notifications/"
 ---
-<p>We've been using <a href="http://god.rubyforge.org">God</a> to monitor our <a href="http://code.macournoyer.com/thin/">Thin</a> processes on <a href="http://freebootr.com">Freebootr</a> and set it up to notify us through our Google Apps account. Thought our God config file might be useful to anyone trying to use God with Thin and Google Apps.</p>
+<p>We've been using <span class="dead-link" title="http://god.rubyforge.org">God</span> to monitor our <a href="http://code.macournoyer.com/thin/">Thin</a> processes on <span class="dead-link" title="http://freebootr.com">Freebootr</span> and set it up to notify us through our Google Apps account. Thought our God config file might be useful to anyone trying to use God with Thin and Google Apps.</p>
 
-<h3 class="clearfix">Thin configuration</h3>
+<h3 class="clearfix">Thin configuration</h2>
 
 {% highlight ruby %}
 # == God config file
@@ -102,7 +107,7 @@ Dir[config_path + "/*.yml"].each do |file|
 end
 {% endhighlight %}
 
-<h3>Email through Google Apps configuration</h3>
+<h2>Email through Google Apps configuration</h2>
 
 {% highlight ruby %}
 require 'tlsmail'
@@ -135,9 +140,9 @@ God.contact(:email) do |c|
 end
 {% endhighlight %}
 
-<h3>References</h3>
+<h2>References</h2>
 <ul>
-<li><a href="http://god.rubyforge.org">God</a></li>
+<li><span class="dead-link" title="http://god.rubyforge.org">God</span></li>
 <li><a href="http://glauche.de/2008/02/15/a-thin-god/">A Thin God</a></li>
 <li><a href="http://railsforum.com/viewtopic.php?pid=75511">A Gmail God</a></li>
 </ul>

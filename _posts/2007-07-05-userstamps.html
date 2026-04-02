@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2007-07-05 01:13:12
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/userstamps/
 title: Userstamps
+subtitle: "Automatically recording created_by and updated_by user IDs on ActiveRecord models"
+redirect_from:
+  - "/rails/userstamps/"
+  - "/how-to/userstamps/"
+  - "/rails/how-to/userstamps/"
+  - "/programming/ruby-on-rails/userstamps/"
 ---
 <p>In my <a href="/rails/migration-timestamps-with-deleted_at-magic-field">last article</a> I talked about adding a <code>deleted_at</code> field to the migration <code>timestamps</code> method for use with acts_as_paranoid.  One of the additional things I wanted to do was not only capture the timestamp information, but also the user information. This way, I can be really paranoid and see who did what when.  To add userstamps, I did the following.</p>
 

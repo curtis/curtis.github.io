@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2008-08-31 22:49:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/quick-tip-named_scope/
 title: "Quick Tip: named_scope"
+subtitle: "Building chainable, reusable query scopes in Rails 2.1 with named_scope"
+redirect_from:
+  - "/rails/quick-tip-named_scope/"
+  - "/how-to/quick-tip-named_scope/"
+  - "/rails/how-to/quick-tip-named_scope/"
+  - "/programming/ruby-on-rails/quick-tip-named_scope/"
 ---
 <p>Have you ever found yourself writing queries like this?</p>
 <p>
@@ -14,7 +18,7 @@ title: "Quick Tip: named_scope"
 <pre><code class="ruby">User.find_all_active_in_date_range(start_date, end_date)</code></pre></p>
 <p>But what if you need that same query where the state is &#8216;pending'? Create another custom finder? Modify it so it takes another parameter for state?  Wouldn't it be nice if you could create some kind of reusable snippet that could be chained together to create a custom finder?  Well, look no further. As of Rails 2.1, such a thing exists and it's called named_scope.</p>
 <p>Let's refactor that code using named_scope.</p>
-<h4>app/models/user.rb</h4>
+<h2>app/models/user.rb</h2>
 <p>
 <pre><code class="ruby">class User &lt; ActiveRecord::Base
   named_scope :active, :conditions =&gt; { :state =&gt; 'active' }
@@ -25,7 +29,7 @@ end
 <p>
 <pre><code class="ruby">User.active.between(start_date, end_date)</code></pre></p>
 <p>Plus, if we want to add another condition, we just created another reusable named_scope and add it to the end.</p>
-<h4>app/models/user.rb</h4>
+<h2>app/models/user.rb</h2>
 <p>
 <pre><code class="ruby">class User &lt; ActiveRecord::Base
   named_scope :active, :conditions =&gt; { :state =&gt; 'active' }
@@ -37,7 +41,7 @@ end
 <p>
 <pre><code class="ruby">User.active.between(start_date, end_date).limit(5)</code></pre></p>
 <p>There's so much more you can do with named_scope, so check it out.</p>
-<h3>References</h3>
+<h2>References</h2>
 <ul>
 <li><a href="http://ryandaigle.com/articles/2008/3/24/what-s-new-in-edge-rails-has-finder-functionality">Has finder functionality</a></li>
 <li><a href="http://ryandaigle.com/articles/2008/8/20/named-scope-it-s-not-just-for-conditions-ya-know">Named scope: It's not just for conditions, ya know?</a></li>

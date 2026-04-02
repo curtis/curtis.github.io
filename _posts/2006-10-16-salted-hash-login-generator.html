@@ -1,12 +1,16 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2006-10-16 02:14:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/salted-hash-login-generator/
 title: Salted Hash Login Generator
+subtitle: "Tips for getting the Rails SaltedHashLoginGenerator working properly"
+redirect_from:
+  - "/rails/salted-hash-login-generator/"
+  - "/how-to/salted-hash-login-generator/"
+  - "/rails/how-to/salted-hash-login-generator/"
+  - "/programming/ruby-on-rails/salted-hash-login-generator/"
 ---
-<p>The remainder of the day, I worked with Ruby on Rails – I am a n00b, so be kind. I am currently looking at the requirements for login and registration. I rolled my own login and registration that was pretty simple using <span class="caps">SHA1</span> encryption for the password, but it was <i>extremely simplistic</i>. So what other options are there besides reinventing the wheel?</p>
+<p>The remainder of the day, I worked with Ruby on Rails - I am a n00b, so be kind. I am currently looking at the requirements for login and registration. I rolled my own login and registration that was pretty simple using <span class="caps">SHA1</span> encryption for the password, but it was <i>extremely simplistic</i>. So what other options are there besides reinventing the wheel?</p>
 <p>There are several options for this particular functionality. The <a href="http://wiki.rubyonrails.com/rails/pages/LoginGenerator">LoginGenerator</a> was the first I found on the <a href="http://wiki.rubyonrails.com">RoR Wiki</a>, but I soon abandoned that in favor of a generator called the <a href="http://wiki.rubyonrails.com/rails/pages/SaltedHashLoginGenerator">SaltedHashLoginGenerator</a> that was referenced a few paragraphs down the page. It stated it was:</p>
 <blockquote>
 a newer descendant of this codebase adds ActionMailer support for changed and forgotten passwords, as well as account verification via a registration email with a custom <span class="caps">URL</span> sent to the user's registered address.

@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, how-to]
 date: 2006-11-30 21:12:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/render-partial-for-email-template/
 title: Render Partial for Email Template
+subtitle: "A workaround for rendering partials inside Rails mail templates using relative paths"
+redirect_from:
+  - "/rails/render-partial-for-email-template/"
+  - "/how-to/render-partial-for-email-template/"
+  - "/rails/how-to/render-partial-for-email-template/"
+  - "/programming/ruby-on-rails/render-partial-for-email-template/"
 ---
 <p>As I create more automated email responses for my system, I realized I should follow the <span class="caps">DRY</span> (Don't Repeat Yourself) principle.  So I started down a path to create a separate file containing a header and footer for my emails.  At least that part I could rip out, right?  Well…not exactly.</p>
 <p>Turns out that rendering from within a mail template is not yet supported.  In fact there is a <a href="http://dev.rubyonrails.org/ticket/2926">Rails ticket</a> open to address it, but it has not been corrected yet.</p>

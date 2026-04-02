@@ -1,10 +1,14 @@
 ---
-categories: [code]
+categories: [code, how-to]
 date: 2006-12-05 22:20:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/dissecting-a-regular-expression/
 title: Dissecting a Regular Expression
+subtitle: "Breaking down a Ruby regex that extracts a file extension from filenames with spaces and multiple dots"
+redirect_from:
+  - "/code/dissecting-a-regular-expression/"
+  - "/how-to/dissecting-a-regular-expression/"
+  - "/code/how-to/dissecting-a-regular-expression/"
+  - "/programming/ruby-on-rails/dissecting-a-regular-expression/"
 ---
 <p>I am a beginner at regular expressions, but recently found the need to create one.  My goal was to take in a file name, split it at the dot ('.') just before the file extension and then hash everything to the left to get a unique name to store on the server.</p>
 <p>I thought I had an okay solution until a user uploaded a file with a name similar to <b>Oct. 24 2006 040.jpg</b>.  Notice that there is white space as well as multiple dots in the string.  So how do you accomplish the goal under those conditions?</p>

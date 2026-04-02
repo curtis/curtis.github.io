@@ -1,10 +1,15 @@
 ---
-categories: [ops]
+categories: [ops, ruby, how-to]
 date: 2008-09-23 07:35:00
 layout: post
-redirect_from:
-  - /programming/error-after-upgrading-slicehost/
 title: "Error after upgrading SliceHost"
+subtitle: "Fixing the INLINEDIR/HOME TemplateError that appears after a SliceHost upgrade"
+redirect_from:
+  - "/ops/error-after-upgrading-slicehost/"
+  - "/ruby/error-after-upgrading-slicehost/"
+  - "/how-to/error-after-upgrading-slicehost/"
+  - "/ops/ruby/how-to/error-after-upgrading-slicehost/"
+  - "/programming/error-after-upgrading-slicehost/"
 ---
 <p>If you happen to see this error after upgrading your SliceHost account, be calm.</p>
 <p>
@@ -13,7 +18,7 @@ title: "Error after upgrading SliceHost"
 <p>
 <pre>ENV['INLINEDIR'] = '/path/to/.ruby_inline'</pre></p>
 <p>Once that was set, we were in business again… whew!</p>
-<h3>References</h3>
+<h2>References</h2>
 <p>Here's a relevant reference that took a while to find:</p>
 <ul>
 <li><a href="http://www.dx13.co.uk/articles/2008/7/6/Problems-with-God--RubyInline-and-Rails.html">Problems with God, RubyInline and Rails</a></li>

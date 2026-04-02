@@ -1,10 +1,14 @@
 ---
-categories: [code]
+categories: [ops, how-to]
 date: 2008-09-23 07:09:00
 layout: post
-redirect_from:
-  - /programming/setting-an-spf-record-for-google-apps/
 title: "Quick Tip: Setting an SPF record"
+subtitle: "Adding a DNS TXT record to stop Google Apps from rejecting your Rails app's outgoing email"
+redirect_from:
+  - "/ops/setting-an-spf-record-for-google-apps/"
+  - "/how-to/setting-an-spf-record-for-google-apps/"
+  - "/ops/how-to/setting-an-spf-record-for-google-apps/"
+  - "/programming/setting-an-spf-record-for-google-apps/"
 ---
 <p>I recently noticed a lot of rejected emails coming from a production app that had just switched to send mail through Google Apps. For some reason Google felt we might be spammers, so it began rejecting our emails out-of-hand. We would continuously get the following error message:</p>
 <p>
@@ -18,8 +22,8 @@ Message rejected.  See http://mail.google.com/support/bin/answer.py?answer=69585
 Publishing an <span class="caps">SPF</span> record that lacks include:aspmx.googlemail.com or specifying -all instead of ~all may result in delivery problems.
 </blockquote>
 <p>I also contacted Google to let them know of the error and if you start seeing this, be sure to let them know, too. Either that or setting the <span class="caps">SPF</span> record corrected our problem and we no longer get the rejected emails…</p>
-<h3>References</h3>
+<h2>References</h2>
 <ul>
-<li><a href="http://articles.slicehost.com/2008/8/8/email-setting-a-sender-policy-framework-spf-record">Setting a sender policy framework (SPF) record</a></li>
+<li><span class="dead-link" title="http://articles.slicehost.com/2008/8/8/email-setting-a-sender-policy-framework-spf-record">Setting a sender policy framework (SPF) record</span></li>
 <li><a href="http://www.google.com/support/a/bin/answer.py?hl=en&#38;answer=33786">How do I set my <span class="caps">SPF</span> record?</a></li>
 </ul>

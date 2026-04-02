@@ -3,69 +3,75 @@ layout: default
 comments: true
 ---
 
-<header class="intro-header" style="background-image: url('{% if page.header-img %}{{ page.header-img | prepend: site.baseurl }}{% else %}{{ site.header-img | prepend: site.baseurl }}{% endif %}')">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <div class="post-heading">
-          <h1>{{ page.title }}</h1>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ page.subtitle | default: site.full_description | jsonify }},
+  "author": {
+    "@type": "Person",
+    "name": {{ site.author | jsonify }},
+    "url": "{{ site.url }}{{ site.baseurl }}/about/"
+  },
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+  "mainEntityOfPage": "{{ page.url | prepend: site.baseurl | prepend: site.url }}",
+  "url": "{{ page.url | prepend: site.baseurl | prepend: site.url }}",
+  "publisher": {
+    "@type": "Person",
+    "name": {{ site.author | jsonify }}
+  }
+}
+</script>
 
-          {% if page.subtitle %}
-            <h2 class="subheading">{{ page.subtitle }}</h2>
-          {% endif %}
+<div class="post-header">
+  <h1>{{ page.title }}</h1>
 
-          <span class="meta">
-            Posted by
-            <a href="https://twitter.com/{{ site.twitter_username }}">
-              <img src="https://s.gravatar.com/avatar/{{ site.gravatar_hash }}?s=24" alt="{{ site.author }}" class="img-responsive img-circle inline-block" />
-              {{ site.author }}
-            </a>
-          </span>
-        </div>
+  {% if page.subtitle %}
+    <p class="post-subtitle">{{ page.subtitle }}</p>
+  {% endif %}
+
+  <div class="post-meta">
+    <a href="{{ site.baseurl }}/about/" class="post-author">{{ site.author }}</a>
+    {% if page.categories.size > 0 %}
+      <div class="post-meta-categories">
+        {% for cat in page.categories %}
+          <a href="{{ site.baseurl }}/{{ cat }}/" class="category-tag">{{ cat }}</a>
+        {% endfor %}
       </div>
-    </div>
+    {% endif %}
   </div>
-</header>
+</div>
 
 <!-- Post Content -->
-<article>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-9">
-        {% if page.update %}
-          <div class="panel panel-danger update">
-            <div class="panel-heading">
-              <h3 class="panel-title">{{ page.update.title }}</h3>
-            </div>
-            <div class="panel-body">{{ page.update.body }}</div>
-          </div>
-        {% endif %}
-
-        {{ content }}
-
-        <hr style="clear: both;"/>
-
-        <ul class="pager">
-          {% if page.previous.url %}
-            <li class="previous">
-              <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">&larr; Previous Post</a>
-            </li>
-          {% endif %}
-
-          {% if page.next.url %}
-            <li class="next">
-              <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-toggle="tooltip" data-placement="top" title="{{page.next.title}}">Next Post &rarr;</a>
-            </li>
-          {% endif %}
-        </ul>
-
-        {% include comments.html %}
-      </div>
-      <div class="col-md-3">
-        {% include hire.html %}
-      </div>
+<article class="post-content">
+  {% if page.update %}
+    <div class="update-alert">
+      <p class="update-title">{{ page.update.title }}</p>
+      <div class="update-body">{{ page.update.body }}</div>
     </div>
-  </div>
-</article>
+  {% endif %}
 
-<hr/>
+  {{ content }}
+
+  {% include hire.html %}
+
+  <hr/>
+
+  <ul class="pager">
+    {% if page.previous.url %}
+      <li class="previous">
+        <a href="{{ page.previous.url | prepend: site.baseurl | replace: '//', '/' }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ page.previous.title }}">&larr; Previous</a>
+      </li>
+    {% endif %}
+
+    {% if page.next.url %}
+      <li class="next">
+        <a href="{{ page.next.url | prepend: site.baseurl | replace: '//', '/' }}" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ page.next.title }}">Next &rarr;</a>
+      </li>
+    {% endif %}
+  </ul>
+
+  {% include comments.html %}
+</article>

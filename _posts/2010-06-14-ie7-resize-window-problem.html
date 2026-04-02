@@ -1,11 +1,14 @@
 ---
-categories: [javascript]
+categories: [javascript, how-to]
 date: 2010-06-14 09:30:39
 layout: post
-redirect_from:
-  - /programming/ie7-resize-window-problem/
 subtitle: "I describe a problem encountered in IE7 when dealing with a centered body and relatively positioned elements that appeared to have a fixed position."
 title: "IE7 resize window problem"
+redirect_from:
+  - "/javascript/ie7-resize-window-problem/"
+  - "/how-to/ie7-resize-window-problem/"
+  - "/javascript/how-to/ie7-resize-window-problem/"
+  - "/programming/ie7-resize-window-problem/"
 ---
 <p>While developing an embeddable JavaScript widget, I ran across a problem in IE7 recently that was pretty strange. Some of the elements on the page appeared to be fixed (i.e., <code>position: fixed</code>) when really they were not.</p>
 <p>I was able to track it down to the use of <code>position: relative</code> on these particular elements. If I added <code>position: relative</code> to other elements, they would also appear to be fixed. I proceed to try relative positioning on surrounding elements, but it was only at the body level that all elements behaved as they should.</p>

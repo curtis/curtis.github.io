@@ -1,59 +1,41 @@
 <!-- Footer -->
-<footer>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <ul class="list-inline text-center">
-          <li>
-            <a href="{{ "/feed.xml" | prepend: site.baseurl }}">
-              <span class="fa-stack fa-lg">
-                <i class="fa fa-circle fa-stack-2x"></i>
-                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-              </span>
-            </a>
-          </li>
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="footer-copy">
+      &copy; {{ site.author }} 2006&ndash;{{ site.time | date: '%Y' }}
+      &middot;
+      <a href="{{ "/privacy" | prepend: site.baseurl }}">Privacy</a>
+      &middot;
+      <a href="{{ "/terms" | prepend: site.baseurl }}">Terms</a>
+    </p>
 
-          {% if site.twitter_username %}
-            <li>
-              <a href="https://twitter.com/{{ site.twitter_username }}">
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-circle fa-stack-2x"></i>
-                  <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
-            </li>
-          {% endif %}
-
-          {% if site.github_username %}
-            <li>
-              <a href="https://github.com/{{ site.github_username }}">
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-circle fa-stack-2x"></i>
-                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
-            </li>
-          {% endif %}
-
-          {% if site.linkedin_username %}
-            <li>
-              <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}">
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-circle fa-stack-2x"></i>
-                  <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
-            </li>
-          {% endif %}
-        </ul>
-
-        <p class="copyright text-muted">
-          Copyright &copy; {{ site.author }} 2006-{{ site.time | date: '%Y' }}
-          <br/>
-          <a href="{{ "/privacy" | prepend: site.baseurl }}">Privacy Policy</a> |
-          <a href="{{ "/terms" | prepend: site.baseurl }}">Terms of Use</a>
-        </p>
-      </div>
-    </div>
+    <ul class="footer-links">
+      <li>
+        <a href="{{ "/feed.xml" | prepend: site.baseurl }}" aria-label="RSS Feed">
+          <i class="fa-solid fa-rss" aria-hidden="true"></i>
+        </a>
+      </li>
+      {% if site.twitter_username %}
+        <li>
+          <a href="https://twitter.com/{{ site.twitter_username }}" aria-label="Twitter">
+            <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+          </a>
+        </li>
+      {% endif %}
+      {% if site.github_username %}
+        <li>
+          <a href="https://github.com/{{ site.github_username }}" aria-label="GitHub">
+            <i class="fa-brands fa-github" aria-hidden="true"></i>
+          </a>
+        </li>
+      {% endif %}
+      {% if site.linkedin_username %}
+        <li>
+          <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>
+          </a>
+        </li>
+      {% endif %}
+    </ul>
   </div>
 </footer>

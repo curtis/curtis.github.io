@@ -1,12 +1,8 @@
-<div id="hire" class="text-center">
-  <p>
-    <img src="/img/velocity-labs-logo-text.png" alt="Velocity Labs" class="img-responsive img-block" />
-  </p>
-  <p>
-    Need web application development, maintenance for your existing app, or a third party code review?
-  </p>
-  <p>
-    <strong class="text-uppercase">{{ site.company.name }} can help.</strong>
-  </p>
-  <a href="{{ site.company.url }}#contact" class="btn btn-warning btn-block" target="_blank">Hire us!</a>
+<div class="cta-terminal" role="complementary" aria-label="{{ site.company.name }}">
+  <div class="cta-header" aria-hidden="true">&#9484;&#9472; <span>{{ site.company.name | downcase }}</span> &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9488;</div>
+  <div class="cta-body">
+    We build web apps for startups. Need development, maintenance, or a code review?
+  </div>
+  <div class="cta-command" aria-hidden="true"><span class="prompt-sign">$ </span>curl {{ site.company.url }}/#contact</div>
+  <a href="{{ site.company.url }}#contact" class="cta-link" target="_blank" rel="noopener">Get in touch</a>
 </div>

@@ -1,35 +1,23 @@
 <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header page-scroll">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+<nav>
+  <div class="site-nav">
+    <a class="site-nav__title" href="{{ site.baseurl }}/">
+      <span class="prompt">~/</span>{{ site.title | downcase }}
+    </a>
+
+    <div class="site-nav__right">
+      <button class="site-nav__menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links" onclick="var ul=document.getElementById('nav-links');ul.classList.toggle('is-open');this.setAttribute('aria-expanded',ul.classList.contains('is-open'))">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
       </button>
-      <a class="navbar-brand" href="{{ site.baseurl }}/">{{ site.title }}</a>
-    </div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a href="{{ site.baseurl }}/">Home</a>
-        </li>
-
+      <ul class="site-nav__links" id="nav-links">
         {% assign pages = site.pages | where:"nav",true %}
-        {% for page in pages %}
-          {% if page.title %}
-            <li>
-              <a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
-            </li>
+        {% for pg in pages %}
+          {% if pg.title %}
+            <li><a href="{{ pg.url | prepend: site.baseurl }}">{{ pg.title | downcase }}</a></li>
           {% endif %}
         {% endfor %}
       </ul>
     </div>
-    <!-- /.navbar-collapse -->
   </div>
-  <!-- /.container -->
 </nav>

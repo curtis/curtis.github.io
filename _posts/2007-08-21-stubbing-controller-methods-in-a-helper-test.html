@@ -1,13 +1,18 @@
 ---
-categories: [rails]
+categories: [rails, testing, how-to]
 date: 2007-08-21 14:30:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/stubbing-controller-methods-in-a-helper-test/
 title: Stubbing controller methods in a helper test
+subtitle: "In RSpec helper tests, the controller context is self -- use self.stub! to mock controller methods"
+redirect_from:
+  - "/rails/stubbing-controller-methods-in-a-helper-test/"
+  - "/testing/stubbing-controller-methods-in-a-helper-test/"
+  - "/how-to/stubbing-controller-methods-in-a-helper-test/"
+  - "/rails/testing/how-to/stubbing-controller-methods-in-a-helper-test/"
+  - "/programming/ruby-on-rails/stubbing-controller-methods-in-a-helper-test/"
 ---
 <p>
-  I hadn't created any tests of helper methods in <a href="http://rspec.rubyforge.org">Rspec</a> until last week. Doing so I found that one of my helpers was invoking the restful_authentication <code>logged_in?</code> method.  This probably isn't a big thing, but I was unsure how to stub the <code>logged_in?</code> method, that is, how to get the controller context to be able to invoke the <code>stub!</code> method.  What I learned from <a href="http://heidmotron.com">a colleague</a> was that the context of the controller in a helper test is self.</p>
+  I hadn't created any tests of helper methods in <span class="dead-link" title="http://rspec.rubyforge.org">Rspec</span> until last week. Doing so I found that one of my helpers was invoking the restful_authentication <code>logged_in?</code> method.  This probably isn't a big thing, but I was unsure how to stub the <code>logged_in?</code> method, that is, how to get the controller context to be able to invoke the <code>stub!</code> method.  What I learned from <a href="http://heidmotron.com">a colleague</a> was that the context of the controller in a helper test is self.</p>
 
 {% highlight ruby %}
 self.stub!(:logged_in?).and_return(false)

@@ -1,10 +1,14 @@
 ---
-categories: [rails]
+categories: [rails, ops]
 date: 2007-08-25 19:38:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/gravatars/
 title: "Gravatar Problems"
+subtitle: "Debugging and fixing the Mephisto Gravatar caching plugin for production use"
+redirect_from:
+  - "/rails/gravatars/"
+  - "/ops/gravatars/"
+  - "/rails/ops/gravatars/"
+  - "/programming/ruby-on-rails/gravatars/"
 ---
 <p>When I switched the blog to <a href="http://mephistoblog.com">Mephisto</a> I had installed the <a href="http://www.matthewhutchinson.net/articles/2007/3/24/mephisto-gravatar-caching-plugin">Gravatar caching plugin</a>.  It seemed to be working fine prior to deployment, but once in production it was not working as expected.  Today I finally tried to track down what was wrong.  hopefully this will fix any problems with Gravatar images, creating comments, etc.  I won't be so bold as to say this will work for everyone, but it works for me :)</p>
 <p>My first problem was that Gravatar images were not displaying at all, even when the email address had an associated Gravatar and the plugin had cached the file.  I could navigate to the image directly and see it was correct, but the plugin was not finding it. After some debugging, I noticed the file exists check was using a relative path.  By changing this to an absolute path I was able to see images. Woohoo!</p>

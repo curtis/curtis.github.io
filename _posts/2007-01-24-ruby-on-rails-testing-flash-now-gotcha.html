@@ -1,13 +1,18 @@
 ---
-categories: [rails]
+categories: [rails, testing, how-to]
 date: 2007-01-24 11:40:00
 layout: post
-redirect_from:
-  - /programming/ruby-on-rails/ruby-on-rails-testing-flash-now-gotcha/
 title: "Ruby on Rails Testing - flash.now gotcha"
+subtitle: "How to test flash.now values that get cleared after rendering the view"
+redirect_from:
+  - "/rails/ruby-on-rails-testing-flash-now-gotcha/"
+  - "/testing/ruby-on-rails-testing-flash-now-gotcha/"
+  - "/how-to/ruby-on-rails-testing-flash-now-gotcha/"
+  - "/rails/testing/how-to/ruby-on-rails-testing-flash-now-gotcha/"
+  - "/programming/ruby-on-rails/ruby-on-rails-testing-flash-now-gotcha/"
 ---
 <p>I finished the test for my models and it went pretty well.  Today I started on the controller tests.  Shortly after starting I ran into some curious Ruby on Rails behavior.  I expected that the value of the flash variable would hold a certain value on an unsuccessful login attempt, but instead it was empty.  I ran the server and tested it manually and there it was 'Invalid login or password.' appeared as an error flash on the page.</p>
-<p>Turns out that flash.now is cleared after it is rendered in the view.  That means you cannot get the value out in your tests.  There is a workaround though.  It is discussed on the <a href="http://wiki.rubyonrails.org/rails/pages/HowToTestFlash.Now/">Rails wiki</a> and on <a href="http://blog.codefront.net/2006/09/03/some-functional-testing-gotchas-in-ruby-on-rails/">Chu Yeow's Redemption in a Blog</a>.  So what is the workaround?</p>
+<p>Turns out that flash.now is cleared after it is rendered in the view.  That means you cannot get the value out in your tests.  There is a workaround though.  It is discussed on the <a href="http://wiki.rubyonrails.org/rails/pages/HowToTestFlash.Now/">Rails wiki</a> and on <span class="dead-link" title="http://blog.codefront.net/2006/09/03/some-functional-testing-gotchas-in-ruby-on-rails/">Chu Yeow's Redemption in a Blog</span>.  So what is the workaround?</p>
 <p>You must access the render viewed contents and look for the corresponding flash div.  For example, my code looked like the following:</p>
 
 {% highlight ruby %}
