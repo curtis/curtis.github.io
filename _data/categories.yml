@@ -1,3 +1,11 @@
+docpdf:
+  name: DocPDF
+  description: Posts about the DocPDF gem for document-to-PDF conversion and watermarking in Ruby.
+
+open-source:
+  name: Open Source
+  description: Open source projects, contributions, and the ecosystem around shared code.
+
 rails:
   name: Ruby on Rails
   description: Building web applications with Rails -- from quick tips on migrations and routes to deployment patterns and gem integrations.
