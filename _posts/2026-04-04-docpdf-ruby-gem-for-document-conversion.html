@@ -1,0 +1,95 @@
+---
+layout: post
+title: "Introducing DocPDF"
+subtitle: "A Ruby gem for document-to-PDF conversion and watermarking, with zero hard dependencies."
+date: 2026-04-04 09:00:00
+categories: [ruby, open-source, docpdf]
+---
+
+<p>We just released <a href="https://github.com/velocity-labs/docpdf">DocPDF</a>, a Ruby gem for converting documents and images to PDF, including watermarking. It converts Word docs, Excel spreadsheets, PowerPoint, images, plain text, and more. All of this depends on the gems you choose to install.</p>
+
+<p>The idea came from a few patterns we see repeated across projects. Take an uploaded file, convert it to a PDF. Or generate a PDF from data and maybe slap a watermark on it. Every time, we use various Ruby gems and install system-level libraries like LibreOffice or ImageMagick, and then of course a bunch of glue code. DocPDF wraps all of that into a clean API. It's easy to use, easy to extend, and easy to maintain.</p>
+
+<h2>The basics</h2>
+
+<p>Converting a file is one line:</p>
+
+{% highlight ruby %}
+result = DocPDF.convert("document.docx")
+result.data     # => binary PDF string
+result.filename # => "document.pdf"
+{% endhighlight %}
+
+<p>It auto-detects the format and picks the right converter. Word, Excel, and PowerPoint go through LibreOffice. Images go through ImageMagick (via RMagick or MiniMagick). Plain text can use Prawn or HexaPDF. PDFs pass through unchanged. All of this is optional and you can choose to only use the converters you need.</p>
+
+<p>It also works with IO objects, so Rails uploads just work:</p>
+
+{% highlight ruby %}
+result = DocPDF.convert(params[:document])
+{% endhighlight %}
+
+<p>Same goes for Active Storage, CarrierWave, Shrine, and Dragonfly attachments. MIME type and filename are extracted automatically from each library's metadata.</p>
+
+<h2>Watermarking</h2>
+
+<p>This was a feature that kept getting reimplemented and each time we had to remember how that was done. DocPDF handles both image and text watermarks with fine-grained control over positioning, opacity, rotation, and page targeting.</p>
+
+{% highlight ruby %}
+# Diagonal "DRAFT" across the center of every page
+DocPDF.watermark("report.pdf",
+  { text: "DRAFT", opacity: 0.1, position: :center, rotation: 45 })
+
+# Logo in the top-right corner of the first page only
+DocPDF.watermark("report.pdf",
+  { image: "logo.png", opacity: 0.3, position: :top_right, width: 80, pages: :first })
+{% endhighlight %}
+
+<p>For ease of use, you can chain watermarking onto a conversion, mix multiple stamps in one call (text and image), and target specific pages (first, last, odd, even, ranges, or individual page numbers).</p>
+
+{% highlight ruby %}
+result = DocPDF.convert("contract.docx")
+  .watermark(
+    { text: "CONFIDENTIAL", opacity: 0.1, position: :center, rotation: 45 },
+    { image: "logo.png", opacity: 0.3, position: :bottom_right, width: 80, pages: :odd },
+    { image: "logo.png", opacity: 0.3, position: :bottom_left, width: 80, pages: :even }
+  )
+{% endhighlight %}
+
+<h2>Zero hard dependencies</h2>
+
+<p>DocPDF has no hard gem dependencies beyond Ruby itself. You install only the adapter gems you actually need, or that are already present in your application. If you only convert Word docs, you don't need Prawn, HexaPDF, or ImageMagick bindings; you only need LibreOffice. If you try to use a feature without the required gem, you get a clear error telling you what to install.</p>
+
+{% highlight ruby %}
+gem "docpdf"
+
+# Add text conversion and watermarking (all in one):
+gem "hexapdf"
+
+# Add image support:
+gem "mini_magick"
+{% endhighlight %}
+
+<p>This keeps your dependency tree lean and avoids pulling in gems with native extensions you don't need.</p>
+
+<h2>Configuration</h2>
+
+<p>Everything works with sensible defaults (I think...), but you can customize it:</p>
+
+{% highlight ruby %}
+DocPDF.configure do |config|
+  config.soffice_path = "/usr/bin/soffice"
+  config.page_size = "A4"
+  config.stamper = :hexapdf
+
+  config.watermark_options = {
+    font: "Times",
+    font_size: 96,
+    color: "FF0000",
+    rotation: 30,
+  }
+end
+{% endhighlight %}
+
+<h2>Check it out</h2>
+
+<p>The gem is on <a href="https://rubygems.org/gems/docpdf">RubyGems</a> and the source is on <a href="https://github.com/velocity-labs/docpdf">GitHub</a>. If you're doing document conversion in Ruby, give it a try. Bug reports and pull requests are welcome.</p>
