@@ -3,6 +3,8 @@ name: Build and Deploy Jekyll
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '0 14 * * *' # daily at 7am MST (14:00 UTC)
 
 permissions:
   contents: read

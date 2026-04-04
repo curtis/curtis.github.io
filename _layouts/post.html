@@ -3,33 +3,21 @@ layout: default
 comments: true
 ---
 
+{% if page.series %}
+{% assign series_info = site.data.series[page.series] %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": {{ page.title | jsonify }},
-  "description": {{ page.subtitle | default: site.full_description | jsonify }},
-  "author": {
-    "@type": "Person",
-    "name": {{ site.author | jsonify }},
-    "url": "{{ site.url }}{{ site.baseurl }}/about/"
-  },
-  "datePublished": "{{ page.date | date_to_xmlschema }}",
-  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
-  "mainEntityOfPage": "{{ page.url | prepend: site.baseurl | prepend: site.url }}",
-  "url": "{{ page.url | prepend: site.baseurl | prepend: site.url }}",
-  "publisher": {
-    "@type": "Person",
-    "name": {{ site.author | jsonify }}
-  }{% if page.series %}{% assign series_info = site.data.series[page.series] %},
   "position": {{ page.series_part }},
   "isPartOf": {
     "@type": "CreativeWorkSeries",
     "name": {{ series_info.title | jsonify }},
     "url": "{{ site.url }}{{ site.baseurl }}/series/{{ page.series }}/"
-  }{% endif %}
+  }
 }
 </script>
+{% endif %}
 
 <div class="post-header">
   <h1>{{ page.title }}</h1>
@@ -40,6 +28,7 @@ comments: true
 
   <div class="post-meta">
     <a href="{{ site.baseurl }}/about/" class="post-author">{{ site.author }}</a>
+    <span class="reading-time">{{ content | reading_time }} min read</span>
     {% if page.categories.size > 0 %}
       <div class="post-meta-categories">
         {% for cat in page.categories %}

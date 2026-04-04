@@ -4,7 +4,9 @@ layout: default
 
 <div class="page-header">
   <h1>
-    {% if page.title %}
+    {% if page.heading %}
+      {{ page.heading }}
+    {% elsif page.title %}
       {{ page.title }}
     {% else %}
       {{ site.title }}

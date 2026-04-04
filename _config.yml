@@ -34,4 +34,16 @@ plugins:
   - jekyll-feed
   - jekyll-paginate
   - jekyll-redirect-from
+  - jekyll-seo-tag
   - jekyll-sitemap
+
+twitter:
+  username: curtism
+
+google_site_verification: X1xSu_ca6LJs9gGO_qTJj0jLwQASeeHqDRMgk6IzDSk
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /img/home-bg.jpg
