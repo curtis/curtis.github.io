@@ -1,0 +1,100 @@
+---
+layout: post
+title: "Document Conversion on Heroku"
+subtitle: "Getting LibreOffice and ImageMagick working for PDF conversion on Heroku."
+date: 2026-04-05 09:00:00
+categories: [ruby, heroku, docpdf]
+---
+
+<p>If you're converting documents to PDF on Heroku, you're going to run into a few gotchas. LibreOffice and ImageMagick both need some coaxing to work in Heroku's environment. Here's what I've learned deploying apps that do document conversion.</p>
+
+<h2>LibreOffice</h2>
+
+<p>Heroku doesn't include LibreOffice by default, so you need a buildpack. I tried a few different options, but they didn't work on Heroku-24. So, we created our own <a href="https://github.com/velocity-labs/heroku-buildpack-libreoffice">LibreOffice buildpack</a>, which installs exactly what you need.</p>
+
+<p>Add the buildpack (it needs to run before the Ruby buildpack), for example:</p>
+
+{% highlight bash %}
+heroku buildpacks:add --index 1 https://github.com/velocity-labs/heroku-buildpack-libreoffice -a your-app-name
+{% endhighlight %}
+
+<p>Deploy your code to rebuild everything, and then verify it's working:</p>
+
+{% highlight bash %}
+heroku run "soffice --version" -a your-app-name
+{% endhighlight %}
+
+<h2>ImageMagick</h2>
+
+<p>Heroku includes ImageMagick by default, but some stacks ship with a restrictive <code>policy.xml</code> that blocks PDF operations. This is a security measure (ImageMagick has had PDF-related CVEs). Heroku-24 seems to be fine out of the box, but older stacks may block image-to-PDF conversion.</p>
+
+<p>To check whether your stack restricts PDF operations, run:</p>
+
+{% highlight bash %}
+heroku run "identify -list policy" -a your-app-name
+{% endhighlight %}
+
+<p>Look for a line like <code>rights: None ... pattern: PDF</code>. If you see that, PDF operations are blocked and you'll get errors like:</p>
+
+{% highlight text %}
+Magick::ImageMagickError: not authorized `output.pdf'
+{% endhighlight %}
+
+<div class="callout">
+  <p class="callout-title">Fix: Override policy.xml</p>
+  <p>Create a <code>.magick/policy.xml</code> in your project root that overrides the restrictive defaults:</p>
+
+{% highlight xml %}
+<policymap>
+  <policy domain="coder" rights="read|write" pattern="PDF" />
+</policymap>
+{% endhighlight %}
+  <br/>
+  <p>Then set the <code>MAGICK_CONFIGURE_PATH</code> environment variable so ImageMagick picks up your policy file:</p>
+
+{% highlight bash %}
+heroku config:set MAGICK_CONFIGURE_PATH=./.magick -a your-app-name
+{% endhighlight %}
+</div>
+
+<h3>Ghostscript</h3>
+
+<p>ImageMagick delegates PDF operations to Ghostscript. If Ghostscript isn't available, you'll get an error. Check if it's installed:</p>
+
+{% highlight bash %}
+heroku run "gs --version" -a your-app-name
+{% endhighlight %}
+
+<p>If not, you can install it via the <a href="https://github.com/heroku/heroku-buildpack-apt">apt buildpack</a> with an <code>Aptfile</code> containing <code>ghostscript</code>.</p>
+
+<h2>Memory considerations</h2>
+
+<p>LibreOffice is not lightweight. The installed package takes up a few hundred megabytes of disk, which eats into Heroku's slug size limit. But the real constraint is runtime memory. A single conversion can use 50-150MB of RAM depending on the document. On a standard Heroku dyno (512MB) with a Rails app already using 200-300MB, that's enough to push you into R14 (memory quota exceeded) errors.</p>
+
+<p>A few strategies:</p>
+
+<ul>
+  <li><strong>Use a worker dyno.</strong> Offload conversions to a background job (Sidekiq, GoodJob, etc.) running on a separate dyno. This keeps your web dynos responsive.</li>
+  <li><strong>Use a Performance dyno.</strong> Performance-M gives you 2.5GB, which is comfortable for most conversion workloads.</li>
+  <li><strong>Process one at a time.</strong> If you're on a smaller dyno, use a queue with concurrency of 1 for conversion jobs to avoid multiple LibreOffice processes competing for memory.</li>
+  <li><strong>Cache the result.</strong> Document conversion is expensive. If there's any chance the same file will be converted more than once, cache the result. Store the converted PDF in S3 (or wherever your app keeps files) keyed by a digest of the input. Before converting, check if a cached version already exists.</li>
+</ul>
+
+<h2>Timeouts</h2>
+
+<p>Heroku enforces a 30-second request timeout for web dynos. Document conversion can take anywhere from 2 to 20 seconds depending on the file. For anything but the simplest conversions, try not to do it in a web request. Use a background job and poll or use WebSockets to notify the client when it's done.</p>
+
+<h2>Putting it together</h2>
+
+<p>A typical setup for a Rails app doing document conversion on Heroku:</p>
+
+<ol>
+  <li>LibreOffice buildpack (and Ghostscript if needed)</li>
+  <li>Check ImageMagick policy and fix if PDF operations are blocked</li>
+  <li>Background job for conversions (not inline in web requests)</li>
+  <li>Performance-M or larger dyno for the worker</li>
+</ol>
+
+<p>It takes a bit of setup, but once it's working, it's reliable. The main thing is knowing about the gotchas upfront rather than discovering them in production.</p>
+
+<p>And, if you're looking for a clean way to handle the conversion itself, check out <a href="/posts/docpdf-ruby-gem-for-document-conversion/">DocPDF</a>. It's a Ruby gem that wraps LibreOffice, ImageMagick, and PDF generation behind a simple API with zero hard dependencies.</p>

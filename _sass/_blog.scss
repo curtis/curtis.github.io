@@ -611,6 +611,34 @@ nav {
     }
   }
 
+  .callout {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    background: var(--code-bg);
+
+    .callout-title {
+      @include mono;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 0 0 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    p:last-child {
+      margin: 0;
+    }
+
+    > pre,
+    .highlight {
+      margin: 0.75rem 0 0;
+    }
+  }
+
   // Responsive tables
   .table-responsive {
     overflow-x: auto;

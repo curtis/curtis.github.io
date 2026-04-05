@@ -26,6 +26,10 @@ module CategoryPages
       existing = site.pages.select { |p| p.data["layout"] == "category" }.map { |p| p.data["category"] }
 
       site.categories.each_key do |slug|
+        unless categories_data.key?(slug)
+          Jekyll.logger.warn "Category:", "\"#{slug}\" is used in posts but not defined in _data/categories.yml"
+        end
+
         next if existing.include?(slug)
 
         cat_info = categories_data[slug] || {}

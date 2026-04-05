@@ -46,6 +46,10 @@ personal:
   name: Personal
   description: Life reflections, philosophy, and the occasional non-tech musing.
 
+heroku:
+  name: Heroku
+  description: Deploying and running apps on Heroku -- buildpacks, dynos, and platform-specific gotchas.
+
 how-to:
   name: How-To
   description: Practical guides and quick tips for solving specific problems.
