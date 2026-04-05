@@ -1,0 +1,47 @@
+---
+layout: default
+permalink: /404.html
+---
+
+<div class="error-page">
+  <div class="error-terminal">
+    <div class="terminal-header">
+      <span class="terminal-dot red"></span>
+      <span class="terminal-dot yellow"></span>
+      <span class="terminal-dot green"></span>
+    </div>
+    <div class="terminal-body">
+      <p><span class="prompt">$</span> curl -I millarian.com<span id="typed-path"></span></p>
+      <p class="response">HTTP/1.1 <span class="error-code">404</span> Not Found</p>
+      <p class="response">Server: GitHub.com</p>
+      <p class="response">Content-Type: text/html; charset=UTF-8</p>
+      <p class="response">Date: <span id="response-date"></span></p>
+      <p class="response">Connection: emotionally-unavailable</p>
+      <p class="response">X-Vibe: not-great</p>
+      <p class="response">X-Suggestion: try-the-homepage-instead</p>
+      <p class="response">X-Cache: MISS (just like this URL)</p>
+      <p>&nbsp;</p>
+      <p><span class="prompt">$</span> <span class="blink">_</span></p>
+    </div>
+  </div>
+  <p class="error-message">Looks like this page took an early retirement.</p>
+  <a href="/" class="error-link">cd ~</a>
+</div>
+
+<script>
+(function() {
+  var path = window.location.pathname;
+  var el = document.getElementById('typed-path');
+  var i = 0;
+  function type() {
+    if (i < path.length) {
+      el.textContent += path.charAt(i);
+      i++;
+      setTimeout(type, 40 + Math.random() * 60);
+    }
+  }
+  document.getElementById('response-date').textContent =
+    new Date().toUTCString();
+  setTimeout(type, 600);
+})();
+</script>

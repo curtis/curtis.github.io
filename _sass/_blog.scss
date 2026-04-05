@@ -891,6 +891,89 @@ nav {
 }
 
 // ============================================================
+// 404 Error Page
+// ============================================================
+
+.error-page {
+  max-width: $content-max-width;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  text-align: center;
+
+  .error-terminal {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-align: left;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+
+  .terminal-header {
+    background: var(--border);
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+
+    &.red { background: #ef4444; }
+    &.yellow { background: #eab308; }
+    &.green { background: #22c55e; }
+  }
+
+  .terminal-body {
+    @include mono;
+    font-size: 0.85rem;
+    padding: 1.25rem;
+    line-height: 1.8;
+
+    p {
+      margin: 0;
+    }
+
+    .prompt {
+      color: var(--accent);
+      margin-right: 0.5rem;
+    }
+
+    .error-code {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .response {
+      color: var(--text-secondary);
+    }
+  }
+
+  .error-message {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .error-link {
+    @include mono;
+    display: inline-block;
+    color: var(--bg);
+    background: var(--accent);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+
+    &:hover {
+      background: var(--accent-hover);
+    }
+  }
+}
+
+// ============================================================
 // Footer
 // ============================================================
 
