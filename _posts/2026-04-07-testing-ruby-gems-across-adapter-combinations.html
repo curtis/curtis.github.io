@@ -1,0 +1,137 @@
+---
+layout: post
+title: "Testing a Ruby Gem Across Multiple Adapter Combinations"
+subtitle: "Using Appraisal to test every combination of optional dependencies."
+date: 2026-04-07 08:00:00
+categories: [ruby, testing]
+---
+
+<p>When your gem supports multiple backends, testing gets interesting. You can't just run your test suite once and call it done. You need to verify that things work with backend A but not B, with B but not A, with both, and with neither. Multiply that by every optional dependency and you've got a combinatorial problem.</p>
+
+<p>The <a href="https://github.com/thoughtbot/appraisal">Appraisal</a> gem from thoughtbot solves this nicely. Here's how I've been using it.</p>
+
+<h2>The problem</h2>
+
+<p>Say you're building a gem that converts documents to PDF. It supports multiple adapters: Prawn for text, ImageMagick for images, LibreOffice for Word docs. Users install only the adapter gems they need, and your gem auto-detects what's available at runtime.</p>
+
+<p>That means you need to test every realistic combination:</p>
+
+<ul>
+  <li>Everything installed (the happy path)</li>
+  <li>Only Prawn (text conversion only)</li>
+  <li>Only ImageMagick bindings (image conversion only)</li>
+  <li>Nothing installed (should fail gracefully with clear errors)</li>
+</ul>
+
+<h2>Setting up Appraisal</h2>
+
+<p>Add it to your gemspec's development dependencies and create an <code>Appraisals</code> file in your project root. Each block defines a separate Gemfile with a different set of optional dependencies:</p>
+
+{% highlight ruby %}
+# Appraisals
+appraise "all" do
+  gem "prawn", "~> 2.4"
+  gem "rmagick", "~> 6.0"
+  gem "mini_magick", "~> 5.0"
+end
+
+appraise "prawn-only" do
+  gem "prawn", "~> 2.4"
+end
+
+appraise "rmagick-only" do
+  gem "rmagick", "~> 6.0"
+end
+
+appraise "mini-magick-only" do
+  gem "mini_magick", "~> 5.0"
+end
+
+appraise "no-adapters" do
+end
+{% endhighlight %}
+
+<p>Run <code>bundle exec appraisal install</code> and Appraisal generates a separate Gemfile for each configuration under <code>gemfiles/</code>.</p>
+
+<h2>Writing adapter-aware tests</h2>
+
+<p>The key challenge is that some tests should only exist when their adapter is available. You could use <code>skip</code>, but that just clutters your output with noise. Instead, detect adapter availability once at load time and use the constants to conditionally define tests:</p>
+
+{% highlight ruby %}
+# test_helper.rb
+def self.gem_available?(name)
+  require name
+  true
+rescue LoadError
+  false
+end
+
+PRAWN_AVAILABLE = gem_available?("prawn")
+RMAGICK_AVAILABLE = gem_available?("rmagick")
+MINI_MAGICK_AVAILABLE = gem_available?("mini_magick")
+IMAGE_CONVERTER_AVAILABLE = RMAGICK_AVAILABLE || MINI_MAGICK_AVAILABLE
+{% endhighlight %}
+
+<p>Then wrap tests in conditionals so they simply don't exist when the adapter isn't installed:</p>
+
+{% highlight ruby %}
+if PRAWN_AVAILABLE
+  def test_text_conversion
+    result = DocPDF.convert("notes.txt")
+    assert result.data.start_with?("%PDF")
+  end
+end
+
+unless PRAWN_AVAILABLE
+  def test_missing_text_adapter_raises_clear_error
+    error = assert_raises(DocPDF::AdapterNotFoundError) do
+      DocPDF.convert("notes.txt")
+    end
+    assert_match(/prawn/i, error.message)
+  end
+end
+{% endhighlight %}
+
+<p>The result is a clean test run with zero skips. In the <code>prawn-only</code> appraisal, the text conversion tests run and the error path tests don't exist. In <code>no-adapters</code>, it's the reverse. Your test count changes between appraisals, but every test that runs is meaningful.</p>
+
+<h2>Running the matrix</h2>
+
+<p>Run all configurations:</p>
+
+{% highlight bash %}
+bundle exec appraisal rake test
+{% endhighlight %}
+
+<p>Or target a specific one:</p>
+
+{% highlight bash %}
+bundle exec appraisal prawn-only rake test
+{% endhighlight %}
+
+<p>Each appraisal runs your full test suite with a different set of gems available. Tests that need a missing gem aren't defined, and tests that verify error behavior only run in the right context.</p>
+
+<h2>CI integration</h2>
+
+<p>In GitHub Actions, run each appraisal as a separate matrix entry:</p>
+
+{% highlight yaml %}
+strategy:
+  matrix:
+    ruby: ['3.3', '3.4', '4.0']
+    appraisal: [all, prawn-only, rmagick-only, mini-magick-only, no-adapters]
+
+steps:
+  - run: bundle exec appraisal ${% raw %}{{ matrix.appraisal }}{% endraw %} rake test
+{% endhighlight %}
+
+<p>This gives you a clear view in the CI dashboard of which adapter combinations pass and which don't. A failure in the <code>rmagick-only</code> appraisal tells you exactly where to look.</p>
+
+<h2>Tips</h2>
+
+<ul>
+  <li><strong>Always include a no-adapters appraisal.</strong> It forces you to verify that every feature path has a clear error message when its dependency is missing. Without it, you'll get cryptic <code>NoMethodError</code> on nil somewhere deep in the stack.</li>
+  <li><strong>Keep appraisals realistic.</strong> Each one should represent how a real user would install your gem. Don't bother testing arbitrary combinations nobody would actually use.</li>
+  <li><strong>Use constants, not skips.</strong> Conditionally defining tests based on adapter availability keeps your output clean and your test count honest. Every test that runs is meaningful.</li>
+</ul>
+
+<p>If you're building a gem with optional dependencies, Appraisal is worth the small setup cost. It catches a class of bugs that a single test run simply can't.</p>
