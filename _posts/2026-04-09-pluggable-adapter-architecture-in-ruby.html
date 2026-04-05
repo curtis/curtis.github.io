@@ -1,0 +1,135 @@
+---
+layout: post
+title: "Building a Pluggable Adapter Architecture in Ruby"
+subtitle: "How to design a gem with zero hard dependencies and user-selectable backends."
+date: 2026-04-09 08:00:00
+categories: [ruby, docpdf, open-source]
+---
+
+<p>When I built <a href="https://github.com/velocity-labs/docpdf">DocPDF</a>, I wanted it to support multiple PDF libraries and image processors without forcing users to install all of them. If you only need to convert Word docs, you shouldn't have to pull in ImageMagick bindings. If you prefer HexaPDF over Prawn, that should just work.</p>
+
+<p>The pattern I landed on is a resolver registry with lazy loading. Extensibility was a key concern too. Users should be able to register their own adapters without forking the gem. Here's how it works.</p>
+
+<h2>The problem</h2>
+
+<p>A document converter needs different tools for different formats. Word docs go through LibreOffice, images go through ImageMagick, plain text needs a PDF generation library. Each tool has its own Ruby gem with its own dependencies (some with native extensions).</p>
+
+<p>The typical approach is to list everything in the gemspec and let users deal with the install. But that means anyone who wants to convert a Word doc is also compiling RMagick, even if they never touch an image.</p>
+
+<h2>The registry</h2>
+
+<p>Instead, I created a resolver class that maintains an ordered list of adapters. Each adapter declares which MIME types it handles, which gem it needs, and a loader proc that returns the adapter class:</p>
+
+{% highlight ruby %}
+class ConverterResolver
+  @adapters = []
+
+  class << self
+    def register(name, require_name: nil, mime_types:, loader:)
+      @adapters << {
+        name: name.to_sym,
+        require_name: require_name,
+        mime_types: mime_types,
+        loader: loader,
+      }
+    end
+
+    def resolve(mime_type)
+      missing_gems = []
+
+      @adapters.each do |entry|
+        next unless entry[:mime_types].include?(mime_type)
+        require entry[:require_name] if entry[:require_name]
+        return entry[:loader].call
+      rescue LoadError
+        missing_gems << entry[:require_name]
+        next
+      end
+
+      if missing_gems.any?
+        gem_list = missing_gems.map { |g| "'#{g}'" }.join(" or ")
+        raise "No converter found for #{mime_type}. Install #{gem_list} and add it to your Gemfile."
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+<p>The key is the <code>rescue LoadError</code>. When an adapter's gem isn't installed, it silently moves on to the next one. This means multiple adapters can handle the same format, and the first available one wins.</p>
+
+<h2>Registering adapters</h2>
+
+<p>Adapters register themselves at load time, and the order determines priority:</p>
+
+{% highlight ruby %}
+ConverterResolver.register :prawn,
+  require_name: "prawn",
+  mime_types: %w[text/plain],
+  loader: -> { require "adapters/prawn_converter"; PrawnConverter }
+
+ConverterResolver.register :hexapdf,
+  require_name: "hexapdf",
+  mime_types: %w[text/plain],
+  loader: -> { require "adapters/hexapdf_converter"; HexapdfConverter }
+{% endhighlight %}
+
+<p>Both handle <code>text/plain</code>, but Prawn is checked first. If the user has Prawn installed, it's used. If not, HexaPDF is tried. If neither is installed, you get a clear error.</p>
+
+<h2>The adapter contract</h2>
+
+<p>Every adapter implements the same interface. For converters, that's a single class method:</p>
+
+{% highlight ruby %}
+class PrawnConverter
+  def self.call(data:, mime_type:, filename:, config:)
+    # Convert input to PDF binary string
+    # Return a Result with data and filename
+  end
+end
+{% endhighlight %}
+
+<p>No inheritance, no abstract base class, no module inclusion. Just duck typing. If it responds to <code>.call</code> with the right arguments, it works. This makes it trivial to write a custom adapter.</p>
+
+<h2>Why lazy loading matters</h2>
+
+<p>The <code>loader:</code> proc is important. The adapter class files are only required when an adapter is actually selected. This means:</p>
+
+<ol>
+  <li>No eager loading of gems the user doesn't have</li>
+  <li>No conditional requires scattered throughout the codebase</li>
+  <li>The require happens once, at first use, and Ruby caches it</li>
+</ol>
+
+<p>Without this, you'd need a bunch of <code>if defined?(Prawn)</code> checks or rescue blocks in your main code. The registry centralizes all of that.</p>
+
+<h2>User-extensible</h2>
+
+<p>Because registration is just a method call, users can add their own adapters:</p>
+
+{% highlight ruby %}
+ConverterResolver.register :my_converter,
+  require_name: "my_gem",
+  mime_types: %w[application/x-custom],
+  loader: -> { require "my_converter"; MyConverter }
+{% endhighlight %}
+
+<p>No monkey-patching, no subclassing. They register it and it participates in resolution like any built-in adapter.</p>
+
+<h2>Clear error messages</h2>
+
+<p>One thing that makes this pattern user-friendly: when no adapter is found, the error message tells you exactly which gem to install. This is the difference between <code>"undefined method 'convert' for nil:NilClass"</code> and <code>"No converter found for text/plain. Install 'prawn' or 'hexapdf' and add it to your Gemfile."</code></p>
+
+<p>That small detail saves a lot of GitHub issues.</p>
+
+<h2>When to use this pattern</h2>
+
+<p>This works well when:</p>
+
+<ul>
+  <li>Your gem needs to support multiple backends for the same operation</li>
+  <li>Those backends have heavy or platform-specific dependencies</li>
+  <li>Users want to choose which backend to use</li>
+  <li>You want to allow third-party extensions</li>
+</ul>
+
+<p>You'll see variations of this pattern in database adapters, cloud storage gems, and file upload libraries. The specific implementation varies, but the core idea is the same: a registry, lazy loading, and a shared interface.</p>
