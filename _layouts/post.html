@@ -42,10 +42,18 @@ comments: true
 <!-- Post Content -->
 <article class="post-content">
   {% if page.update %}
-    <div class="update-alert">
-      <p class="update-title">{{ page.update.title }}</p>
-      <div class="update-body">{{ page.update.body }}</div>
-    </div>
+    {% assign show_update = true %}
+    {% if page.update.since %}
+      {% assign since_ts = page.update.since | date: '%s' | plus: 0 %}
+      {% assign now_ts = site.time | date: '%s' | plus: 0 %}
+      {% if since_ts > now_ts %}{% assign show_update = false %}{% endif %}
+    {% endif %}
+    {% if show_update %}
+      <div class="update-alert">
+        <p class="update-title">{{ page.update.title }}</p>
+        <div class="update-body">{{ page.update.body }}</div>
+      </div>
+    {% endif %}
   {% endif %}
 
   {% include series-nav.html %}
