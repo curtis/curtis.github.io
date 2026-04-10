@@ -1,0 +1,121 @@
+---
+layout: post
+title: "Turbo Streams Instead of Nested Forms"
+subtitle: "When the parent already exists, you probably don't need a nested form at all"
+date: 2026-04-10 08:00:00
+categories: [rails, javascript, how-to]
+---
+
+<p>Not every "one parent, many children" form needs nested attributes. If the parent already exists and children are added, edited, or removed one at a time, Turbo Frames and Streams handle it better than a big nested form, without the usual bookkeeping.</p>
+
+<p>The catch: the parent has to exist first. If you need an atomic parent-plus-children save, see <a href="/posts/nested-forms-in-rails-8/">Nested Forms in Rails 8</a> instead.</p>
+
+<h2>The Setup</h2>
+
+<p>Each child is its own Rails resource with its own controller. No nested attributes, no <code>fields_for</code>, no special strong params. The models look like any other pair:</p>
+
+{% highlight ruby %}
+# app/models/project.rb
+class Project < ApplicationRecord
+  has_many :tasks, dependent: :destroy
+end
+
+# app/models/task.rb
+class Task < ApplicationRecord
+  belongs_to :project
+  validates :title, presence: true
+end
+{% endhighlight %}
+
+<p>Routes nest the child under the parent:</p>
+
+{% highlight ruby %}
+# config/routes.rb
+resources :projects do
+  resources :tasks, except: [:index, :show]
+end
+{% endhighlight %}
+
+<h2>The Views</h2>
+
+<p>The parent view wraps the task list in a Turbo Frame and lazy-loads a blank "new task" form at the bottom. The frame IDs are what the stream responses will target:</p>
+
+{% highlight haml %}
+-# app/views/projects/show.html.haml
+%h1= @project.name
+
+#tasks
+  = render @project.tasks
+
+= turbo_frame_tag "new_task", src: new_project_task_path(@project), loading: :lazy
+{% endhighlight %}
+
+<p>The task partial declares its own frame, keyed on <code>dom_id(task)</code>, so inline edits can swap a single row without touching the rest of the list:</p>
+
+{% highlight haml %}
+-# app/views/tasks/_task.html.haml
+= turbo_frame_tag dom_id(task) do
+  .task
+    %span= task.title
+    = link_to "Edit", edit_project_task_path(task.project, task)
+    = button_to "Delete", project_task_path(task.project, task), method: :delete
+{% endhighlight %}
+
+<p>The new and edit views are just one-liners that render the same form partial that we will use in the controller:</p>
+
+{% highlight haml %}
+-# app/views/tasks/_form.html.haml
+= turbo_frame_tag "new_task" do
+  = form_with(model: [task.project, task]) do |f|
+    = f.text_field :title, placeholder: "New task"
+    = f.submit "Add"
+{% endhighlight %}
+
+<h2>The Tasks Controller</h2>
+
+<p>This is where the work happens. <code>create</code>, <code>update</code>, and <code>destroy</code> respond with Turbo Streams that patch the DOM directly instead of redirecting. No full-page reloads, no nested form bookkeeping:</p>
+
+{% highlight ruby %}
+# app/controllers/tasks_controller.rb
+class TasksController < ApplicationController
+  # before_actions, new, edit, set_project, set_task, task_params: all the usual stuff
+
+  def create
+    @task = @project.tasks.build(task_params)
+
+    if @task.save
+      render turbo_stream: [
+        turbo_stream.append("tasks", @task),
+        turbo_stream.update("new_task", partial: "form", locals: { task: @project.tasks.build })
+      ]
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @task.update(task_params)
+      render turbo_stream: turbo_stream.replace(@task)
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @task.destroy
+    render turbo_stream: turbo_stream.remove(@task)
+  end
+end
+{% endhighlight %}
+
+<p>A successful create appends the new task to the <code>tasks</code> list and replaces the lazy-loaded "new_task" frame with a blank form. Update replaces the single row by its <code>dom_id</code>. Destroy removes it. That's the whole flow.</p>
+
+<h2>What You Get</h2>
+
+<ul>
+  <li>No nested attributes, no <code>fields_for</code>, no <code>child_index</code>, no hidden <code>_destroy</code> inputs.</li>
+  <li>Each operation is its own HTTP request, its own controller action, and its own set of validations. Much easier to test.</li>
+  <li>Each add, edit, or delete only touches the affected task in the DOM.</li>
+</ul>
+
+<p>The only thing you give up is the ability to create parent and children in a single transaction. I mean, c'mon. Do you really need that?</p>
