@@ -1,0 +1,106 @@
+---
+layout: post
+title: "Nested Forms in Rails 8: Life After Cocoon and Webpacker"
+subtitle: "accepts_nested_attributes_for still works. A small Stimulus controller handles the rest."
+date: 2026-04-10 08:00:00
+categories: [rails, javascript, how-to]
+---
+
+<p>Back in 2020, I wrote about <a href="/posts/adding-the-cocoon-gem-to-rails-6-with-webpacker/">using the Cocoon gem with Webpacker in Rails 6</a>. Cocoon stopped getting updates years ago, and Webpacker was retired from Rails in version 7. jQuery is gone from the default Rails stack. So how do you build a form where the user adds and removes child records before saving the parent in Rails 8?</p>
+
+<p>It's actually simpler than it used to be. <code>accepts_nested_attributes_for</code> still works exactly the way it always has, and the client-side piece Cocoon used to handle is a small Stimulus controller.</p>
+
+<h2>The Model</h2>
+
+<p>Nothing new here. A parent <code>has_many</code> children and declares nested attributes:</p>
+
+{% highlight ruby %}
+# app/models/project.rb
+class Project < ApplicationRecord
+  has_many :tasks, dependent: :destroy
+  accepts_nested_attributes_for :tasks, allow_destroy: true, reject_if: :all_blank
+end
+{% endhighlight %}
+
+<p><code>allow_destroy: true</code> lets you mark rows for deletion with a <code>_destroy</code> flag. <code>reject_if: :all_blank</code> skips rows where every field is empty, so clicking "Add" and leaving it alone doesn't save a blank task.</p>
+
+<h2>Strong Parameters</h2>
+
+{% highlight ruby %}
+# app/controllers/projects_controller.rb
+def project_params
+  params.expect(project: [:name, tasks_attributes: [[:id, :title, :done, :_destroy]]])
+end
+{% endhighlight %}
+
+<p>The <code>:id</code> key matters: without it, Rails treats every row as new on update and you end up with duplicates instead of edits.</p>
+
+<h2>The Form</h2>
+
+<p>Render the form with a hidden <code>&lt;template&gt;</code> containing one blank row. The <code>child_index: "NEW_RECORD"</code> placeholder is what Stimulus swaps out with a unique index every time the user clicks "Add":</p>
+
+{% highlight haml %}
+-# app/views/projects/new.html.haml
+= form_with(model: @project, data: { controller: "nested-form" }) do |f|
+  = f.text_field :name
+
+  %div{data: { nested_form_target: "list" }}
+    = f.fields_for :tasks do |task_fields|
+      = render "task_fields", f: task_fields
+
+  %template{data: { nested_form_target: "template" }}
+    = f.fields_for :tasks, Task.new, child_index: "NEW_RECORD" do |task_fields|
+      = render "task_fields", f: task_fields
+
+  %button{type: "button", data: { action: "nested-form#add" }} Add task
+  = f.submit
+{% endhighlight %}
+
+<p>The row partial at <code>_task_fields.html.haml</code> includes a hidden <code>_destroy</code> input and a remove button:</p>
+
+{% highlight haml %}
+-# app/views/projects/_task_fields.html.haml
+%div{data: { nested_form_target: "row", persisted: (true if f.object.persisted?) }}
+  = f.text_field :title
+  = f.check_box :done
+  = f.hidden_field :_destroy, data: { nested_form_target: "destroy" }
+  %button{type: "button", data: { action: "nested-form#remove" }} Remove
+{% endhighlight %}
+
+<h2>The Stimulus Controller</h2>
+
+{% highlight javascript %}
+// app/javascript/controllers/nested_form_controller.js
+import { Controller } from "@hotwired/stimulus"
+
+export default class extends Controller {
+  static targets = ["list", "template"]
+
+  add() {
+    const html = this.templateTarget.innerHTML.replace(/NEW_RECORD/g, new Date().getTime())
+    this.listTarget.insertAdjacentHTML("beforeend", html)
+  }
+
+  remove(event) {
+    const row = event.target.closest("[data-nested-form-target='row']")
+    const destroy = row.querySelector("[data-nested-form-target='destroy']")
+
+    if(row.hasAttribute("data-persisted")) {
+      destroy.value = "1"
+      row.hidden = true
+    } else {
+      row.remove()
+    }
+  }
+}
+{% endhighlight %}
+
+<p>The <code>data-persisted</code> attribute on the row partial differentiates new tasks from existing ones. For new ones, we simply need to remove them from the DOM. For tasks that already exist, we need to pass <code>_destroy=1</code> and then hide it.</p>
+
+<h2>That's It</h2>
+
+<p>No Cocoon, no gem, no jQuery. Rails handles the nested save the way it always has, and the Stimulus controller is small enough that you can paste it into every project that needs it. If you don't want to roll your own, <a href="https://github.com/stimulus-components/stimulus-rails-nested-form">stimulus-rails-nested-form</a> is basically this controller packaged up with a couple of extras.</p>
+
+<h2>What About an Alternative?</h2>
+
+<p>Nested forms are the right tool when you want to save the parent and child objects together. However, if you can save the parent first, check out <a href="/posts/turbo-streams-instead-of-nested-forms/">Turbo Streams Instead of Nested Forms</a> as a cool alternative.</p>
