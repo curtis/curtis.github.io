@@ -5,6 +5,10 @@ on:
     branches: [main]
   schedule:
     - cron: '0 14 * * *' # daily at 7am MST (14:00 UTC)
+  # GitHub disables a workflow with a schedule after 60 days of repo inactivity,
+  # which silently takes the push trigger down with it. This gives a way to kick
+  # off a deploy by hand without pushing an empty commit.
+  workflow_dispatch:
 
 permissions:
   contents: read
