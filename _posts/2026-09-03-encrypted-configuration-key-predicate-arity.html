@@ -1,0 +1,61 @@
+---
+layout: post
+title: "EncryptedConfiguration#key? Missing Before Rails 7.1"
+subtitle: "delegate_missing_to turns a missing predicate into a confusing ArgumentError, not a NoMethodError."
+date: 2026-09-03 08:00:00
+categories: [rails, ruby, gotchas]
+---
+
+<p>A gem we were building read Rails encrypted credentials directly. It worked fine on Rails 7.1 and later. On Rails 7.0 it raised:</p>
+
+<pre><code>ArgumentError: wrong number of arguments (given 0, expected 1)</code></pre>
+
+<p>from three stack frames inside ActiveSupport:</p>
+
+<pre><code>active_support/core_ext/module/delegation.rb:304:in `key?'
+active_support/core_ext/module/delegation.rb:304:in `public_send'
+active_support/core_ext/module/delegation.rb:304:in `method_missing'
+</code></pre>
+
+<p>Nothing in that trace names the line that actually called it.</p>
+
+<p>The bug was a method that doesn't exist yet on the Rails version we were testing.</p>
+
+<h2>The setup</h2>
+
+<p>The call was simple:</p>
+
+<pre><code class="language-ruby">encrypted = ActiveSupport::EncryptedConfiguration.new(
+  config_path: config_path,
+  key_path: key_path,
+  env_key: "SOME_KEY_NOTHING_SETS",
+  raise_if_missing_key: true
+)
+
+encrypted.key?
+</code></pre>
+
+<p><code>#key?</code> is supposed to answer "is a decryption key available here," without raising the way <code>#key</code> does when <code>raise_if_missing_key</code> is set. It's the safe way to check before you read.</p>
+
+<h2>Why it happens</h2>
+
+<p><code>EncryptedFile#key?</code> was added in Rails 7.1. On 7.0 and earlier the method simply doesn't exist. Rather than a clean <code>NoMethodError</code>, <code>EncryptedConfiguration</code> declares <code>delegate_missing_to :options</code>, so the missing call falls through to the underlying options object, an <code>ActiveSupport::OrderedOptions</code>, which behaves like a Hash. <code>Hash#key?</code> exists, but it takes one required argument, the key to look up. Called with zero arguments, you get an arity error from a method you never meant to call, on an object you didn't know was involved.</p>
+
+<h2>The fix</h2>
+
+<p>Stop calling it. In our case the check deliberately passes an <code>env_key</code> that nothing ever sets, so the key file on disk is the only possible source of the key. <code>key_path.exist?</code> is exactly equivalent for that purpose, and it behaves the same on every Rails version:</p>
+
+<pre><code class="language-ruby">key_path.exist? # instead of encrypted.key?
+</code></pre>
+
+<p>Generalize that: when a predicate you want is version dependent, check the underlying condition yourself instead of trusting the method to exist.</p>
+
+<p>If you genuinely need the method itself, <code>respond_to?</code> doesn't work here. <code>delegate_missing_to</code> also defines <code>respond_to_missing?</code> and forwards it to the same target, so <code>respond_to?(:key?)</code> returns <code>true</code> on 7.0 and the call fails anyway. Ask the class instead, which checks the ancestry rather than <code>method_missing</code>:</p>
+
+<pre><code class="language-ruby">ActiveSupport::EncryptedConfiguration.method_defined?(:key?)
+# =&gt; true on 7.1, false on 7.0
+</code></pre>
+
+<h2>Takeaway</h2>
+
+<p><code>delegate_missing_to</code> converts "this method doesn't exist on this version" into a confusing arity or type error somewhere else entirely. A plain <code>NoMethodError</code> tells you what's missing and where. Delegation hides both. If you support multiple framework versions, don't assume a missing method will announce itself as missing, it might announce itself as a different method failing for a different reason. We found this one while running a gem's specs across an Appraisal matrix of ActiveSupport versions.</p>

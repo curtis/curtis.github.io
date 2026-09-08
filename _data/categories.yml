@@ -22,6 +22,10 @@ code:
   name: Code
   description: General programming practices, developer tools, and lessons learned writing software.
 
+gotchas:
+  name: Gotchas
+  description: Surprising behavior in Rails, Ruby, and the gems around them -- what breaks, why, and how to work around it.
+
 ops:
   name: Ops
   description: Server management, deployment, infrastructure, and keeping things running in production.

@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Requiring an ActiveSupport Leaf File Breaks on Rails 7.1"
+subtitle: "require 'active_support/x' alone raises a deprecator NoMethodError unless the parent library loads first."
+date: 2026-08-27 08:00:00
+categories: [rails, ruby, gotchas]
+---
+
+<p>A gem we were building requires only the one ActiveSupport file it needs, rather than pulling in all of Rails. On Rails 7.1 that raised:</p>
+
+<pre><code>NoMethodError: undefined method 'deprecator' for module ActiveSupport
+activesupport-7.1.x/lib/active_support/core_ext/time/conversions.rb:62:in `&lt;class:Time&gt;'
+</code></pre>
+
+<p>triggered by:</p>
+
+<pre><code class="language-ruby">require "active_support/encrypted_configuration"
+</code></pre>
+
+<p>The bug was requiring a leaf file without requiring its parent.</p>
+
+<h2>Why it happens</h2>
+
+<p>"Require only what you need" is the normal advice for a gem that doesn't want to load all of Rails just to use one class. So the gem required exactly the ActiveSupport file it cared about and nothing else, and every test using that file passed under Rails 7.2 and 8.0. Under 7.1, the same require blew up before the file even finished loading.</p>
+
+<p>Rails 7.1 introduced per-framework deprecators. ActiveSupport's own core_ext files now reference <code>ActiveSupport.deprecator</code> directly, and that accessor only gets set up when <code>active_support</code> itself, the parent library, has been loaded. Requiring a leaf file pulls in its core_ext dependencies transitively, but never triggers that parent initialization. The <code>ActiveSupport</code> constant exists. The method on it doesn't.</p>
+
+<h2>The fix</h2>
+
+<p>One line, at the top of every file that requires an ActiveSupport file directly:</p>
+
+<pre><code class="language-ruby">require "active_support"
+require "active_support/encrypted_configuration"
+</code></pre>
+
+<h2>Takeaway</h2>
+
+<p>"Require only what you need" is good advice that stops being true at ActiveSupport's boundary. Require <code>active_support</code> first, always, before any <code>active_support/...</code> leaf file. And if your gem wraps framework internals, test it against a matrix of framework versions rather than one pinned Rails release. See <a href="/posts/testing-ruby-gems-across-adapter-combinations/">testing a gem across every adapter combination</a> for the Appraisal side of that.</p>
