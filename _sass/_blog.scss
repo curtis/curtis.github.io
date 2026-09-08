@@ -1312,7 +1312,8 @@ nav {
   margin: 0.2rem 0 0;
 }
 
-.category-see-all {
+.category-see-all,
+.photo-see-all {
   @include mono;
   display: inline-block;
   margin-top: 0.5rem;

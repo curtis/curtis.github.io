@@ -7,7 +7,7 @@ title: Photos
 
 {% if site.data.instagram and site.data.instagram.size > 0 %}
 <div class="photo-grid">
-  {% for photo in site.data.instagram %}
+  {% for photo in site.data.instagram limit: 15 %}
     <a href="{{ photo.url }}" data-permalink="{{ photo.permalink }}" data-caption="{{ photo.caption | strip_html | truncate: 200 }}" class="photo-grid-item">
       <img src="{{ photo.url }}" alt="{{ photo.caption | strip_html | truncate: 100 }}" loading="lazy" />
       <div class="photo-overlay">
@@ -17,6 +17,10 @@ title: Photos
     </a>
   {% endfor %}
 </div>
+
+{% if site.instagram_username %}
+  <a href="https://www.instagram.com/{{ site.instagram_username }}/" class="photo-see-all" target="_blank" rel="noopener">View more on Instagram &rarr;</a>
+{% endif %}
 
 <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Photo viewer">
   <button class="lightbox-close" aria-label="Close">&times;</button>
