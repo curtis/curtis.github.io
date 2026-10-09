@@ -17,7 +17,7 @@ gravatar_hash: 0cc10d016d72b66a06590a1d2678f68b
 
 company:
   name: Velocity Labs
-  url: http://velocitylabs.io
+  url: https://velocitylabs.io
 
 # Build Settings
 markdown: kramdown
