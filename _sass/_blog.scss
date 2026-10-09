@@ -1341,6 +1341,26 @@ nav {
 // Series Navigation
 // ============================================================
 
+.related-posts {
+  margin-top: 2.5rem;
+
+  .related-posts-label {
+    @include mono;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
 .series-nav {
   border: 1px solid var(--border);
   border-radius: 6px;

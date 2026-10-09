@@ -88,6 +88,17 @@ comments: true
 
   {{ content }}
 
+  {% if page.related and page.related.size > 0 %}
+    <aside class="related-posts" aria-labelledby="related-posts-label">
+      <div class="related-posts-label" id="related-posts-label">Related posts</div>
+      <ul>
+        {% for related in page.related %}
+          <li><a href="{{ related.url | prepend: site.baseurl }}">{{ related.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </aside>
+  {% endif %}
+
   {% include hire.html %}
 
   <hr/>
