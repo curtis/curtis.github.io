@@ -2,16 +2,108 @@
 layout: page
 nav: true
 title: About
-description: Rubyist, coworking advocate, and technical advisor to startups.
+heading: About Curtis Miller
+description: Curtis Miller is a Ruby on Rails developer in Phoenix, Arizona, co-founder of Velocity Labs, and has been writing about Rails and startups here since 2006.
 ---
+<img class="img-circle about-avatar" src="https://www.gravatar.com/avatar/{{ site.gravatar_hash }}?s=320" alt="{{ site.author }}" width="160" height="160">
+
 <p>
-  I'm a Ruby on Rails developer and the co-founder of {{ site.company.name }}, a <a rel="external" href="{{ site.company.url }}">Ruby on Rails development</a> company. We work with early-stage startup companies, large enterprise organizations, and everything in-between.
+  Hi, I'm Curtis. I've written software professionally since 2001 and picked up Ruby on Rails in 2006, the same year I started this blog. Today I'm the co-founder of {{ site.company.name }}, a <a rel="external" href="{{ site.company.url }}">Ruby on Rails development</a> company.
+</p>
+
+<h2>What I do</h2>
+
+<p>
+  At {{ site.company.name }} we build and maintain custom web applications in Ruby on Rails and JavaScript. We work with early stage startup companies, large enterprise organizations, and everything in between. The work usually looks like one of these:
+</p>
+
+<ul>
+  <li>Taking a startup's idea from nothing to a launched product, then adjusting and scaling it as it grows.</li>
+  <li>Joining an existing team to speed up work on a large or legacy Rails app.</li>
+  <li>Maintenance, special projects, and code reviews for apps that are already in production.</li>
+</ul>
+
+<h2>What I write about</h2>
+
+<p>
+  I started this blog in 2006 and it now holds {{ site.posts.size }} posts. These days I mostly write up the things that cost me time: surprising behavior in Rails, Ruby, and the gems around them, with the root cause and a fix you can copy. The older posts cover startups, the Phoenix tech community, and conference notes.
 </p>
 
 <p>
-  In addition to working as a software consulting company, we're also involved in the tech community through <a href="https://www.meetup.com/Ruby-AZ/">Ruby::AZ</a> and <a href="https://cohoots.com">CO+HOOTS coworking</a>.
+  Good places to start: <a href="{{ "/gotchas/" | prepend: site.baseurl }}">Gotchas</a>, <a href="{{ "/rails/" | prepend: site.baseurl }}">Ruby on Rails</a>, <a href="{{ "/ruby/" | prepend: site.baseurl }}">Ruby</a>, <a href="{{ "/startups/" | prepend: site.baseurl }}">Startups</a>, or <a href="{{ "/categories/" | prepend: site.baseurl }}">every category</a>. You can also subscribe to the <a href="{{ "/feed.xml" | prepend: site.baseurl }}">RSS feed</a>.
 </p>
 
+<p>The latest posts:</p>
+
+<ul>
+  {% for post in site.posts limit:3 %}
+    <li><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></li>
+  {% endfor %}
+</ul>
+
+<h2>Open source</h2>
+
+<p>Some of what we build at {{ site.company.name }} is open source:</p>
+
+<ul>
+  <li><a rel="external" href="https://github.com/velocity-labs/docpdf">docpdf</a>: a Ruby gem that converts Word, Excel, PowerPoint, HTML, images, and more to PDF, with optional watermarking. I've <a href="{{ "/docpdf/" | prepend: site.baseurl }}">written about it here</a>.</li>
+  <li><a rel="external" href="https://github.com/velocity-labs/credential_parity">credential_parity</a>: a Ruby gem that fails fast when your Rails encrypted credential files don't declare the same keys.</li>
+  <li><a rel="external" href="https://github.com/velocity-labs/heroku-buildpack-libreoffice">heroku-buildpack-libreoffice</a>: a Heroku buildpack that installs LibreOffice with checksum verification.</li>
+</ul>
+
+<h2>Community</h2>
+
 <p>
-  I love talking with startups about their ideas, so please get in touch!
+  In addition to working as a software consulting company, we're also involved in the tech community through <a rel="external" href="https://www.meetup.com/ruby-az/">Ruby::AZ</a> and <a rel="external" href="https://cohoots.com">CO+HOOTS coworking</a>.
 </p>
+
+<h2>Background</h2>
+
+<p>
+  I have an MS in Computer Science from California State University, Fullerton and a BS in Computer Science from the University of Arizona. Before Rails I wrote Java and C++ for distributed systems at Raytheon, and before that I worked on a UML-to-C++ compiler. I've worked at small agile companies and large bureaucratic ones, and found that I like working in and around startups best. That's been my focus since 2006.
+</p>
+
+<h2>Get in touch</h2>
+
+<p>
+  I love talking with startups about their ideas. The fastest way to reach me about a project is the <a rel="external" href="{{ site.company.url }}/#contact">{{ site.company.name }} contact form</a>. You can also find me on <a rel="external me" href="https://bsky.app/profile/{{ site.bluesky_username }}">Bluesky</a>, <a rel="external me" href="https://github.com/{{ site.github_username }}">GitHub</a>, and <a rel="external me" href="https://www.linkedin.com/in/{{ site.linkedin_username }}">LinkedIn</a>.
+</p>
+
+{% include hire.html %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "name": {{ site.author | jsonify }},
+    "url": {{ page.url | absolute_url | jsonify }},
+    "image": "https://www.gravatar.com/avatar/{{ site.gravatar_hash }}?s=240",
+    "jobTitle": "Ruby on Rails Developer",
+    "description": {{ page.description | jsonify }},
+    "worksFor": {
+      "@type": "Organization",
+      "name": {{ site.company.name | jsonify }},
+      "url": {{ site.company.url | jsonify }}
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Phoenix",
+      "addressRegion": "AZ",
+      "addressCountry": "US"
+    },
+    "alumniOf": [
+      { "@type": "CollegeOrUniversity", "name": "California State University, Fullerton" },
+      { "@type": "CollegeOrUniversity", "name": "University of Arizona" }
+    ],
+    "knowsAbout": ["Ruby on Rails", "Ruby", "JavaScript", "Startups"],
+    "sameAs": [
+      "https://github.com/{{ site.github_username }}",
+      "https://www.linkedin.com/in/{{ site.linkedin_username }}",
+      "https://bsky.app/profile/{{ site.bluesky_username }}",
+      "https://www.instagram.com/{{ site.instagram_username }}/"
+    ]
+  }
+}
+</script>

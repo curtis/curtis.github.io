@@ -1059,6 +1059,17 @@ nav {
   border-radius: 50%;
 }
 
+.about-avatar {
+  float: right;
+  margin: 0 0 1rem 1.5rem;
+  border: 1px solid var(--border);
+
+  @media (max-width: 600px) {
+    width: 96px;
+    height: 96px;
+  }
+}
+
 // ============================================================
 // Photo grid
 // ============================================================
