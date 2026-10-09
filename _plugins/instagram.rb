@@ -15,6 +15,18 @@ rescue StandardError
   false
 end
 
+# Instagram serves originals up to 4000px wide. Shrink a copy so the photo
+# grid and lightbox do not ship multi-megabyte files. Uses ImageMagick when
+# it is installed and falls back to sips on macOS.
+def resize_image(source, dest, max_edge)
+  FileUtils.mkdir_p(File.dirname(dest))
+  system('magick', source, '-auto-orient', '-resize', "#{max_edge}x#{max_edge}>", '-strip', '-quality', '82', dest, err: File::NULL) ||
+    system('sips', '-Z', max_edge.to_s, '-s', 'formatOptions', '80', source, '--out', dest, out: File::NULL, err: File::NULL)
+end
+
+FULL_EDGE = 1600
+THUMB_EDGE = 640
+
 Jekyll::Hooks.register :site, :after_init do |site|
   token_file = File.join(site.source, '.instagram_token')
   token = if File.exist?(token_file)
@@ -69,15 +81,20 @@ Jekyll::Hooks.register :site, :after_init do |site|
         img_response = Net::HTTP.get_response(img_uri)
         if img_response.is_a?(Net::HTTPSuccess)
           File.binwrite(local_path, img_response.body)
+          Jekyll.logger.warn "Instagram:", "Could not resize #{filename}" unless resize_image(local_path, local_path, FULL_EDGE)
         else
           Jekyll.logger.warn "Instagram:", "Failed to download #{filename}"
         end
       end
 
+      thumb_path = File.join(photo_dir, 'thumbs', filename)
+      resize_image(local_path, thumb_path, THUMB_EDGE) if File.exist?(local_path) && !File.exist?(thumb_path)
+
       {
         'id' => p['id'],
         'caption' => p['caption'] || '',
         'url' => "/img/instagram/#{filename}",
+        'thumb' => File.exist?(thumb_path) ? "/img/instagram/thumbs/#{filename}" : nil,
         'permalink' => p['permalink'],
         'timestamp' => p['timestamp'],
         'likes' => p['like_count'] || 0,

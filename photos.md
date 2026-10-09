@@ -9,7 +9,7 @@ title: Photos
 <div class="photo-grid">
   {% for photo in site.data.instagram limit: 15 %}
     <a href="{{ photo.url }}" data-permalink="{{ photo.permalink }}" data-caption="{{ photo.caption | strip_html | truncate: 200 }}" class="photo-grid-item">
-      <img src="{{ photo.url }}" alt="{{ photo.caption | strip_html | truncate: 100 }}" loading="lazy" />
+      <img src="{{ photo.thumb | default: photo.url }}" alt="{{ photo.caption | strip_html | truncate: 100 }}" loading="lazy" />
       <div class="photo-overlay">
         <span><i class="fa-solid fa-heart" aria-hidden="true"></i> {{ photo.likes }}</span>
         <span><i class="fa-solid fa-comment" aria-hidden="true"></i> {{ photo.comments }}</span>
