@@ -55,4 +55,4 @@ defaults:
   - scope:
       path: ""
     values:
-      image: /img/home-bg.jpg
+      image: /img/social-card.png
