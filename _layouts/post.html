@@ -19,6 +19,34 @@ comments: true
 </script>
 {% endif %}
 
+{% assign crumb_cat = page.categories | first %}
+{% assign crumb_cat_info = site.data.categories[crumb_cat] %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": {{ site.title | jsonify }},
+      "item": "{{ site.url }}{{ site.baseurl }}/"
+    },{% if crumb_cat %}
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ crumb_cat_info.name | default: crumb_cat | jsonify }},
+      "item": "{{ site.url }}{{ site.baseurl }}/{{ crumb_cat }}/"
+    },{% endif %}
+    {
+      "@type": "ListItem",
+      "position": {% if crumb_cat %}3{% else %}2{% endif %},
+      "name": {{ page.title | jsonify }}
+    }
+  ]
+}
+</script>
+
 <div class="post-header">
   <h1>{{ page.title }}</h1>
 
