@@ -7,7 +7,7 @@
 
     <div class="site-nav__right">
       <button class="site-nav__menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links" onclick="var ul=document.getElementById('nav-links');ul.classList.toggle('is-open');this.setAttribute('aria-expanded',ul.classList.contains('is-open'))">
-        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+        {% include icons/bars.svg %}
       </button>
 
       <ul class="site-nav__links" id="nav-links">
