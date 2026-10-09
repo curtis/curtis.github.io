@@ -1,0 +1,172 @@
+---
+layout: post
+title: "Rails titleize Breaks Names, Hyphens, and Apostrophes"
+subtitle: "titleize splits McAllen, drops hyphens, skips capitals after apostrophes, and chops ALL-CAPS words around acronyms. Here's a safer way to recase text."
+date: 2026-10-09 08:00:00
+categories: [rails, ruby, gotchas]
+---
+
+<p>Rails <code>titleize</code> mangles names, cities, and addresses. It splits words at inner capitals, drops hyphens, lowercases the letter after an apostrophe, and breaks ordinals apart. It's still the first thing people reach for when a form or an import hands them ALL-CAPS text, because the simple case looks right:</p>
+
+{% highlight ruby %}
+store(dev)> "PHOENIX".titleize
+=> "Phoenix"
+store(dev)> "McAllen".titleize
+=> "Mc Allen"
+store(dev)> "Winston-Salem".titleize
+=> "Winston Salem"
+store(dev)> "O'Fallon".titleize
+=> "O'fallon"
+store(dev)> "500 W 21ST ST".titleize
+=> "500 W 21 St St"
+{% endhighlight %}
+
+<p>The bug is using an inflector as a name formatter. The usual code is a one-liner (this one uses the <a href="https://api.rubyonrails.org/classes/ActiveModel/Attributes/Normalization/ClassMethods.html#method-i-normalizes"><code>normalizes</code></a> declaration, available since Rails 7.1, but a setter or a <code>before_validation</code> callback does the same thing):</p>
+
+{% highlight ruby %}
+class Customer < ApplicationRecord
+  normalizes :last_name, :street, :city, with: ->(value) { value.strip.titleize }
+end
+{% endhighlight %}
+
+<p>It runs on write, so the mangled value is what gets saved. The casing the user typed is gone for good.</p>
+
+<h2>Why titleize removes hyphens and splits names</h2>
+
+<p><code>titleize</code> is <code>humanize(underscore(word))</code> plus a regex that capitalizes word starts. The <a href="https://api.rubyonrails.org/classes/String.html#method-i-titleize">String#titleize docs</a> say it "replaces some characters in the string to create a nicer looking title," and the examples are identifiers like <code>TheManWithoutAPast</code>. Each step makes sense for identifiers and is wrong for people. These outputs are from Rails 8.1.4 (the latest release as of October 2026) on Ruby 4.0.2:</p>
+
+<div class="table-responsive">
+<table>
+  <thead>
+    <tr><th>Input</th><th><code>titleize</code> returns</th><th>Why</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>PHOENIX</code></td><td><code>Phoenix</code></td><td>Nothing to split, so it looks fine</td></tr>
+    <tr><td><code>McAllen</code></td><td><code>Mc Allen</code></td><td><code>underscore</code> splits CamelCase</td></tr>
+    <tr><td><code>Winston-Salem</code></td><td><code>Winston Salem</code></td><td><code>underscore</code> turns hyphens into underscores, <code>humanize</code> turns those into spaces</td></tr>
+    <tr><td><code>O'Fallon</code></td><td><code>O'fallon</code></td><td>The final regex skips a letter after a word character and an apostrophe</td></tr>
+    <tr><td><code>MARY-KATE O'NEIL</code></td><td><code>Mary Kate O'neil</code></td><td>Both of the above</td></tr>
+    <tr><td><code>500 W 21ST ST</code></td><td><code>500 W 21 St St</code></td><td><code>underscore</code> splits a digit from a capital letter</td></tr>
+    <tr><td><code>BOISE-ID</code></td><td><code>Boise</code></td><td><code>underscore</code> makes it <code>boise_id</code>, and <code>humanize</code> drops a trailing <code>_id</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>The apostrophe rule leaves contractions like <code>Don't</code> alone, but it can't tell one from a name prefix like <code>O'</code>. The hyphen loss is documented in Rails itself: <code>titleize('x-men: the last stand')</code> returns <code>"X Men: The Last Stand"</code>.</p>
+
+<h2>How acronym inflections split ALL-CAPS words</h2>
+
+<p>It gets worse once your app registers acronyms. A line like <code>inflect.acronym "API"</code> in <code>config/initializers/inflections.rb</code> is how <code>api_controller</code> becomes <code>APIController</code>. The rule is global, so <code>titleize</code> also applies it inside any ALL-CAPS word that contains those letters:</p>
+
+<div class="table-responsive">
+<table>
+  <thead>
+    <tr><th>Registered acronym</th><th>Input</th><th><code>titleize</code> returns</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>AI</code></td><td><code>SPAIN</code></td><td><code>Sp AI N</code></td></tr>
+    <tr><td><code>API</code></td><td><code>GRAND RAPIDS</code></td><td><code>Grand R API Ds</code></td></tr>
+    <tr><td><code>ID</code></td><td><code>DAVID</code></td><td><code>Dav</code></td></tr>
+    <tr><td><code>US</code></td><td><code>COLUMBUS</code></td><td><code>Columb US</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Each row registers only that acronym. <code>underscore</code> puts separators around the match and <code>humanize</code> swaps in the registered spelling. <code>ID</code> also trips the trailing <code>_id</code> rule, so David loses two letters. The splitting only happens in upper case, so mixed-case <code>David</code> and <code>Columbus</code> come through fine. ALL-CAPS is the input people feed to <code>titleize</code>, so it's the input that breaks.</p>
+
+<h2>Fixing ALL-CAPS names without titleize</h2>
+
+<p>A single-case string carries no casing information: nobody can tell whether <code>MCALLEN</code> meant <code>McAllen</code>. A mixed-case string does, because someone typed that capital A on purpose. So the helper below recases only text that's all upper or all lower, capitalizes word starts itself instead of calling the inflector, and applies a short list of whole-word exceptions. Seed that list with the casing your data actually has.</p>
+
+{% highlight ruby %}
+# app/lib/text_case.rb
+module TextCase
+  CASING_EXCEPTIONS = %w[McAllen DeKalb NE NW SE SW].index_by(&:downcase)
+
+  module_function
+
+  # Recase text only when it's all one case, so casing a person chose is never touched.
+  def tidy_case(text)
+    text = text.to_s.squish
+    return text unless text == text.upcase || text == text.downcase
+
+    text.downcase
+        .gsub(/(?<![\p{L}\p{M}\p{N}'’])\p{L}|(?<=\b\p{L}['’])\p{L}/, &:upcase)
+        .gsub(/[\p{L}\p{M}]+/) { |word| CASING_EXCEPTIONS.fetch(word.downcase, word) }
+  end
+end
+{% endhighlight %}
+
+<ul>
+  <li>The first regex branch capitalizes a letter that starts a word: one not preceded by a letter, a combining mark, a digit, or an apostrophe. The digit check is why <code>21ST</code> becomes <code>21st</code> instead of <code>21St</code>.</li>
+  <li>The second branch handles a one-letter prefix before an apostrophe (<code>O'Fallon</code>, <code>D'Angelo</code>, <code>L'Anse</code>) without touching <code>Martha's</code> or <code>Don't</code>.</li>
+  <li>Exceptions match whole words, so <code>NE</code> can't fire inside <code>NEW</code>.</li>
+</ul>
+
+<p>It never calls the inflector, so a registered <code>AI</code> acronym leaves <code>SPAIN</code> as <code>Spain</code>. Whitespace is squished either way, and mixed-case input is otherwise returned untouched.</p>
+
+<p>Wire it in through <code>normalizes</code>. That declaration can apply the block more than once, so the block has to be idempotent, and this one is:</p>
+
+{% highlight ruby %}
+class Customer < ApplicationRecord
+  normalizes :last_name, :street, :city, with: ->(value) { TextCase.tidy_case(value) }
+end
+{% endhighlight %}
+
+<p>A table-driven spec doubles as documentation:</p>
+
+{% highlight ruby %}
+RSpec.describe TextCase do
+  {
+    "PHOENIX"           => "Phoenix",
+    "WINSTON-SALEM"     => "Winston-Salem",
+    "MARY-KATE O'NEIL"  => "Mary-Kate O'Neil",
+    "D'ANGELO"          => "D'Angelo",
+    "MARTHA'S VINEYARD" => "Martha's Vineyard",
+    "500 W 21ST ST"     => "500 W 21st St",
+    "1234 NE 5TH ST"    => "1234 NE 5th St",
+    "NEW YORK AVE"      => "New York Ave",
+    "MCALLEN"           => "McAllen",
+    "  st. louis  "     => "St. Louis",
+    "McAllen"           => "McAllen",
+    "Coeur d'Alene"     => "Coeur d'Alene",
+    "Ne Portland Blvd"  => "Ne Portland Blvd",
+    nil                 => ""
+  }.each do |input, expected|
+    it "turns #{input.inspect} into #{expected.inspect}" do
+      expect(described_class.tidy_case(input)).to eq(expected)
+    end
+  end
+end
+{% endhighlight %}
+
+<h2>Can't I just register the name as an inflection?</h2>
+
+<p>For some names, yes. The <a href="https://api.rubyonrails.org/classes/ActiveSupport/Inflector/Inflections.html#method-i-acronym"><code>acronym</code> docs</a> include <code>acronym 'McDonald'</code> for words that need non-standard capitalization. Register one in <code>config/initializers/inflections.rb</code> (the file where I added <a href="/posts/quick-tip-rails-singularization-of-ess/">a custom singularization rule</a> back in 2009) and <code>titleize</code> honors it:</p>
+
+{% highlight ruby %}
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.acronym "McAllen"
+end
+
+"McAllen".titleize # => "McAllen"
+"MCALLEN".titleize # => "McAllen"
+"mcallen".titleize # => "McAllen"
+{% endhighlight %}
+
+<p><code>McDowell</code> and <code>DeKalb</code> work the same way. The limits are real:</p>
+
+<ul>
+  <li><strong>Hyphens and apostrophes stay broken.</strong> Registering <code>Winston-Salem</code> or <code>O'Fallon</code> changes nothing: they still come out <code>Winston Salem</code> and <code>O'fallon</code>.</li>
+  <li><strong>It doesn't repair what's already stored.</strong> <code>Mc Allen</code> stays <code>Mc Allen</code>.</li>
+  <li><strong>It's app-wide.</strong> After registering <code>DeKalb</code>, <code>"dekalb_report".camelize</code> returns <code>"DeKalbReport"</code>.</li>
+  <li><strong>Short entries backfire on ALL-CAPS text.</strong> Register <code>NE</code> and <code>SW</code> for street directions and <code>NEW YORK AVE</code> becomes <code>NE W York Ave</code>, <code>SENECA ST</code> becomes <code>Se NE Ca St</code>, and <code>SWAN LN</code> becomes <code>SW An Ln</code>. Mixed-case <code>New York Ave</code> is fine.</li>
+</ul>
+
+<p>That last one is why the helper's exceptions match whole words. Keep the list in your own helper, not in global inflections.</p>
+
+<h2>Takeaway</h2>
+
+<p>The helper has limits. The list only knows what you put in it, so <code>COEUR D'ALENE</code> comes out <code>Coeur D'Alene</code> although the official name has a lowercase d. Letters after a digit stay lowercase so ordinals work, which turns <code>SUITE 1A</code> into <code>Suite 1a</code>. Its promise is narrower than what people expect from <code>titleize</code>: it never damages casing a person typed, and it makes single-case text readable.</p>
+
+<p>Normalizing on write destroys the original, so the rule has to be one that can't hurt good input. <strong>Only recase text that's all one case, capitalize word starts yourself instead of calling <code>titleize</code>, and leave mixed-case input alone, because a person chose that casing.</strong> If you can't write a rule you trust, store what the user typed and format it on display, where a bad rule costs a render instead of data.</p>
