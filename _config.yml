@@ -19,6 +19,15 @@ company:
   name: Velocity Labs
   url: https://velocitylabs.io
 
+# Used by jekyll-seo-tag: profile links (sameAs) and the publisher logo on posts
+social:
+  links:
+    - https://github.com/curtis
+    - https://www.linkedin.com/in/curtm95
+    - https://bsky.app/profile/curtm.bsky.social
+    - https://www.instagram.com/curtis.d.miller/
+logo: /img/logo.png
+
 # Build Settings
 markdown: kramdown
 highlighter: rouge
