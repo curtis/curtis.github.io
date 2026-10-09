@@ -10,7 +10,7 @@ redirect_from:
   - "/rails/how-to/rails-class-collisions/"
   - "/programming/ruby-on-rails/rails-class-collisions/"
 ---
-<p>While trying to use the oh-so-nifty <a href="/rails/discover-your-missing-specs">missing spec finder</a> on a recent project, I discovered that it was not working.  Hmmm… seems that somewhere along the way Rails added detection for existing constants and won't allow you to re-generate something.  Instead it calls <code>raise_class_collision</code>, which raises a <code>UsageError</code>. Damn them.</p>
+<p>While trying to use the oh-so-nifty <a href="/posts/discover-your-missing-specs/">missing spec finder</a> on a recent project, I discovered that it was not working.  Hmmm… seems that somewhere along the way Rails added detection for existing constants and won't allow you to re-generate something.  Instead it calls <code>raise_class_collision</code>, which raises a <code>UsageError</code>. Damn them.</p>
 <p>Anyway, to work around this for now, you can add the following somewhere (e.g., an initializer):</p>
 
 {% highlight ruby %}

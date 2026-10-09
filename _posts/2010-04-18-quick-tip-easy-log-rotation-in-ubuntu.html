@@ -11,6 +11,6 @@ redirect_from:
   - "/ops/how-to/quick-tip-easy-log-rotation-in-ubuntu/"
 ---
 <p>In Ubuntu, there's a <a rel="external" href="http://manpages.ubuntu.com/manpages/jaunty/man8/logrotate.8.html">logrotate</a> command that makes this pretty easy. You simply need to create a configuration file that will be processed by the logrotate process. For example:</p>
-<h4>/etc/logrotate.d/myapp</h4>
+<h2>/etc/logrotate.d/myapp</h2>
 <p><script src="https://gist.github.com/175869.js"></script></p>
 <p>Some of the config options are self-explanatory, but it essentially says that the log will be rotate daily, unless it's empty, and compressed and it will keep five days worth of log files. Additionally, it's ok if the log file is missing</p>

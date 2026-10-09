@@ -12,7 +12,7 @@ redirect_from:
 ---
 <p>I was recently working on a project using edge rails and saw that it supported something like what used to be called <cite><a href="http://errtheblog.com/post/2381">sexy migrations</a></cite>. Basically, you can make your migration files look a whole lot cleaner.</p>
 
-<h4>Before</h4>
+<h2>Before</h2>
 
 {% highlight ruby linenos %}
 class CreateUsers < ActiveRecord::Migration
@@ -32,7 +32,7 @@ class CreateUsers < ActiveRecord::Migration
 end
 {% endhighlight %}
 
-<h4>After</h4>
+<h2>After</h2>
 
 {% highlight ruby linenos %}
 class CreateUsers < ActiveRecord::Migration
@@ -52,7 +52,7 @@ end
 
 <p>Looks much better doesn't it?  For what I was doing though, I wanted to use the <span class="dead-link" title="http://ar-paranoid.rubyforge.org/">acts_as_paranoid</span> functionality to never delete anything.  The acts_as_paranoid plugin updates the row with a deleted_at timestamp and then filters out 'deleted' ones whenever it queries the database.  Of course, I could just add <code>t.datetime :deleted_at</code> to each table.  But instead of going back to the old way of doing things, I simply extended the built in timestamps functionality by placing the following in a file in the lib directory and then requiring it in the environment.</p>
 
-<h4>lib/custom_schema_definitions.rb</h4>
+<h2>lib/custom_schema_definitions.rb</h2>
 
 {% highlight ruby linenos %}
 module ActiveRecord
@@ -71,7 +71,7 @@ module ActiveRecord
 end
 {% endhighlight %}
 
-<h4>config/environment.rb (add)</h4>
+<h2>config/environment.rb (add)</h2>
 
 {% highlight ruby %}
 require "custom_schema_definitions"

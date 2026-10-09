@@ -10,7 +10,7 @@ redirect_from:
   - "/rails/how-to/quick-tip-rails-named-bind-variables/"
   - "/programming/ruby-on-rails/quick-tip-rails-named-bind-variables/"
 ---
-<p>Have you ever come across a Ruby on Rails query that has so many conditions that it's hard to figure out what is being replaced where? While this can be somewhat mitigated by using <a href="https://millarian.com/rails/quick-tip-named_scope/">Rails named scopes</a>, you can also use named bind variables to make it easier to read. Named bind variables replace the question marks with symbols and you supply a hash with values for the matching symbol keys:</p>
+<p>Have you ever come across a Ruby on Rails query that has so many conditions that it's hard to figure out what is being replaced where? While this can be somewhat mitigated by using <a href="/posts/quick-tip-named_scope/">Rails named scopes</a>, you can also use named bind variables to make it easier to read. Named bind variables replace the question marks with symbols and you supply a hash with values for the matching symbol keys:</p>
 
 {% highlight ruby %}
 Company.find(:first, :conditions => [
