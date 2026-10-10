@@ -46,6 +46,10 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+# jekyll-feed defaults to the 10 newest posts
+feed:
+  posts_limit: 50
+
 twitter:
   username: curtism
 

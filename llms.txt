@@ -1,0 +1,24 @@
+---
+layout: null
+sitemap: false
+---
+# {{ site.title }}
+
+> {{ site.full_description }} {{ site.description }} {{ site.posts.size }} posts on web development, Ruby on Rails, JavaScript, and consulting, published from {{ site.posts.last.date | date: "%Y" }} to {{ site.posts.first.date | date: "%Y" }}.
+
+Every post has a Markdown copy, linked below, at the post URL with the trailing slash replaced by `.md`. Posts are listed newest first under their primary category, with the publish date in parentheses. Older posts describe the software versions of their time, so check the date before relying on one.
+{% assign groups = site.posts | group_by_exp: "post", "post.categories | first" %}
+{%- for group in groups %}
+{%- assign info = site.data.categories[group.name] %}
+
+## {{ info.name | default: group.name | default: "Uncategorized" }}
+{% for post in group.items %}
+- [{{ post.title | strip_html | normalize_whitespace }}]({{ post.markdown_url | prepend: site.baseurl | prepend: site.url }}){% if post.subtitle %}: {{ post.subtitle | strip_html | normalize_whitespace }}{% endif %} ({{ post.date | date: "%Y-%m-%d" }})
+{%- endfor %}
+{%- endfor %}
+
+## Optional
+
+- [About {{ site.author }}]({{ "/about/" | prepend: site.baseurl | prepend: site.url }}): Background and contact details
+- [Atom feed]({{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}): Full text of the most recent posts
+- [Sitemap]({{ "/sitemap.xml" | prepend: site.baseurl | prepend: site.url }}): Every page on the site

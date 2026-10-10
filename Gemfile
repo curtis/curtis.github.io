@@ -4,6 +4,7 @@ ruby "~> 4.0"
 
 gem "jekyll", "~> 4.4"
 gem "logger"
+gem "reverse_markdown"
 gem "webrick"
 
 group :jekyll_plugins do
