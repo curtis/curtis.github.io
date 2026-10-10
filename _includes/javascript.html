@@ -1,8 +1,8 @@
 <!-- Bootstrap 5.3.8 Bundle (includes Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" defer></script>
 
 <!-- Theme JavaScript -->
-<script src="{{ "/js/blog.js" | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/blog.js" | prepend: site.baseurl }}" defer></script>
 
 <!-- Google Analytics: add GA4 Measurement ID to _config.yml as google_analytics -->
 {% if site.google_analytics and jekyll.environment == 'production' %}

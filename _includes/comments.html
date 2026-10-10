@@ -4,11 +4,22 @@
   <div id="disqus_thread"></div>
 
   <script type="text/javascript">
-    (function() { // DON'T EDIT BELOW THIS LINE
-      var d = document, s = d.createElement('script');
-      s.src = 'https://millarian.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', +new Date());
-      (d.head || d.body).appendChild(s);
+    // Load Disqus only when the comments are about to scroll into view
+    (function() {
+      var d = document, thread = d.getElementById('disqus_thread');
+      function loadDisqus() {
+        var s = d.createElement('script');
+        s.src = 'https://millarian.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      if (!('IntersectionObserver' in window)) return loadDisqus();
+      var observer = new IntersectionObserver(function(entries) {
+        if (!entries[0].isIntersecting) return;
+        observer.disconnect();
+        loadDisqus();
+      }, { rootMargin: '600px' });
+      observer.observe(thread);
     })();
   </script>
 
