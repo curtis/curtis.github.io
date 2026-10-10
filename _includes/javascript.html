@@ -4,15 +4,94 @@
 <!-- Theme JavaScript -->
 <script src="{{ "/js/blog.js" | prepend: site.baseurl }}" defer></script>
 
-<!-- Google Analytics: add GA4 Measurement ID to _config.yml as google_analytics -->
+<!-- Google Analytics (GA4). Visitors on a European clock are asked first; nothing loads until they accept. -->
 {% if site.google_analytics and jekyll.environment == 'production' %}
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
+<div class="consent-bar" id="consent-bar" role="region" aria-label="Analytics consent" hidden>
+  <p class="consent-bar__text">Okay if I use Google Analytics to count visits? It sets cookies and stores a random ID in your browser. <a href="{{ "/privacy" | prepend: site.baseurl }}">Details</a></p>
+  <div class="consent-bar__actions">
+    <button type="button" class="consent-bar__btn" data-consent="granted">Accept</button>
+    <button type="button" class="consent-bar__btn" data-consent="denied">Decline</button>
+  </div>
+</div>
 <script>
+(function() {
+  var gaId = '{{ site.google_analytics }}';
+  var consentKey = 'analytics_consent';
+  // EEA, UK and Switzerland, judged by the browser's time zone
+  var europe = /^(Europe\/|Atlantic\/(Reykjavik|Canary|Madeira|Azores)|Asia\/(Nicosia|Famagusta)|Arctic\/Longyearbyen|Indian\/(Reunion|Mayotte)|America\/(Guadeloupe|Martinique|Cayenne))/;
+  var bar = document.getElementById('consent-bar');
+  var loaded = false;
+
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('consent', 'default', { analytics_storage: 'granted' });
-  gtag('config', '{{ site.google_analytics }}');
+  window.gtag = function() { dataLayer.push(arguments); };
+
+  function storedChoice() {
+    try { return localStorage.getItem(consentKey); } catch (e) { return null; }
+  }
+
+  function needsConsent() {
+    try { return europe.test(Intl.DateTimeFormat().resolvedOptions().timeZone); } catch (e) { return true; }
+  }
+
+  function loadAnalytics() {
+    window['ga-disable-' + gaId] = false;
+    if (loaded) return;
+    loaded = true;
+
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtag/js?id=' + gaId;
+    document.head.appendChild(script);
+
+    gtag('js', new Date());
+    gtag('consent', 'default', { analytics_storage: 'granted' });
+    // GA4 User-ID: a random per-browser ID, since the site has no sign-in
+    var config = {};
+    try {
+      var userId = localStorage.getItem('ga_user_id');
+      if (!userId) {
+        userId = crypto.randomUUID();
+        localStorage.setItem('ga_user_id', userId);
+      }
+      config.user_id = userId;
+    } catch (e) {}
+    gtag('config', gaId, config);
+  }
+
+  // Stop sending hits and remove the ID and cookies left by an earlier "accept"
+  function forgetAnalytics() {
+    window['ga-disable-' + gaId] = true;
+    try { localStorage.removeItem('ga_user_id'); } catch (e) {}
+    var domains = [location.hostname, '.' + location.hostname.replace(/^www\./, '')];
+    document.cookie.split(';').forEach(function(cookie) {
+      var name = cookie.split('=')[0].trim();
+      if (name.indexOf('_ga') !== 0) return;
+      domains.forEach(function(domain) {
+        document.cookie = name + '=; Max-Age=0; path=/; domain=' + domain;
+      });
+    });
+  }
+
+  bar.querySelectorAll('[data-consent]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var choice = button.getAttribute('data-consent');
+      try { localStorage.setItem(consentKey, choice); } catch (e) {}
+      bar.hidden = true;
+      if (choice === 'granted') loadAnalytics(); else forgetAnalytics();
+    });
+  });
+
+  // "Change analytics choice" button on the privacy page
+  document.querySelectorAll('[data-consent-reset]').forEach(function(button) {
+    button.addEventListener('click', function() { bar.hidden = false; });
+  });
+
+  var choice = storedChoice();
+  if (choice ? choice === 'granted' : !needsConsent()) {
+    loadAnalytics();
+  } else if (!choice) {
+    bar.hidden = false;
+  }
+})();
 </script>
 {% endif %}
-
