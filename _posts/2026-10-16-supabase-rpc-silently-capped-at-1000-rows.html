@@ -1,0 +1,113 @@
+---
+layout: post
+title: "Supabase RPC Silently Capped at 1000 Rows (PostgREST)"
+subtitle: "PostgREST's max_rows cut my RPC result off at 1,000 rows with no error. Returning one row per group fixed it."
+date: 2026-10-16 08:00:00
+categories: [gotchas, postgres, supabase]
+---
+
+<p>I have a project with an admin dashboard that shows, for each of about 300 data sources, a bar of its last 30 job runs. That's up to around 9,000 rows. Some sources were showing an empty bar on the list page, even though viewing the detail page showed plenty of runs.</p>
+
+<h2>What I saw</h2>
+
+<p>The list page got all its data from one Postgres function, called through supabase-js:</p>
+
+{% highlight js %}
+const { data, error } = await supabase.rpc("recent_runs");
+// error is null, data.length is 1000
+{% endhighlight %}
+
+<p>The call completed successfully with no errors, but it returned exactly 1,000 rows. The detail page queried runs for a single source, so it was never affected. That's why the data looked fine in one place and missing in another. The empty bars were not random either: they were the sources late in the alphabet.</p>
+
+<h2>Why PostgREST truncates RPC results at max_rows</h2>
+
+<p>Supabase's REST API is <a href="https://docs.postgrest.org/en/stable/">PostgREST</a>, and it has a <a href="https://docs.postgrest.org/en/stable/references/configuration.html#db-max-rows"><code>db-max-rows</code></a> setting that caps how many rows any response can contain. Supabase's default is 1,000. In a local project it shows up in <code>supabase/config.toml</code>:</p>
+
+{% highlight toml %}
+[api]
+max_rows = 1000
+{% endhighlight %}
+
+<p>The cap applies to function calls too. My function looked like this:</p>
+
+{% highlight sql %}
+select s.id, r.started_at, r.status
+from sources s
+cross join lateral (
+  select * from runs
+  where runs.source_id = s.id
+  order by started_at desc
+  limit 30
+) r
+order by s.id, r.started_at;
+{% endhighlight %}
+
+<p>The lateral join is how we get "last 30 per source" without scanning every run. But it returns one row per run, not one row per source. That day it returned 1,441 rows for 308 sources, and it would grow toward 30 x 308 = 9,240. Everything past row 1,000 was silently dropped. Since the result was ordered by source id, the sources at the end got nothing.</p>
+
+<h2>The fix: return one row per group</h2>
+
+<p>The row count has to stay bounded by something that doesn't grow with the data. Here that's the number of sources. Aggregate each source's runs into a JSON array so the function returns one row per source:</p>
+
+{% highlight sql %}
+drop function if exists recent_runs();
+
+create function recent_runs()
+returns table (source_id text, runs jsonb)
+language sql
+stable
+as $$
+  select
+    s.id,
+    coalesce(
+      (select jsonb_agg(
+                jsonb_build_object('started_at', r.started_at, 'status', r.status)
+                order by r.started_at
+              )
+       from (
+         select * from runs
+         where runs.source_id = s.id
+         order by started_at desc
+         limit 30
+       ) r),
+      '[]'::jsonb
+    )
+  from sources s
+  order by s.id;
+$$;
+
+grant execute on function recent_runs() to authenticated;
+{% endhighlight %}
+
+<p>Two details matter here. Changing a function's return type needs <code>drop function</code> followed by <code>create</code>, because <code>create or replace</code> can't change it. The drop also removes the old grants, so we need to run <code>grant execute</code> again. And the <code>coalesce</code> turns a source with no runs into an empty array instead of <code>null</code>, so the client never has to special-case it.</p>
+
+<p>On the client, one line flattens the result back into the shape the UI already used:</p>
+
+{% highlight js %}
+const runs = data.flatMap((row) => row.runs);
+{% endhighlight %}
+
+<p>The rest of the UI code didn't change.</p>
+
+<h2>Test the shape, not just the values</h2>
+
+<p>My original tests passed because the fixtures had a handful of sources and a few runs each. Nothing came near 1,000 rows. I added three tests for the new function:</p>
+
+<ul>
+  <li>The function returns exactly one row per source.</li>
+  <li>A source with no runs gets an empty list, not <code>null</code>.</li>
+  <li>The 30-run cap per source still holds.</li>
+</ul>
+
+<p>The first one is the guard that matters. As long as the row count equals the source count, the function can't grow past the cap until I have a thousand sources, and that's a number I can see coming.</p>
+
+<h2>Takeaway</h2>
+
+<p>PostgREST truncation is silent, and any RPC whose row count grows with your data will eventually hit it. You have three options, in order of preference:</p>
+
+<ul>
+  <li><strong>Aggregate per group</strong>, as above, so the row count is bounded by the number of groups.</li>
+  <li><strong>Paginate</strong> with <code>.range()</code> on the client when the data really is a long flat list.</li>
+  <li><strong>Raise <code>max_rows</code></strong>. This is only a bandaid.</li>
+</ul>
+
+<p>Whichever you pick, write at least one test whose result size scales with the data. A function that is correct on small fixtures can still be wrong in production.</p>

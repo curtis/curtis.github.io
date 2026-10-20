@@ -77,3 +77,11 @@ react-native:
 android:
   name: Android
   description: Android builds, app size, and Play Console.
+
+postgres:
+  name: Postgres
+  description: PostgreSQL queries, functions, and database gotchas.
+
+supabase:
+  name: Supabase
+  description: Supabase, PostgREST, and row level security.
