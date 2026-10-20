@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Expo Android Status Bar Icons Invisible in Light Mode"
+subtitle: "White status bar icons on a white background? Render expo-status-bar once in the root layout."
+date: 2026-10-14 08:00:00
+categories: [gotchas, react-native, android]
+---
+
+<p>My Expo app's Android status bar was invisible in light mode. The clock, battery, and signal icons were drawn white on a white background. Dark mode hid it completely, since white icons on a dark background look correct.</p>
+
+<h2>Why it happens</h2>
+
+<p>Android draws dark status bar icons only when the app tells it the background is light. The Expo template installs <code>expo-status-bar</code>, but I never rendered it anywhere, so nothing told Android to switch.</p>
+
+<h2>The fix</h2>
+
+<p>Render <a href="https://docs.expo.dev/versions/latest/sdk/status-bar/"><code>StatusBar</code></a> once in the root layout with <code>style="auto"</code>. It picks dark icons on a light theme and light icons on a dark one.</p>
+
+{% highlight tsx %}
+// app/_layout.tsx
+import { StatusBar } from "expo-status-bar";
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return (
+    <>
+      <StatusBar style="auto" />
+      <Stack />
+    </>
+  );
+}
+{% endhighlight %}
+
+<p>If a screen needs different icons, like a dark launch overlay, it can render its own <code>&lt;StatusBar style="light" /&gt;</code>. The most recently mounted one wins.</p>
+
+<h2>Takeaway</h2>
+
+<p><strong>Test your Android app in light mode, not just dark.</strong> If your template installs <code>expo-status-bar</code>, check that something actually renders it.</p>
