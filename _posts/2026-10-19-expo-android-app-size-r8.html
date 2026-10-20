@@ -1,0 +1,95 @@
+---
+layout: post
+title: "Shrink Your Expo Android App Size with R8"
+subtitle: "R8 is off by default in Expo. Turning it on cut my Android download from 27.5 MB to 17.3 MB."
+date: 2026-10-19 08:00:00
+categories: [how-to, javascript, react-native, android]
+---
+
+<p>Before the first release of a side project, Play Console showed my Expo app at 27.5 MB. That seemed large for a fairly simple app. If your Expo Android app size is larger than you expect, the cause is probably not your JavaScript. In my case the app's own code was 4.4 MB. Most of the rest was library bytecode that Expo doesn't shrink by default, and a few lines of config cut the download by about 37%.</p>
+
+<h2>Measuring what's in the Android APK</h2>
+
+<p>I didn't want to guess, so I pulled the installed APKs off the emulator and looked inside. This was the unshrunk build:</p>
+
+<div class="table-responsive">
+<table>
+  <thead>
+    <tr><th>What</th><th>Uncompressed size</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>classes*.dex</code></td><td>about 47 MB</td><td>Compiled Java and Kotlin from React Native, Expo modules, and other Android libraries</td></tr>
+    <tr><td>Native libraries (arm64 split)</td><td>about 23 MB</td><td>Compiled C++ for React Native, the Hermes engine, and native modules</td></tr>
+    <tr><td><code>index.android.bundle</code></td><td>4.4 MB</td><td>My JavaScript, compiled to Hermes bytecode</td></tr>
+    <tr><td>Icon fonts and resources</td><td>about 2 MB</td><td>Fonts, images, and Android resources</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>Why Expo apps are large: R8 is off by default</h2>
+
+<p>The 47 MB of dex is the surprise. Almost none of it is mine. It's every class from every library I depend on, whether my app calls it or not. <a href="https://developer.android.com/build/shrink-code">R8</a> is Android's code shrinker, optimizer, and obfuscator. It walks the code reachable from your app's entry points and drops the rest. A new Expo project ships release builds with R8 turned off, so none of that happens.</p>
+
+<p>The catch: R8 can remove a class a library only looks up by name at runtime, and the app crashes when someone reaches that code. The fix is a keep rule telling R8 to leave that class alone.</p>
+
+<h2>Turning on R8 with expo-build-properties</h2>
+
+<p>The <a href="https://docs.expo.dev/versions/latest/sdk/build-properties/">expo-build-properties</a> config plugin exposes the switches. Install it:</p>
+
+{% highlight bash %}
+npx expo install expo-build-properties
+{% endhighlight %}
+
+<p>Then add it to the <code>plugins</code> array in <code>app.json</code>:</p>
+
+{% highlight json %}
+{
+  "expo": {
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ]
+    ]
+  }
+}
+{% endhighlight %}
+
+<p><code>enableMinifyInReleaseBuilds</code> turns on R8 for the code. <code>enableShrinkResourcesInReleaseBuilds</code> removes resources nothing references.</p>
+
+<p>Config plugins run at build time, so start a new EAS build (or run <code>npx expo prebuild --clean</code> for local builds) to pick up the change.</p>
+
+<div class="callout">
+  <p class="callout-title">Check the option name</p>
+  <p>In recent Expo SDKs (52 and later) the option is named <code>enableMinifyInReleaseBuilds</code>. I tested this on SDK 57. Older docs and blog posts call it <code>enableProguardInReleaseBuilds</code>, so if you copy a snippet and nothing changes, check the name.</p>
+</div>
+
+<h2>Results: 27.5 MB down to 17.3 MB</h2>
+
+<p>I built again with R8 on and repeated the same measurements:</p>
+
+<div class="table-responsive">
+<table>
+  <thead>
+    <tr><th></th><th>Before (no shrinking)</th><th>After (R8)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>dex files</td><td>47 MB</td><td>16.7 MB</td></tr>
+    <tr><td><code>base.apk</code>, uncompressed</td><td>53.5 MB</td><td>23.1 MB</td></tr>
+    <tr><td>Download size</td><td>27.5 MB</td><td>17.3 MB</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>That's 37% smaller!</p>
+
+<h2>Takeaway</h2>
+
+<p><strong>Measure before guessing.</strong> In a React Native or Expo app it's mostly libraries, not your JavaScript, so trimming your own code or compressing images would have barely moved the number here.</p>
+
+<p><strong>Turn on R8 early and test every screen on a real release build.</strong> Given how R8 works, it's far easier to find a missing keep rule when the app is small and you know every screen than after months of features.</p>
